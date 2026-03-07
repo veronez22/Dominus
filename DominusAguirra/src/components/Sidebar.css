@@ -1,0 +1,90 @@
+.sidebar-wrapper {
+  display: flex;
+  height: 100%;
+}
+
+.sidebar {
+  width: 90px;
+  background: #1a1a1a;
+  border-right: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.sidebar-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #666;
+  padding: 10px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-btn:hover {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+.sidebar-btn.ativo {
+  background: #e8a020;
+  color: #000;
+}
+
+.sidebar-icon {
+  font-size: 20px;
+}
+
+.sidebar-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Subcategorias */
+.sidebar-sub {
+  width: 110px;
+  background: #161616;
+  border-right: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 8px;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.sidebar-sub-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #666;
+  padding: 10px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-sub-btn:hover {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+.sidebar-sub-btn.ativo {
+  background: #e8a020;
+  color: #000;
+  font-weight: 700;
+}
