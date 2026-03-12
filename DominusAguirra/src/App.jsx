@@ -43,12 +43,14 @@ function App() {
     return true
   })
 
+  const [carrinhoAberto, setCarrinhoAberto] = useState(false)
+
   return (
   <div className="app">
     <Header
       mesa="04"
       totalItens={totalItens}
-      onAbrirCarrinho={() => alert('carrinho!')}
+      onAbrirCarrinho={() => setCarrinhoAberto(true)}
     />
 
     <div className="app-body">
@@ -70,10 +72,12 @@ function App() {
             onAdicionar={() => adicionarItem(item)}
           />
         ))}
+
       </main>
+              {carrinhoAberto && <Carrinho itens={carrinho} onRemover={removerItem} />}
     </div>
 
-    <Carrinho itens={carrinho} onRemover={removerItem} />
+    
   </div>
 )
 }
