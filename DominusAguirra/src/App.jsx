@@ -3,8 +3,10 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import CardItem from './components/CardItem'
 import Carrinho from './components/Carrinho'
-import { cardapio } from './data/cardapio'
+import Banner from './components/Banner'
+import { cardapio, categorias } from './data/cardapio'
 import './App.css'
+
 
 function App() {
   const [categoriaAtiva, setCategoriaAtiva] = useState('esfihas')
@@ -53,6 +55,8 @@ function App() {
       onAbrirCarrinho={() => setCarrinhoAberto(true)}
     />
 
+    
+
     <div className="app-body">
       <Sidebar
         categoriaAtiva={categoriaAtiva}
@@ -62,6 +66,7 @@ function App() {
       />
 
       <main className="app-conteudo">
+         <Banner categoria={categorias.find(c => c.id === categoriaAtiva)} />
         {itensFiltrados.map((item) => (
           <CardItem
             key={item.id}
@@ -74,7 +79,7 @@ function App() {
         ))}
 
       </main>
-              {carrinhoAberto && <Carrinho itens={carrinho} onRemover={removerItem} />}
+              {carrinhoAberto && <Carrinho itens={carrinho} onRemover={removerItem}  onFechar={() => setCarrinhoAberto(false)} />}
     </div>
 
     

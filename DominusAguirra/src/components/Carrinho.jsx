@@ -1,12 +1,13 @@
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover }) {
+function Carrinho({ itens, onRemover, onFechar}) {
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
   return (
     <div className="carrinho">
       <div className="carrinho-header">
         <h2>🛒 Meu Pedido</h2>
+        <button className="carrinho-btn-fechar" onClick={onFechar}>✕</button>
       </div>
 
       <div className="carrinho-itens">

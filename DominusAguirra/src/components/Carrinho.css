@@ -14,7 +14,6 @@
 }
 
 .carrinho-header h2 {
-  font-family: 'Playfair Display', serif;
   font-size: 18px;
   color: #fff;
 }
@@ -26,8 +25,7 @@
 }
 
 .carrinho-vazio {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: 18px;
   color: #555;
   text-align: center;
   margin-top: 40px;
@@ -43,16 +41,14 @@
 }
 
 .carrinho-item-info p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: #fff;
   margin-bottom: 4px;
 }
 
 .carrinho-item-info span {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   color: #777;
 }
 
@@ -84,13 +80,11 @@
 }
 
 .carrinho-total span {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   color: #888;
 }
 
 .carrinho-total strong {
-  font-family: 'Playfair Display', serif;
   font-size: 20px;
   color: #e8a020;
 }
@@ -99,10 +93,9 @@
   width: 100%;
   background: #e8a020;
   border: none;
-  border-radius: 10px;
+  border-radius: 31px;
   color: #000;
   padding: 14px;
-  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -111,4 +104,32 @@
 
 .carrinho-btn-confirmar:hover {
   background: #f0b030;
+}
+
+.carrinho-header {
+  padding: 20px;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.carrinho-btn-fechar {
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: #888;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.carrinho-btn-fechar:hover {
+  background: #3a2a2a;
+  color: #f55;
 }
