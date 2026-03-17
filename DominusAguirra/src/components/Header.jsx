@@ -9,11 +9,11 @@ function Header({ mesa, totalItens, onAbrirCarrinho }) {
       </div>
 
       <div className="header-acoes">
-        <button className="header-btn">⬜ Mesa {mesa}</button>
-        <button className="header-btn">💳 Wallet</button>
-        <button className="header-btn">🔔 Chamar Garçom</button>
+        <button className="header-btn"> Mesa {mesa}</button>
+        <button className="header-btn"> Wallet</button>
+        <button className="header-btn"> Chamar Garçom</button>
         <button className="header-btn-carrinho" onClick={onAbrirCarrinho}>
-          🛒 Meu Pedido
+           Meu Pedido
           {totalItens > 0 && (
             <span className="header-badge">{totalItens}</span>
           )}
