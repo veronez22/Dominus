@@ -3,23 +3,25 @@
   height: 100%;
 }
 
+/* Coluna principal */
 .sidebar {
-  width: 90px;
-  background: #1a1a1a;
-  border-right: 1px solid #2a2a2a;
+  width: 110px;
+  min-width: 100px;
+  background: #141414;
+  border-right: 1px solid #222;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 8px;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
   overflow-y: auto;
 }
 
 .sidebar-btn {
-  width: 100%;
+  width: 90px;
   background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   color: #666;
   padding: 10px 6px;
   cursor: pointer;
@@ -27,64 +29,68 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s;
 }
 
 .sidebar-btn:hover {
   background: #2a2a2a;
   color: #ccc;
+  border-color: #3a3a3a;
 }
 
 .sidebar-btn.ativo {
   background: #e8a020;
+  border-color: #e8a020;
   color: #000;
-}
-
-.sidebar-icon {
-  font-size: 20px;
 }
 
 .sidebar-label {
   font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
   text-align: center;
 }
 
-/* Subcategorias */
+/* Segunda coluna — subcategorias */
 .sidebar-sub {
-  width: 110px;
-  background: #161616;
-  border-right: 1px solid #2a2a2a;
+  min-width: 130px;
+  background:  #141414;
+  border-right: 1px solid #222;
   display: flex;
   flex-direction: column;
-  padding: 12px 8px;
-  gap: 4px;
+  justify-content: center;
+  padding: 16px 10px;
+  gap: 8px;
   overflow-y: auto;
 }
 
 .sidebar-sub-btn {
-  width: 100%;
+  width: 113px;
+  height: 60px;
+  justify-content: center;
   background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   color: #666;
-  padding: 10px 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 10px 6px;
   cursor: pointer;
-  text-align: left;
-  transition: background 0.2s, color 0.2s;
+  display: flex;
+  font-size: 16px;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
 }
 
 .sidebar-sub-btn:hover {
   background: #2a2a2a;
   color: #ccc;
+  border-color: #3a3a3a;
 }
 
 .sidebar-sub-btn.ativo {
   background: #e8a020;
+  border-color: #e8a020;
   color: #000;
   font-weight: 700;
 }

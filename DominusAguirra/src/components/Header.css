@@ -1,11 +1,12 @@
 .header {
   background: #1a1a1a;
   border-bottom: 1px solid #2a2a2a;
-  padding: 0px 0px 0px 24px;
+  padding: 0px 0px 0 px 24px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -15,42 +16,37 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: fit-content;
 }
 
-.header-logo h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 900;
-  color: #fff;
+.header-logo-img {
+  height: 65px;
+  width: 105p;
+  border-radius: 8px;
 }
 
-.header-logo span {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  color: #e8a020;
-}
-
+/* Botões */
 .header-acoes {
   display: flex;
   align-items: center;
-  gap: 0px;
+  gap: 1px;
 }
 
 .header-btn {
   background: #2a2a2a;
-  height: 67px;
   border: none;
+  height: 64px;
   color: #fff;
-  padding: 10px 16px;
+  padding: 0 16px;
   font-family: 'DM Sans', sans-serif;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
+  flex-direction: row; /* ← ícone e texto lado a lado */
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   transition: background 0.2s;
-  flex-direction: column;
 }
 
 .header-btn:hover {
@@ -60,17 +56,17 @@
 .header-btn-carrinho {
   background: #e8a020;
   border: none;
-  height: 67px;
+  height: 64px;
   color: #000;
-  padding: 10px 18px;
+  padding: 0 20px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
-  flex-direction: column;
   transition: background 0.2s;
 }
 
@@ -85,3 +81,4 @@
   font-size: 12px;
   font-weight: 800;
 }
+

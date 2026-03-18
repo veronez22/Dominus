@@ -1,41 +1,30 @@
 import { categorias } from '../data/cardapio'
 import './Sidebar.css'
+import { UtensilsCrossed, ChefHat, GlassWater, Package, Star } from 'lucide-react'
 
-function Sidebar({ categoriaAtiva, onMudar, subcategoriaAtiva, onMudarSub }) {
-  const categoriaAtualObj = categorias.find((cat) => cat.id === categoriaAtiva)
+function Sidebar({ onMudar, categoriaVisivel }) {
+  const icones = {
+    destaques:  <Star size={22} />,
+    esfihas:    <UtensilsCrossed size={22} />,
+    cigarretes: <ChefHat size={22} />,
+    bebidas:    <GlassWater size={22} />,
+    combos:     <Package size={22} />,
+  }
 
   return (
     <div className="sidebar-wrapper">
-
-      {/* Coluna principal */}
       <aside className="sidebar">
         {categorias.map((cat) => (
           <button
             key={cat.id}
-            className={`sidebar-btn ${categoriaAtiva === cat.id ? 'ativo' : ''}`}
+            className={`sidebar-btn ${categoriaVisivel === cat.id ? 'ativo' : ''}`}
             onClick={() => onMudar(cat.id)}
           >
-            <span className="sidebar-icon">{cat.icon}</span>
+            {icones[cat.id]}
             <span className="sidebar-label">{cat.label}</span>
           </button>
         ))}
       </aside>
-
-      {/* Coluna de subcategorias */}
-      {categoriaAtualObj?.subcategorias && (
-        <aside className="sidebar-sub">
-          {categoriaAtualObj.subcategorias.map((sub) => (
-            <button
-              key={sub}
-              className={`sidebar-sub-btn ${subcategoriaAtiva === sub ? 'ativo' : ''}`}
-              onClick={() => onMudarSub(sub)}
-            >
-              {sub}
-            </button>
-          ))}
-        </aside>
-      )}
-
     </div>
   )
 }

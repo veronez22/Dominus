@@ -1,0 +1,220 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 860px;
+  max-width: 92vw;
+  max-height: 88vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;          /* ← lado a lado */
+  flex-direction: row;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Imagem à esquerda */
+.modal-imagem {
+  width: 380px;
+  min-width: 380px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px 0 0 20px;
+}
+
+/* Conteúdo à direita */
+.modal-conteudo {
+  flex: 1;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.modal-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.modal-fechar:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+.modal-nome {
+  font-size: 26px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.modal-descricao {
+  font-size: 14px;
+  color: #888;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.modal-preco {
+  font-size: 24px;
+  font-weight: 700;
+  color: #e8a020;
+  display: block;
+  margin-bottom: 24px;
+}
+
+/* Divisor */
+.modal-divisor {
+  height: 1px;
+  background: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+/* Opções */
+.modal-opcoes {
+  margin-bottom: 20px;
+}
+
+.modal-opcoes-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.modal-opcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.modal-opcao input {
+  width: 20px;
+  height: 20px;
+  accent-color: #f1c880;
+  cursor: pointer;
+}
+
+/* Observação */
+.modal-observacao {
+  margin-bottom: 28px;
+  flex: 1;
+}
+
+.modal-observacao textarea {
+  width: 100%;
+  background: #f8f8f8;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #333;
+  resize: none;
+  height: 80px;
+  outline: none;
+  margin-top: 8px;
+  transition: border-color 0.2s;
+}
+
+.modal-observacao textarea:focus {
+  border-color: #e8a020;
+}
+
+/* Rodapé */
+.modal-rodape {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.modal-quantidade {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 10px 16px;
+}
+
+.modal-quantidade button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.modal-quantidade button:hover {
+  color: #e8a020;
+}
+
+.modal-quantidade span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  min-width: 24px;
+  text-align: center;
+}
+
+.modal-btn-adicionar {
+  flex: 1;
+  background: #ffb639;
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal-btn-adicionar:hover {
+  background: #f0b030;
+}

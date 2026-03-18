@@ -1,19 +1,43 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import CardItem from './components/CardItem'
-import Carrinho from './components/Carrinho'
 import Banner from './components/Banner'
+import Carrinho from './components/Carrinho'
+import ModalProduto from './components/ModalProduto'
 import { cardapio, categorias } from './data/cardapio'
 import './App.css'
 
-
 function App() {
-  const [categoriaAtiva, setCategoriaAtiva] = useState('esfihas')
-  const [subcategoriaAtiva, setSubcategoriaAtiva] = useState('Salgadas')
   const [carrinho, setCarrinho] = useState([])
+  const [carrinhoAberto, setCarrinhoAberto] = useState(false)
+  const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null)
+  const refs = useRef({})
+  const bannerRefs = useRef({})  // ← refs só dos banners
 
-  // Calcula total de itens pro badge do header
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setCategoriaVisivel(entry.target.dataset.categoria)
+        }
+      })
+    },
+    { threshold: 0.5 }
+  )
+
+  Object.entries(bannerRefs.current).forEach(([id, el]) => {
+    if (el) {
+      el.dataset.categoria = id
+      observer.observe(el)
+    }
+  })
+
+  return () => observer.disconnect()
+}, [])
+
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
 
   function adicionarItem(item) {
@@ -32,59 +56,66 @@ function App() {
     setCarrinho((prev) => prev.filter((i) => i.id !== id))
   }
 
-  function mudarCategoria(id) {
-    setCategoriaAtiva(id)
-    setSubcategoriaAtiva(null)
+  function scrollParaCategoria(id) {
+    refs.current[id]?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const itensFiltrados = cardapio.filter((item) => {
-    if (item.categoria !== categoriaAtiva) return false
-    if (subcategoriaAtiva && item.subcategoria) {
-      return item.subcategoria === subcategoriaAtiva
-    }
-    return true
-  })
-
-  const [carrinhoAberto, setCarrinhoAberto] = useState(false)
-
   return (
-  <div className="app">
-    <Header
-      mesa="04"
-      totalItens={totalItens}
-      onAbrirCarrinho={() => setCarrinhoAberto(true)}
-    />
-
-    
-
-    <div className="app-body">
-      <Sidebar
-        categoriaAtiva={categoriaAtiva}
-        onMudar={mudarCategoria}
-        subcategoriaAtiva={subcategoriaAtiva}
-        onMudarSub={setSubcategoriaAtiva}
+    <div className="app">
+      <Header
+        totalItens={totalItens}
+        onAbrirCarrinho={() => setCarrinhoAberto(true)}
       />
 
-      <main className="app-conteudo">
-         <Banner categoria={categorias.find(c => c.id === categoriaAtiva)} />
-        {itensFiltrados.map((item) => (
+      <div className="app-body">
+        <Sidebar
+          onMudar={scrollParaCategoria}
+          categoriaVisivel={categoriaVisivel}
+        />
+
+        <main className="app-conteudo">
+  {categorias.map((cat) => {
+    const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
+    return (
+      <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
+
+        {/* ref no banner pra detectar qual categoria tá visível */}
+        <div ref={(el) => bannerRefs.current[cat.id] = el}>
+          <Banner categoria={cat} />
+        </div>
+
+        {itensDaCategoria.map((item) => (
           <CardItem
             key={item.id}
             nome={item.nome}
             preco={item.preco}
             descricao={item.descricao}
             imagem={item.imagem}
-            onAdicionar={() => adicionarItem(item)}
+            onAdicionar={() => setProdutoSelecionado(item)}
           />
         ))}
+      </div>
+    )
+  })}
+</main>
+      </div>
 
-      </main>
-              {carrinhoAberto && <Carrinho itens={carrinho} onRemover={removerItem}  onFechar={() => setCarrinhoAberto(false)} />}
+      {carrinhoAberto && (
+        <Carrinho
+          itens={carrinho}
+          onFechar={() => setCarrinhoAberto(false)}
+          onRemover={removerItem}
+        />
+      )}
+      {produtoSelecionado && (
+  <ModalProduto
+    produto={produtoSelecionado}
+    onFechar={() => setProdutoSelecionado(null)}
+    onAdicionar={adicionarItem}
+  />
+)}
     </div>
-
-    
-  </div>
-)
+  )
 }
 
 export default App

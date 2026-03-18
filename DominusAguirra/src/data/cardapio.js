@@ -1,35 +1,38 @@
 export const categorias = [
+
+    {
+    id: 'destaques',
+    label: 'Destaques',
+    descricao: 'Os favoritos de quem já provou',
+    banner: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=80',
+  },
+
   {
     id: 'esfihas',
     label: 'Esfihas',
-    icon: '🫓',
+    descricao: 'Tradição e sabor em cada mordida',
     subcategorias: ['Salgadas', 'Doces'],
     banner: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=900&q=80',
   },
   {
     id: 'cigarretes',
     label: 'Cigarretes',
-    icon: '🥐',
+    descricao: 'Crocantes por fora, irresistíveis por dentro',
     banner: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&q=80',
   },
   {
     id: 'bebidas',
     label: 'Bebidas',
-    icon: '🥤',
+    descricao: 'Geladas para acompanhar',
     banner: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=900&q=80',
   },
   {
     id: 'combos',
     label: 'Combos',
-    icon: '📦',
+    descricao: 'Mais sabor, melhor preço',
     banner: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&q=80',
   },
-  {
-    id: 'destaques',
-    label: 'Destaques',
-    icon: '⭐',
-    banner: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=80',
-  },
+
 ]
 
 export const cardapio = [
@@ -47,7 +50,7 @@ export const cardapio = [
   // Bebidas
   { id: 9,  nome: 'Coca-Cola Lata',     preco: 5.00, descricao: 'Coca-Cola gelada 350ml.',                           imagem: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=200', categoria: 'bebidas',    subcategoria: null       },
   { id: 10, nome: 'Suco de Laranja',    preco: 7.50, descricao: 'Suco natural espremido na hora 300ml.',             imagem: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=200', categoria: 'bebidas',    subcategoria: null       },
-  { id: 11, nome: 'Limonada Suíça',     preco: 9.00, descricao: 'Limonada cremosa com limão siciliano.',             imagem: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=200', categoria: 'bebidas',    subcategoria: null       },
+  { id: 11, nome: 'Limonada Suíça',     preco: 9.00, descricao: 'Limonada cremosa com limão siciliano.',             imagem: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=200', categoria: 'bebidas', destaque: true      },
   // Combos
   { id: 12, nome: 'Combo Família',      preco: 49.90, descricao: '10 esfihas à escolha + 2 refrigerantes lata.',     imagem: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=200', categoria: 'combos',     subcategoria: null       },
   { id: 13, nome: 'Combo Casal',        preco: 27.90, descricao: '4 esfihas à escolha + 2 refrigerantes lata.',      imagem: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=200', categoria: 'combos',     subcategoria: null       },
