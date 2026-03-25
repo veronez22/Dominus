@@ -1,4 +1,4 @@
-import logo from '../assets/logoAguirra.png'
+import logo from '../assets/logoAguirra.png.png'
 import { UtensilsCrossed, CreditCard, BellRing, ShoppingCart, Search } from 'lucide-react'
 import './Header.css'
 
