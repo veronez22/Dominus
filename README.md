@@ -32,7 +32,7 @@ Este projeto está sendo construído com o apoio de ferramentas de Inteligência
 
 ## 🖼️ Preview
 
-> ![Demo do sistema](./assets/Dominus.gif)
+> ![Demo do sistema](./assets/printDominus.png)
 
 
 ---
