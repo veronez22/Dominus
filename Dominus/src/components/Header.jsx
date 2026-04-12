@@ -1,4 +1,4 @@
-import logo from '../assets/logoAguirra.png.png'
+import logo from '../assets/logo.png'
 import { UtensilsCrossed, CreditCard, BellRing, ShoppingCart, Search } from 'lucide-react'
 import './Header.css'
 
@@ -7,7 +7,7 @@ function Header({ mesa, totalItens, onAbrirCarrinho }) {
     <header className="header">
       {/* Logo */}
        <div className="header-logo">
-        <img src={logo} alt="Aguirra Esfiharia" className="header-logo-img" />
+        <img src={logo} alt="Sua logo" className="header-logo-img" />
       </div>
 
       {/* Ações */}
@@ -16,15 +16,15 @@ function Header({ mesa, totalItens, onAbrirCarrinho }) {
           Mesa {mesa}
         </button>
         <button className="header-btn">
-          <CreditCard size={20} />
+          <CreditCard size={25} />
           Minha <br/>Conta
         </button>
         <button className="header-btn">
-          <BellRing size={20} />
+          <BellRing size={25} />
           Chamar <br/> Garçom
         </button>
         <button className="header-btn-carrinho" onClick={onAbrirCarrinho}>
-          <ShoppingCart size={20} />
+          <ShoppingCart size={25} />
           Meu <br/> Carrinho
           {totalItens > 0 && (
             <span className="header-badge">{totalItens}</span>

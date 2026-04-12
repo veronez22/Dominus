@@ -45,7 +45,7 @@
   font-weight: 500;
   cursor: pointer;
   display: flex;
-  flex-direction: column; /* ← ícone e texto lado a lado */
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   transition: background 0.2s;
@@ -67,7 +67,7 @@
   font-size: 16px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   transition: background 0.2s;
