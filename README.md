@@ -24,7 +24,7 @@ O **Dominus** é um sistema de cardápio digital desenvolvido para funcionar em 
 
 ## 🤖 Desenvolvido com Auxílio de IA
 
-Este projeto está sendo construído com o apoio de ferramentas de Inteligência Artificial (como Claude). O objetivo é aprender **React** e **JavaScript** na prática, utilizando a IA para entender conceitos, tirar dúvidas e evoluir o código com autonomia — não apenas copiar soluções prontas.
+Este projeto está sendo construído com o apoio de ferramentas de Inteligência Artificial. O objetivo é aprender **React** e **JavaScript** na prática, utilizando a IA para entender conceitos, tirar dúvidas e evoluir o código com autonomia — não apenas copiar soluções prontas.
 
 > 💡 Acredito que aprender com IA de forma consciente é uma habilidade essencial para o desenvolvedor moderno.
 
