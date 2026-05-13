@@ -16,7 +16,7 @@
 }
 
 .modal {
-  background: #fff;
+  background: var(--bg-secundario);
   border-radius: 20px;
   width: 860px;
   max-width: 92vw;
@@ -26,6 +26,7 @@
   display: flex;          /* ← lado a lado */
   flex-direction: row;
   animation: slideUp 0.25s ease;
+  border: 1px solid var(--border);
 }
 
 @keyframes slideUp {
@@ -49,16 +50,18 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  background: var(--bg-secundario);
+  color: var(--texto-principal);
 }
 
 .modal-fechar {
   position: absolute;
   top: 14px;
   right: 14px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(255, 184, 77, 0.2);
   border: none;
   border-radius: 999px;
-  color: #fff;
+  color: var(--cor-primaria);
   width: 34px;
   height: 34px;
   display: flex;
@@ -66,31 +69,34 @@
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .modal-fechar:hover {
-  background: rgba(0,0,0,0.8);
+  background: rgba(255, 184, 77, 0.3);
+  transform: scale(1.1);
 }
 
 .modal-nome {
   font-size: 26px;
   font-weight: 900;
-  color: #111;
+  color: var(--texto-principal);
   margin-bottom: 10px;
 }
 
 .modal-descricao {
   font-size: 14px;
-  color: #888;
+  color: var(--texto-secundario);
   line-height: 1.7;
   margin-bottom: 16px;
 }
 
 .modal-preco {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #e8a020;
+  color: var(--cor-primaria);
   display: block;
   margin-bottom: 24px;
 }
@@ -98,7 +104,7 @@
 /* Divisor */
 .modal-divisor {
   height: 1px;
-  background: #f0f0f0;
+  background: var(--border);
   margin-bottom: 20px;
 }
 
@@ -108,9 +114,9 @@
 }
 
 .modal-opcoes-titulo {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: #aaa;
+  color: var(--texto-terciario);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 12px;
@@ -121,16 +127,21 @@
   align-items: center;
   gap: 12px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  color: #333;
+  font-size: 14px;
+  color: var(--texto-secundario);
   margin-bottom: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-opcao:hover {
+  color: var(--texto-principal);
 }
 
 .modal-opcao input {
   width: 20px;
   height: 20px;
-  accent-color: #f1c880;
+  accent-color: var(--cor-primaria);
   cursor: pointer;
 }
 
@@ -142,22 +153,23 @@
 
 .modal-observacao textarea {
   width: 100%;
-  background: #f8f8f8;
-  border: 1px solid #eee;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-  color: #333;
+  color: var(--texto-principal);
   resize: none;
   height: 80px;
   outline: none;
   margin-top: 8px;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s ease;
 }
 
 .modal-observacao textarea:focus {
-  border-color: #e8a020;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
 }
 
 /* Rodapé */
@@ -172,49 +184,58 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #f5f5f5;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 10px 16px;
+  padding: 12px 16px;
 }
 
 .modal-quantidade button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #333;
+  color: var(--texto-terciario);
   display: flex;
   align-items: center;
   padding: 0;
-  transition: color 0.15s;
+  font-size: 18px;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .modal-quantidade button:hover {
-  color: #e8a020;
+  color: var(--cor-primaria);
 }
 
 .modal-quantidade span {
   font-family: 'DM Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #111;
+  color: var(--texto-principal);
   min-width: 24px;
   text-align: center;
 }
 
 .modal-btn-adicionar {
   flex: 1;
-  background: #ffb639;
+  background: var(--cor-primaria);
   border: none;
   border-radius: 12px;
-  color: #000;
+  color: #1a1a1a;
   padding: 14px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.3s ease;
 }
 
 .modal-btn-adicionar:hover {
-  background: #f0b030;
+  background: var(--cor-primaria-hover);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 184, 77, 0.3);
+}
+
+.modal-btn-adicionar:active {
+  transform: scale(0.98);
 }

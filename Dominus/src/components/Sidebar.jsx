@@ -2,7 +2,7 @@ import { categorias } from '../data/cardapio'
 import './Sidebar.css'
 import { UtensilsCrossed, ChefHat, GlassWater, Package, Star } from 'lucide-react'
 
-function Sidebar({ onMudar, categoriaVisivel }) {
+function Sidebar({ onMudar, categoriaVisivel })  {
   const icones = {
     destaques:  <Star size={22} />,
     esfihas:    <UtensilsCrossed size={22} />,

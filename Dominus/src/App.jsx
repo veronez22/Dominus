@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import CardItem from './components/CardItem'
-import Banner from './components/Banner'
 import Carrinho from './components/Carrinho'
 import ModalProduto from './components/ModalProduto'
+import Destaques from './components/Destaques'
 import { cardapio, categorias } from './data/cardapio'
 import './App.css'
 
@@ -13,32 +13,41 @@ function App() {
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
+  const [busca, setBusca] = useState('')
   const refs = useRef({})
-  const bannerRefs = useRef({})  // ← refs só dos banners
 
-useEffect(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setCategoriaVisivel(entry.target.dataset.categoria)
-        }
-      })
-    },
-    { threshold: 0.5 }
-  )
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setCategoriaVisivel(entry.target.dataset.categoria)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '-40% 0px -50% 0px' }
+    )
 
-  Object.entries(bannerRefs.current).forEach(([id, el]) => {
-    if (el) {
-      el.dataset.categoria = id
-      observer.observe(el)
-    }
-  })
+    Object.entries(refs.current).forEach(([id, el]) => {
+      if (el) {
+        el.dataset.categoria = id
+        observer.observe(el)
+      }
+    })
 
-  return () => observer.disconnect()
-}, [])
+    return () => observer.disconnect()
+  }, [])
 
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
+
+  const buscaAtiva = busca.trim().length > 0
+
+  const produtosFiltrados = buscaAtiva
+    ? cardapio.filter(i =>
+        i.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        i.descricao.toLowerCase().includes(busca.toLowerCase())
+      )
+    : []
 
   function adicionarItem(item) {
     setCarrinho((prev) => {
@@ -57,6 +66,7 @@ useEffect(() => {
   }
 
   function scrollParaCategoria(id) {
+    setCategoriaVisivel(id)
     refs.current[id]?.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -65,6 +75,8 @@ useEffect(() => {
       <Header
         totalItens={totalItens}
         onAbrirCarrinho={() => setCarrinhoAberto(true)}
+        busca={busca}
+        onBusca={setBusca}
       />
 
       <div className="app-body">
@@ -74,30 +86,56 @@ useEffect(() => {
         />
 
         <main className="app-conteudo">
-  {categorias.map((cat) => {
-    const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
-    return (
-      <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
-
-        {/* ref no banner pra detectar qual categoria tá visível */}
-        <div ref={(el) => bannerRefs.current[cat.id] = el}>
-          <Banner categoria={cat} />
-        </div>
-
-        {itensDaCategoria.map((item) => (
-          <CardItem
-            key={item.id}
-            nome={item.nome}
-            preco={item.preco}
-            descricao={item.descricao}
-            imagem={item.imagem}
-            onAdicionar={() => setProdutoSelecionado(item)}
-          />
-        ))}
-      </div>
-    )
-  })}
-</main>
+          {buscaAtiva ? (
+            // ── Resultados da busca ──
+            <div className="busca-resultado">
+              <p className="busca-info">
+                {produtosFiltrados.length === 0
+                  ? `Nenhum produto encontrado para "${busca}"`
+                  : `${produtosFiltrados.length} resultado${produtosFiltrados.length > 1 ? 's' : ''} para "${busca}"`
+                }
+              </p>
+              {produtosFiltrados.map((item) => (
+                <CardItem
+                  key={item.id}
+                  nome={item.nome}
+                  preco={item.preco}
+                  descricao={item.descricao}
+                  imagem={item.imagem}
+                  onAdicionar={() => setProdutoSelecionado(item)}
+                />
+              ))}
+            </div>
+          ) : (
+            // ── Listagem normal por categoria ──
+            categorias.map((cat) => {
+              const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
+              return (
+                <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
+                  {cat.id !== 'destaques' && (
+                    <div className="secao-titulo">
+                      <h2>{cat.label}</h2>
+                    </div>
+                  )}
+                  {cat.id === 'destaques' ? (
+                    <Destaques onAdicionar={setProdutoSelecionado} />
+                  ) : (
+                    itensDaCategoria.map((item) => (
+                      <CardItem
+                        key={item.id}
+                        nome={item.nome}
+                        preco={item.preco}
+                        descricao={item.descricao}
+                        imagem={item.imagem}
+                        onAdicionar={() => setProdutoSelecionado(item)}
+                      />
+                    ))
+                  )}
+                </div>
+              )
+            })
+          )}
+        </main>
       </div>
 
       {carrinhoAberto && (
@@ -107,13 +145,14 @@ useEffect(() => {
           onRemover={removerItem}
         />
       )}
+
       {produtoSelecionado && (
-  <ModalProduto
-    produto={produtoSelecionado}
-    onFechar={() => setProdutoSelecionado(null)}
-    onAdicionar={adicionarItem}
-  />
-)}
+        <ModalProduto
+          produto={produtoSelecionado}
+          onFechar={() => setProdutoSelecionado(null)}
+          onAdicionar={adicionarItem}
+        />
+      )}
     </div>
   )
 }

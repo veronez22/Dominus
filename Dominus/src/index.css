@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import './colors.css';
 
 * {
   box-sizing: border-box;
@@ -12,8 +13,8 @@ html, body, #root {
 }
 
 body {
-  background: #0a0a0a;
-  color: #fff;
+  background: var(--bg-principal);
+  color: var(--texto-principal);
   font-family: 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -23,6 +24,7 @@ button {
   cursor: pointer;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #111; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-principal); }
+::-webkit-scrollbar-thumb { background: var(--cor-primaria); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cor-primaria-hover); }

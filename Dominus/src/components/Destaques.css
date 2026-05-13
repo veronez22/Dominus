@@ -1,0 +1,209 @@
+/* ── Wrapper geral ── */
+.destaques {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: calc(100vh - 80px);
+}
+
+/* Banner principal */
+.destaques-banner {
+  position: relative;
+  width: 100%;
+  height: 400px;        
+  flex: none;           
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.destaques-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 55%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+.destaques-banner-conteudo {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 36px 40px;
+  max-width: 480px;
+}
+
+.destaques-banner-badge {
+  display: inline-block;
+  background: var(--cor-primaria);
+  color: #1a1a1a;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+
+.destaques-banner-titulo {
+  font-size: 34px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.destaques-banner-descricao {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.destaques-banner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cor-primaria);
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  padding: 12px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.3s ease;
+}
+
+.destaques-banner-btn:hover {
+  background: var(--cor-primaria-hover);
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.35);
+}
+
+.destaques-banner-btn:active {
+  transform: scale(0.97);
+}
+
+/* ────────────────────────────
+   Seção de recomendados
+──────────────────────────── */
+.destaques-secao-titulo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 16px;
+}
+
+.destaques-secao {
+  flex-shrink: 0;
+}
+
+/* Scroll horizontal dos cards */
+.destaques-cards {
+  display: flex;
+  gap: 20px;           
+  overflow-x: auto;
+  padding-bottom: 24px;
+  scrollbar-width: none;
+}
+
+.destaques-cards::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Card individual ── */
+.destaques-card {
+  min-width: 200px;     
+  max-width: 200px;
+  background: var(--bg-secundario);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.destaques-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.destaques-card-imagem-wrapper {
+  position: relative;
+  width: 100%;
+  height: 120px;
+}
+
+.destaques-card-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.destaques-card-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--cor-primaria);
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.destaques-card-info {
+  padding: 10px 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.destaques-card-nome {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  line-height: 1.3;
+}
+
+.destaques-card-preco {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+}
+
+.destaques-card-btn {
+  margin: 8px 12px 12px;
+  background: transparent;
+  border: 1px solid var(--cor-primaria);
+  border-radius: 8px;
+  color: var(--cor-primaria);
+  padding: 7px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.destaques-card-btn:hover {
+  background: var(--cor-primaria);
+  color: #1a1a1a;
+}

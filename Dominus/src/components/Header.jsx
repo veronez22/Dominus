@@ -1,37 +1,177 @@
+import { useState } from 'react'
 import logo from '../assets/logo.png'
-import { UtensilsCrossed, CreditCard, BellRing, ShoppingCart, Search } from 'lucide-react'
+import { CreditCard, BellRing, ShoppingCart, Search } from 'lucide-react'
 import './Header.css'
 
-function Header({ mesa, totalItens, onAbrirCarrinho }) {
-  return (
-    <header className="header">
-      {/* Logo */}
-       <div className="header-logo">
-        <img src={logo} alt="Sua logo" className="header-logo-img" />
-      </div>
+const HASH_SENHA_GARCOM = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'
+const LIMITE_MESAS = 20
 
-      {/* Ações */}
-      <div className="header-acoes">
-        <button className="header-btn">
-          Mesa {mesa}
-        </button>
-        <button className="header-btn">
-          <CreditCard size={25} />
-          Minha <br/>Conta
-        </button>
-        <button className="header-btn">
-          <BellRing size={25} />
-          Chamar <br/> Garçom
-        </button>
-        <button className="header-btn-carrinho" onClick={onAbrirCarrinho}>
-          <ShoppingCart size={25} />
-          Meu <br/> Carrinho
-          {totalItens > 0 && (
-            <span className="header-badge">{totalItens}</span>
+function Header({ totalItens, onAbrirCarrinho, busca, onBusca }) {
+  const [mesa, setMesa] = useState('')
+  const [modalAberto, setModalAberto] = useState(false)
+  const [etapa, setEtapa] = useState('mesa')
+  const [inputMesa, setInputMesa] = useState('')
+  const [inputSenha, setInputSenha] = useState('')
+  const [erro, setErro] = useState('')
+
+  function mostrarErro(msg) {
+    setErro(msg)
+    setTimeout(() => setErro(''), 2500)
+  }
+
+  async function hashSenha(senha) {
+    const encoded = new TextEncoder().encode(senha)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  }
+
+  function handleFechar() {
+    setModalAberto(false)
+    setEtapa('mesa')
+    setInputMesa('')
+    setInputSenha('')
+    setErro('')
+  }
+
+  function handleConfirmarMesa() {
+    const num = parseInt(inputMesa)
+    if (!inputMesa || isNaN(num) || num <= 0) {
+      mostrarErro('Digite um número de mesa válido.')
+      return
+    }
+    if (num > LIMITE_MESAS) {
+      mostrarErro(`Mesa ${num} não existe. O limite é mesa ${LIMITE_MESAS}.`)
+      return
+    }
+    setEtapa('senha')
+    setErro('')
+  }
+
+  async function handleConfirmarSenha() {
+    const hash = await hashSenha(inputSenha)
+    if (hash !== HASH_SENHA_GARCOM) {
+      mostrarErro('Senha incorreta. Tente novamente.')
+      setInputSenha('')
+      return
+    }
+    setMesa(inputMesa)
+    handleFechar()
+  }
+
+  return (
+    <>
+      <header className="header">
+
+        {/* Logo */}
+        <div className="header-logo">
+          <img src={logo} alt="Sua logo" className="header-logo-img" />
+        </div>
+
+        {/* Busca — fica entre logo e ações */}
+        <div className="header-busca">
+          <Search size={16} className="header-busca-icone" />
+          <input
+            className="header-busca-input"
+            type="text"
+            placeholder="Buscar produto..."
+            value={busca}
+            onChange={(e) => onBusca(e.target.value)}
+          />
+          {busca && (
+            <button className="header-busca-limpar" onClick={() => onBusca('')}>✕</button>
           )}
-        </button>
-      </div>
-    </header>
+        </div>
+
+        {/* Ações */}
+        <div className="header-acoes">
+          <button className="header-btn" onClick={() => setModalAberto(true)}>
+            Mesa {mesa || ''}
+          </button>
+          <button className="header-btn">
+            <CreditCard size={25} />
+            Minha <br/>Conta
+          </button>
+          <button className="header-btn">
+            <BellRing size={25} />
+            Chamar <br/> Garçom
+          </button>
+          <button className="header-btn-carrinho" onClick={onAbrirCarrinho}>
+            <ShoppingCart size={25} />
+            Meu <br/> Carrinho
+            {totalItens > 0 && (
+              <span className="header-badge">{totalItens}</span>
+            )}
+          </button>
+        </div>
+
+      </header>
+
+      {/* Modal de mesa */}
+      {modalAberto && (
+        <div className="mesa-overlay" onClick={handleFechar}>
+          <div className="mesa-modal" onClick={(e) => e.stopPropagation()}>
+
+            {etapa === 'mesa' ? (
+              <>
+                <h2 className="mesa-titulo">Qual é a sua mesa?</h2>
+                <p className="mesa-subtitulo">Digite o número da mesa (1 a {LIMITE_MESAS})</p>
+
+                <input
+                  className="mesa-input"
+                  type="number"
+                  placeholder="Ex: 5"
+                  value={inputMesa}
+                  onChange={(e) => setInputMesa(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleConfirmarMesa()}
+                  autoFocus
+                />
+
+                {erro && <p className="mesa-erro">⚠️ {erro}</p>}
+
+                <div className="mesa-acoes">
+                  <button className="mesa-btn-cancelar" onClick={handleFechar}>
+                    Cancelar
+                  </button>
+                  <button className="mesa-btn-confirmar" onClick={handleConfirmarMesa}>
+                    Continuar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="mesa-titulo">Senha do Garçom</h2>
+                <p className="mesa-subtitulo">
+                  Confirme com um garçom para definir a Mesa {inputMesa}
+                </p>
+
+                <input
+                  className="mesa-input"
+                  type="password"
+                  placeholder="••••"
+                  value={inputSenha}
+                  onChange={(e) => setInputSenha(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleConfirmarSenha()}
+                  autoFocus
+                />
+
+                {erro && <p className="mesa-erro">⚠️ {erro}</p>}
+
+                <div className="mesa-acoes">
+                  <button className="mesa-btn-cancelar" onClick={() => { setEtapa('mesa'); setErro('') }}>
+                    Voltar
+                  </button>
+                  <button className="mesa-btn-confirmar" onClick={handleConfirmarSenha}>
+                    Confirmar
+                  </button>
+                </div>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
