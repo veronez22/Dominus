@@ -15,35 +15,68 @@
   to   { opacity: 1; }
 }
 
-.modal {
-  background: var(--bg-secundario);
-  border-radius: 20px;
-  width: 860px;
-  max-width: 92vw;
-  max-height: 88vh;
-  overflow: hidden;
-  position: relative;
-  display: flex;          /* ← lado a lado */
-  flex-direction: row;
-  animation: slideUp 0.25s ease;
-  border: 1px solid var(--border);
-}
-
 @keyframes slideUp {
   from { transform: translateY(30px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* Imagem à esquerda */
-.modal-imagem {
-  width: 380px;
-  min-width: 380px;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 20px 0 0 20px;
+/* ── Modal container ── */
+.modal {
+  background: var(--bg-secundario);
+  border-radius: 24px;
+  width: 860px;
+  max-width: 92vw;
+  max-height: 88vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  animation: slideUp 0.25s ease;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
-/* Conteúdo à direita */
+/* ── Imagem ── */
+.modal-imagem {
+  width: 360px;
+  min-width: 360px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px 0 0 24px;
+  transition: transform 0.4s ease;
+}
+
+.modal:hover .modal-imagem {
+  transform: scale(1.03);
+}
+
+/* ── Botão fechar ── */
+.modal-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.modal-fechar:hover {
+  background: rgba(255, 80, 80, 0.4);
+  border-color: rgba(255, 80, 80, 0.4);
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* ── Conteúdo direito ── */
 .modal-conteudo {
   flex: 1;
   padding: 32px 28px;
@@ -52,73 +85,56 @@
   overflow-y: auto;
   background: var(--bg-secundario);
   color: var(--texto-principal);
+  scrollbar-width: none;
 }
 
-.modal-fechar {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: rgba(255, 184, 77, 0.2);
-  border: none;
-  border-radius: 999px;
-  color: var(--cor-primaria);
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  font-size: 18px;
+.modal-conteudo::-webkit-scrollbar {
+  display: none;
 }
 
-.modal-fechar:hover {
-  background: rgba(255, 184, 77, 0.3);
-  transform: scale(1.1);
-}
-
+/* ── Textos ── */
 .modal-nome {
   font-size: 26px;
   font-weight: 900;
   color: var(--texto-principal);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  line-height: 1.2;
 }
 
 .modal-descricao {
   font-size: 14px;
   color: var(--texto-secundario);
   line-height: 1.7;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .modal-preco {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
   color: var(--cor-primaria);
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
 }
 
-/* Divisor */
+/* ── Divisor ── */
 .modal-divisor {
   height: 1px;
   background: var(--border);
   margin-bottom: 20px;
 }
 
-/* Opções */
+/* ── Opções (bebidas) ── */
 .modal-opcoes {
   margin-bottom: 20px;
 }
 
 .modal-opcoes-titulo {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--texto-terciario);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   margin-bottom: 12px;
 }
 
@@ -131,7 +147,7 @@
   color: var(--texto-secundario);
   margin-bottom: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .modal-opcao:hover {
@@ -139,15 +155,15 @@
 }
 
 .modal-opcao input {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   accent-color: var(--cor-primaria);
   cursor: pointer;
 }
 
-/* Observação */
+/* ── Observação ── */
 .modal-observacao {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   flex: 1;
 }
 
@@ -155,55 +171,61 @@
   width: 100%;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 12px 14px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   color: var(--texto-principal);
   resize: none;
-  height: 80px;
+  height: 76px;
   outline: none;
   margin-top: 8px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .modal-observacao textarea:focus {
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.12);
 }
 
-/* Rodapé */
+/* ── Rodapé ── */
 .modal-rodape {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-top: auto;
+  padding-top: 16px;
 }
 
+/* ── Quantidade ── */
 .modal-quantidade {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px 16px;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .modal-quantidade button {
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
   color: var(--texto-terciario);
+  width: 42px;
+  height: 48px;
   display: flex;
   align-items: center;
-  padding: 0;
+  justify-content: center;
+  transition: all 0.2s ease;
   font-size: 18px;
-  font-weight: bold;
-  transition: color 0.3s ease;
 }
 
 .modal-quantidade button:hover {
+  background: rgba(255, 184, 77, 0.12);
   color: var(--cor-primaria);
 }
 
@@ -212,30 +234,150 @@
   font-size: 18px;
   font-weight: 700;
   color: var(--texto-principal);
-  min-width: 24px;
+  min-width: 36px;
   text-align: center;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* ── Botão adicionar ── */
 .modal-btn-adicionar {
   flex: 1;
   background: var(--cor-primaria);
   border: none;
   border-radius: 12px;
   color: #1a1a1a;
-  padding: 14px;
+  padding: 14px 20px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .modal-btn-adicionar:hover {
   background: var(--cor-primaria-hover);
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 184, 77, 0.3);
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.35);
 }
 
 .modal-btn-adicionar:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+/* ────────────────────────────
+   Tela de Upsell
+──────────────────────────── */
+.modal-upsell-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.modal-upsell-voltar {
+  background: none;
+  border: none;
+  color: var(--texto-terciario);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  width: fit-content;
+  transition: color 0.2s;
+}
+
+.modal-upsell-voltar:hover {
+  color: var(--cor-primaria);
+}
+
+.modal-upsell-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.modal-upsell-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.modal-upsell-item:hover {
+  border-color: var(--cor-primaria);
+  background: rgba(255, 184, 77, 0.05);
+}
+
+.modal-upsell-item.selecionado {
+  border-color: var(--cor-primaria);
+  background: rgba(255, 184, 77, 0.1);
+}
+
+.modal-upsell-emoji {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.modal-upsell-label {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+.modal-upsell-preco {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-terciario);
+}
+
+.modal-upsell-item.selecionado .modal-upsell-preco {
+  color: var(--cor-primaria);
+}
+
+.modal-upsell-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--texto-terciario);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.modal-upsell-item.selecionado .modal-upsell-check {
+  background: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: #1a1a1a;
+}
+
+.modal-btn-confirmar-upsell {
+  width: 100%;
 }

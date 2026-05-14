@@ -1,57 +1,104 @@
 import { useState } from 'react'
+import { X, ShoppingCart, CheckCircle } from 'lucide-react'
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover, onFechar }) {
+function Carrinho({ itens, onRemover, onFechar, onConfirmar }) {
   const [confirmado, setConfirmado] = useState(false)
-  const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
   const [mensagemErro, setMensagemErro] = useState(false)
+  const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
-function handleConfirmar() {
-  if (itens.length === 0) {
-    setMensagemErro(true)
-    setTimeout(() => setMensagemErro(false), 2500)
-    return
+  function handleConfirmar() {
+    if (itens.length === 0) {
+      setMensagemErro(true)
+      setTimeout(() => setMensagemErro(false), 2500)
+      return
+    }
+    onConfirmar(itens)
+    setConfirmado(true)
   }
-  setConfirmado(true)
-}
 
   return (
     <div className="modal-overlay carrinho-overlay" onClick={onFechar}>
       <div className="carrinho" onClick={(e) => e.stopPropagation()}>
-      
+
         {confirmado ? (
-          // ── Tela de confirmação ──
+
+          /* ── Tela de confirmação ── */
           <div className="carrinho-confirmado">
-            <div className="carrinho-confirmado-icone">✅</div>
+            <div className="carrinho-confirmado-icone">
+              <CheckCircle size={64} strokeWidth={1.5} />
+            </div>
             <h2>Pedido Enviado!</h2>
             <p>Seu pedido foi recebido e já está sendo preparado.</p>
-
-            <button className="carrinho-btn-confirmar" onClick={onFechar}>
-              Fechar
-            </button>
+            <button className="carrinho-btn-confirmar" onClick={onFechar}>Fechar</button>
           </div>
 
         ) : (
-          // ── Tela normal do carrinho ──
+
+          /* ── Tela normal ── */
           <>
             <div className="carrinho-header">
-              <h2>🛒 Meu Pedido</h2>
-              <button className="carrinho-btn-fechar" onClick={onFechar}>✕</button>
+              <div className="carrinho-header-titulo">
+                <ShoppingCart size={20} />
+                <h2>Meu Pedido</h2>
+              </div>
+              <button className="carrinho-btn-fechar" onClick={onFechar}>
+                <X size={18} />
+              </button>
             </div>
 
             <div className="carrinho-itens">
               {itens.length === 0 ? (
                 <p className="carrinho-vazio">Seu carrinho está vazio</p>
               ) : (
-                itens.map((item) => (
-                  <div key={item.id} className="carrinho-item">
-                    <div className="carrinho-item-info">
-                      <p>{item.nome}</p>
-                      <span>x{item.quantidade} · R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}</span>
+                itens.map((item) => {
+                  const adicionais = item.extras?.adicionais || []
+                  const observacao = item.extras?.observacao || ''
+                  const gelo = item.extras?.gelo
+                  const limao = item.extras?.limao
+
+                  const tagExtras = [
+                    ...adicionais,
+                    gelo ? 'Gelo' : null,
+                    limao ? 'Limão' : null,
+                  ].filter(Boolean)
+
+                  return (
+                    <div key={item.id} className="carrinho-item">
+                      <div className="carrinho-item-info">
+                        <div className="carrinho-item-topo">
+                          <p>{item.nome}</p>
+                          <button
+                            className="carrinho-item-remover"
+                            onClick={() => onRemover(item.id)}
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+
+                        <span className="carrinho-item-preco">
+                          x{item.quantidade} · R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
+                        </span>
+
+                        {/* Tags de adicionais */}
+                        {tagExtras.length > 0 && (
+                          <div className="carrinho-item-tags">
+                            {tagExtras.map((tag) => (
+                              <span key={tag} className="carrinho-item-tag">+ {tag}</span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Observação */}
+                        {observacao && (
+                          <p className="carrinho-item-obs">
+                            Obs: {observacao}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <button className="carrinho-item-remover" onClick={() => onRemover(item.id)}>✕</button>
-                  </div>
-                ))
+                  )
+                })
               )}
             </div>
 
@@ -61,10 +108,10 @@ function handleConfirmar() {
                 <strong>R$ {total.toFixed(2).replace('.', ',')}</strong>
               </div>
               {mensagemErro && (
-              <p className="carrinho-erro">⚠️ Adicione pelo menos um produto!</p>
+                <p className="carrinho-erro">Adicione pelo menos um produto!</p>
               )}
               <button className="carrinho-btn-confirmar" onClick={handleConfirmar}>
-                Confirmar Pedido 🔥
+                Confirmar Pedido
               </button>
             </div>
           </>

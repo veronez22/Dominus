@@ -5,15 +5,20 @@ import CardItem from './components/CardItem'
 import Carrinho from './components/Carrinho'
 import ModalProduto from './components/ModalProduto'
 import Destaques from './components/Destaques'
+import MinhaConta from './components/MinhaConta'
 import { cardapio, categorias } from './data/cardapio'
 import './App.css'
 
 function App() {
   const [carrinho, setCarrinho] = useState([])
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
+  const [contaAberta, setContaAberta] = useState(false)
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const [busca, setBusca] = useState('')
+  const [historico, setHistorico] = useState([])
+  const [mesa, setMesa] = useState('')
+
   const refs = useRef({})
 
   useEffect(() => {
@@ -27,21 +32,17 @@ function App() {
       },
       { threshold: 0.1, rootMargin: '-40% 0px -50% 0px' }
     )
-
     Object.entries(refs.current).forEach(([id, el]) => {
       if (el) {
         el.dataset.categoria = id
         observer.observe(el)
       }
     })
-
     return () => observer.disconnect()
   }, [])
 
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
-
   const buscaAtiva = busca.trim().length > 0
-
   const produtosFiltrados = buscaAtiva
     ? cardapio.filter(i =>
         i.nome.toLowerCase().includes(busca.toLowerCase()) ||
@@ -70,24 +71,33 @@ function App() {
     refs.current[id]?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function confirmarPedido(itens) {
+    const novoPedido = {
+      id: Date.now(),
+      horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      itens: [...itens],
+      total: itens.reduce((s, i) => s + i.preco * i.quantidade, 0)
+    }
+    setHistorico(prev => [...prev, novoPedido])
+  }
+
   return (
     <div className="app">
       <Header
         totalItens={totalItens}
         onAbrirCarrinho={() => setCarrinhoAberto(true)}
+        onAbrirConta={() => setContaAberta(true)}
         busca={busca}
         onBusca={setBusca}
+        mesa={mesa}
+        onMesaMudou={setMesa}
       />
 
       <div className="app-body">
-        <Sidebar
-          onMudar={scrollParaCategoria}
-          categoriaVisivel={categoriaVisivel}
-        />
+        <Sidebar onMudar={scrollParaCategoria} categoriaVisivel={categoriaVisivel} />
 
         <main className="app-conteudo">
           {buscaAtiva ? (
-            // ── Resultados da busca ──
             <div className="busca-resultado">
               <p className="busca-info">
                 {produtosFiltrados.length === 0
@@ -107,15 +117,12 @@ function App() {
               ))}
             </div>
           ) : (
-            // ── Listagem normal por categoria ──
             categorias.map((cat) => {
               const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
               return (
                 <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
                   {cat.id !== 'destaques' && (
-                    <div className="secao-titulo">
-                      <h2>{cat.label}</h2>
-                    </div>
+                    <div className="secao-titulo"><h2>{cat.label}</h2></div>
                   )}
                   {cat.id === 'destaques' ? (
                     <Destaques onAdicionar={setProdutoSelecionado} />
@@ -143,6 +150,16 @@ function App() {
           itens={carrinho}
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
+          onConfirmar={confirmarPedido}
+        />
+      )}
+
+      {contaAberta && (
+        <MinhaConta
+          mesa={mesa}
+          historico={historico}
+          onFechar={() => setContaAberta(false)}
+          onAbrirCarrinho={() => { setContaAberta(false); setCarrinhoAberto(true) }}
         />
       )}
 
