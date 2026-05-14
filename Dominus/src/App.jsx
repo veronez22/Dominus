@@ -51,14 +51,15 @@ function App() {
     : []
 
   function adicionarItem(item) {
+    const quantidadeNova = item.quantidade || 1
     setCarrinho((prev) => {
       const jaExiste = prev.find((i) => i.id === item.id)
       if (jaExiste) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantidade: i.quantidade + 1 } : i
+          i.id === item.id ? { ...i, quantidade: i.quantidade + quantidadeNova } : i
         )
       }
-      return [...prev, { ...item, quantidade: 1 }]
+      return [...prev, { ...item, quantidade: quantidadeNova }]
     })
   }
 

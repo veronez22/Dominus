@@ -1,76 +1,99 @@
+import { useState, useEffect } from 'react'
+import { cardapio } from '../data/cardapio'
 import './Destaques.css'
 
-const itensDestaque = [
+// Slide 1 — item do cardápio (dinâmico)
+const itemPrincipal = cardapio.find(item => item.badge === 'Mais Pedido') || cardapio.find(item => item.badge)
+
+// Slides promocionais — fixos, sem botão
+const slidesPromo = [
   {
-    id: 2,
-    nome: 'Carne c/ Catupiry',
-    preco: 5.75,
-    descricao: 'Carne moída com catupiry cremoso.',
-    imagem: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600',
-    badge: 'Mais Pedido',
+    id: 'promo-1',
+    imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1200&q=80',
+    titulo: 'Terça é dia de Esfiha em Dobro',
+    subtitulo: 'Peça 10 e leve 20. Todo terceiro dia da semana.',
+    tipo: 'promo',
   },
   {
-    id: 4,
-    nome: 'Frango c/ Requeijão',
-    preco: 5.50,
-    descricao: 'Frango desfiado com requeijão cremoso.',
-    imagem: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600',
-    badge: 'Favorito',
+    id: 'promo-2',
+    imagem: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80',
+    titulo: 'Quarta-feira do Vinho',
+    subtitulo: 'Harmonize sua esfiha favorita com um bom vinho.',
+    tipo: 'promo',
   },
   {
-    id: 7,
-    nome: 'Cigarrete de Carne',
-    preco: 6.50,
-    descricao: 'Massa crocante recheada com carne temperada.',
-    imagem: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600',
-    badge: 'Novo',
-  },
-  {
-    id: 11,
-    nome: 'Limonada Suíça',
-    preco: 9.00,
-    descricao: 'Limonada cremosa com limão siciliano.',
-    imagem: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=600',
-    badge: 'Novo',
-  },
-  {
-    id: 12,
-    nome: 'Combo Família',
-    preco: 49.90,
-    descricao: '10 esfihas à escolha + 2 refrigerantes.',
-    imagem: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600',
-    badge: 'Oferta',
+    id: 'promo-3',
+    imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&q=80',
+    titulo: 'Combo Família',
+    subtitulo: '10 esfihas + 2 refrigerantes por R$ 49,90.',
+    tipo: 'promo',
   },
 ]
 
-const bannerItem = itensDestaque[0]
+// Todos os slides juntos — item principal primeiro
+const slides = [
+  { ...itemPrincipal, tipo: 'produto' },
+  ...slidesPromo,
+]
+
+// Itens dos cards (todos com badge)
+const itensDestaque = cardapio.filter(item => item.badge)
 
 function Destaques({ onAdicionar }) {
+  const [slideAtivo, setSlideAtivo] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlideAtivo(prev => (prev + 1) % slides.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const slide = slides[slideAtivo]
+
   return (
     <div className="destaques">
 
-      {/* ── Banner principal ── */}
       <div
         className="destaques-banner"
-        style={{ backgroundImage: `url(${bannerItem.imagem})` }}
+        style={{ backgroundImage: `url(${slide.imagem})` }}
       >
         <div className="destaques-banner-overlay" />
-        <div className="destaques-banner-conteudo">
-          <span className="destaques-banner-badge">{bannerItem.badge}</span>
-          <h1 className="destaques-banner-titulo">{bannerItem.nome}</h1>
-          <p className="destaques-banner-descricao">{bannerItem.descricao}</p>
-          <button
-            className="destaques-banner-btn"
-            onClick={() => onAdicionar(bannerItem)}
-          >
-            Adicionar · R$ {bannerItem.preco.toFixed(2).replace('.', ',')}
-          </button>
+
+        <div className="destaques-banner-conteudo" key={slideAtivo}>
+          {slide.tipo === 'produto' ? (
+            <>
+              <span className="destaques-banner-badge">{slide.badge}</span>
+              <h1 className="destaques-banner-titulo">{slide.nome}</h1>
+              <p className="destaques-banner-descricao">{slide.descricao}</p>
+              <button
+                className="destaques-banner-btn"
+                onClick={() => onAdicionar(slide)}
+              >
+                Adicionar · R$ {slide.preco.toFixed(2).replace('.', ',')}
+              </button>
+            </>
+          ) : (
+            <>
+              <h1 className="destaques-banner-titulo">{slide.titulo}</h1>
+              <p className="destaques-banner-descricao">{slide.subtitulo}</p>
+            </>
+          )}
+        </div>
+
+        <div className="destaques-indicadores">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              className={`destaques-indicador ${i === slideAtivo ? 'ativo' : ''}`}
+              onClick={() => setSlideAtivo(i)}
+            />
+          ))}
         </div>
       </div>
 
-      {/* ── Seção de recomendados ── */}
       <div className="destaques-secao">
-        <h2 className="destaques-secao-titulo">⭐ Destaques</h2>
+        <h2 className="destaques-secao-titulo">Destaques</h2>
         <div className="destaques-cards">
           {itensDestaque.map((item) => (
             <div key={item.id} className="destaques-card">

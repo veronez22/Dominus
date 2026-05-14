@@ -26,6 +26,7 @@
   border-radius: 24px;
   width: 860px;
   max-width: 92vw;
+  height: 520px;            /* ← altura fixa — todos os modais iguais */
   max-height: 88vh;
   overflow: hidden;
   position: relative;
@@ -41,7 +42,8 @@
   width: 360px;
   min-width: 360px;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;        /* preenche sem distorcer */
+  object-position: center;  /* centraliza o foco */
   border-radius: 24px 0 0 24px;
   transition: transform 0.4s ease;
 }
@@ -202,7 +204,6 @@
 .modal-quantidade {
   display: flex;
   align-items: center;
-  gap: 0;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -330,12 +331,6 @@
 .modal-upsell-item.selecionado {
   border-color: var(--cor-primaria);
   background: rgba(255, 184, 77, 0.1);
-}
-
-.modal-upsell-emoji {
-  font-size: 24px;
-  line-height: 1;
-  flex-shrink: 0;
 }
 
 .modal-upsell-label {
