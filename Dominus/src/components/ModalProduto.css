@@ -23,10 +23,10 @@
 /* ── Modal container ── */
 .modal {
   background: var(--bg-secundario);
-  border-radius: 24px;
+  border-radius: 20px;
   width: 860px;
   max-width: 92vw;
-  height: 520px;            /* ← altura fixa — todos os modais iguais */
+  height: 600px;
   max-height: 88vh;
   overflow: hidden;
   position: relative;
@@ -38,32 +38,54 @@
 }
 
 /* ── Imagem ── */
-.modal-imagem {
-  width: 360px;
-  min-width: 360px;
+.modal-imagem-wrapper {
+  width: 280px;
+  min-width: 280px;
   height: 100%;
-  object-fit: cover;        /* preenche sem distorcer */
-  object-position: center;  /* centraliza o foco */
-  border-radius: 24px 0 0 24px;
+  position: relative;
+  overflow: hidden;
+  
+}
+
+.modal-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
   transition: transform 0.4s ease;
 }
 
 .modal:hover .modal-imagem {
-  transform: scale(1.03);
+  transform: scale(1.04);
+}
+
+.modal-imagem-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: var(--cor-primaria);
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
 /* ── Botão fechar ── */
 .modal-fechar {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   color: #fff;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,19 +96,17 @@
 
 .modal-fechar:hover {
   background: rgba(255, 80, 80, 0.4);
-  border-color: rgba(255, 80, 80, 0.4);
+  border-color: rgba(255, 80, 80, 0.3);
   transform: scale(1.1) rotate(90deg);
 }
 
 /* ── Conteúdo direito ── */
 .modal-conteudo {
   flex: 1;
-  padding: 32px 28px;
+  padding: 24px 24px 20px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background: var(--bg-secundario);
-  color: var(--texto-principal);
   scrollbar-width: none;
 }
 
@@ -94,28 +114,36 @@
   display: none;
 }
 
-/* ── Textos ── */
+/* ── Cabeçalho ── */
+.modal-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-right: 36px;
+}
+
 .modal-nome {
-  font-size: 26px;
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 700;
   color: var(--texto-principal);
-  margin-bottom: 8px;
+  margin: 0 0 6px;
   line-height: 1.2;
 }
 
 .modal-descricao {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--texto-secundario);
-  line-height: 1.7;
-  margin-bottom: 14px;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .modal-preco {
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--cor-primaria);
-  display: block;
-  margin-bottom: 20px;
+  white-space: nowrap;
   letter-spacing: -0.5px;
 }
 
@@ -123,90 +151,168 @@
 .modal-divisor {
   height: 1px;
   background: var(--border);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-/* ── Opções (bebidas) ── */
-.modal-opcoes {
-  margin-bottom: 20px;
+/* ── Seções ── */
+.modal-secao {
+  margin-bottom: 14px;
 }
 
-.modal-opcoes-titulo {
-  font-size: 11px;
+.modal-secao-obs {
+  flex: 1;
+}
+
+.modal-secao-titulo {
+  font-size: 10px;
   font-weight: 700;
   color: var(--texto-terciario);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  margin-bottom: 12px;
+  margin: 0 0 10px;
 }
 
-.modal-opcao {
+/* ── Pills ── */
+.modal-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modal-pill {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--texto-secundario);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--texto-secundario);
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: color 0.2s ease;
+  gap: 2px;
 }
 
-.modal-opcao:hover {
+.modal-pill:hover {
+  border-color: var(--cor-primaria);
   color: var(--texto-principal);
 }
 
-.modal-opcao input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--cor-primaria);
-  cursor: pointer;
+.modal-pill.ativo {
+  border-color: var(--cor-primaria);
+  background: rgba(255, 184, 77, 0.12);
+  color: var(--cor-primaria);
 }
 
-/* ── Observação ── */
-.modal-observacao {
-  margin-bottom: 20px;
-  flex: 1;
+.modal-pill-preco {
+  color: var(--texto-terciario);
+  font-weight: 500;
 }
 
-.modal-observacao textarea {
-  width: 100%;
+.modal-pill.ativo .modal-pill-preco {
+  color: var(--cor-primaria);
+  opacity: 0.8;
+}
+
+/* ── Copos ── */
+.modal-copos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 10px 14px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--texto-principal);
-  resize: none;
-  height: 76px;
-  outline: none;
-  margin-top: 8px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
+  border-radius: 10px;
 }
 
-.modal-observacao textarea:focus {
+.modal-copos-label {
+  font-size: 13px;
+  color: var(--texto-secundario);
+  font-weight: 500;
+}
+
+.modal-copos-contador {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modal-copos-contador button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--texto-terciario);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-copos-contador button:hover {
+  background: rgba(255, 184, 77, 0.12);
+  color: var(--cor-primaria);
+}
+
+.modal-copos-contador span {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  min-width: 28px;
+  text-align: center;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Textarea ── */
+.modal-textarea {
+  width: 100%;
+  height: 64px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--texto-principal);
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-textarea:focus {
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.12);
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
 }
 
 /* ── Rodapé ── */
 .modal-rodape {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
   margin-top: auto;
-  padding-top: 16px;
 }
 
 /* ── Quantidade ── */
 .modal-quantidade {
   display: flex;
   align-items: center;
-  background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -216,13 +322,12 @@
   border: none;
   cursor: pointer;
   color: var(--texto-terciario);
-  width: 42px;
-  height: 48px;
+  width: 38px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  font-size: 18px;
 }
 
 .modal-quantidade button:hover {
@@ -231,15 +336,14 @@
 }
 
 .modal-quantidade span {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--texto-principal);
-  min-width: 36px;
+  min-width: 32px;
   text-align: center;
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
-  height: 48px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,12 +354,12 @@
   flex: 1;
   background: var(--cor-primaria);
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   color: #1a1a1a;
-  padding: 14px 20px;
+  padding: 12px 20px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.25s ease;
   display: flex;
@@ -266,113 +370,10 @@
 
 .modal-btn-adicionar:hover {
   background: var(--cor-primaria-hover);
-  transform: scale(1.03);
-  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.35);
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.3);
 }
 
 .modal-btn-adicionar:active {
   transform: scale(0.97);
-}
-
-/* ────────────────────────────
-   Tela de Upsell
-──────────────────────────── */
-.modal-upsell-header {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-.modal-upsell-voltar {
-  background: none;
-  border: none;
-  color: var(--texto-terciario);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  width: fit-content;
-  transition: color 0.2s;
-}
-
-.modal-upsell-voltar:hover {
-  color: var(--cor-primaria);
-}
-
-.modal-upsell-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex: 1;
-}
-
-.modal-upsell-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
-}
-
-.modal-upsell-item:hover {
-  border-color: var(--cor-primaria);
-  background: rgba(255, 184, 77, 0.05);
-}
-
-.modal-upsell-item.selecionado {
-  border-color: var(--cor-primaria);
-  background: rgba(255, 184, 77, 0.1);
-}
-
-.modal-upsell-label {
-  flex: 1;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--texto-principal);
-}
-
-.modal-upsell-preco {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--texto-terciario);
-}
-
-.modal-upsell-item.selecionado .modal-upsell-preco {
-  color: var(--cor-primaria);
-}
-
-.modal-upsell-check {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--texto-terciario);
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.modal-upsell-item.selecionado .modal-upsell-check {
-  background: var(--cor-primaria);
-  border-color: var(--cor-primaria);
-  color: #1a1a1a;
-}
-
-.modal-btn-confirmar-upsell {
-  width: 100%;
 }

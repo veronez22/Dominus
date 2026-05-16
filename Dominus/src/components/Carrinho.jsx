@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { X, ShoppingCart, CheckCircle } from 'lucide-react'
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover, onFechar, onConfirmar }) {
+function Carrinho({ itens, onRemover, onFechar, onConfirmar, onLimpar }) {
   const [confirmado, setConfirmado] = useState(false)
   const [mensagemErro, setMensagemErro] = useState(false)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
@@ -14,6 +14,7 @@ function Carrinho({ itens, onRemover, onFechar, onConfirmar }) {
       return
     }
     onConfirmar(itens)
+    onLimpar()
     setConfirmado(true)
   }
 

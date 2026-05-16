@@ -3,18 +3,29 @@
   height: 100%;
 }
 
-/* Coluna principal */
+/* ── Coluna principal ── */
 .sidebar {
-  width: 110px;
+  width: 120px;
   min-width: 100px;
   background: var(--bg-tertiary);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  justify-content: center;    /* ← categorias no centro */
   overflow-y: auto;
+  padding: 16px 0;
+  position: relative;         /* ← necessário pro rodapé absoluto */
+}
+
+/* ── Grupo de categorias ── */
+.sidebar-categorias {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 140px;
 }
 
 .sidebar-btn {
@@ -35,7 +46,6 @@
 .sidebar-btn:hover {
   background: var(--cor-secundaria);
   color: var(--texto-principal);
-  border-color: var(--border);
 }
 
 .sidebar-btn.ativo {
@@ -52,10 +62,63 @@
   text-align: center;
 }
 
-/* Segunda coluna — subcategorias */
+/* ── Rodapé fixo no fundo ── */
+.sidebar-rodape {
+  position: absolute;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto-terciario);
+  text-decoration: none;
+  text-align: center;
+  transition: color 0.2s ease;
+  padding: 2px 0;
+}
+
+.sidebar-link:hover {
+  color: var(--cor-primaria);
+}
+
+/* ── Bandeiras de idioma ── */
+.sidebar-idiomas {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.sidebar-idioma {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px;
+  border-radius: 4px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.sidebar-idioma:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* ── Segunda coluna subcategorias ── */
 .sidebar-sub {
   min-width: 130px;
-  background:  #141414;
+  background: #141414;
   border-right: 1px solid #222;
   display: flex;
   flex-direction: column;
@@ -76,7 +139,7 @@
   padding: 10px 6px;
   cursor: pointer;
   display: flex;
-  font-size: 16px;
+  font-size: 14px;
   flex-direction: column;
   align-items: center;
   gap: 5px;

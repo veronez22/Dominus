@@ -63,6 +63,10 @@ function App() {
     })
   }
 
+function limparCarrinho() {
+  setCarrinho([])
+}
+
   function removerItem(id) {
     setCarrinho((prev) => prev.filter((i) => i.id !== id))
   }
@@ -152,6 +156,7 @@ function App() {
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
           onConfirmar={confirmarPedido}
+          onLimpar={limparCarrinho} 
         />
       )}
 
