@@ -50,9 +50,6 @@ function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
           {historico.length === 0 ? (
             <div className="conta-vazio">
               <p>Nenhum pedido realizado ainda.</p>
-              <button className="conta-btn-pedir" onClick={onAbrirCarrinho}>
-                Ver cardápio
-              </button>
             </div>
           ) : (
             [...historico].reverse().map((pedido) => (
