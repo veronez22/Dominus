@@ -9,8 +9,8 @@ const itemPrincipal = cardapio.find(item => item.badge === 'Mais Pedido') || car
 const slidesPromo = [
   {
     id: 'promo-1',
-    imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1200&q=80',
-    titulo: 'Terça é dia de Esfiha em Dobro',
+    imagem: '../src/assets/pexels-wolfart-32402085.jpg',
+    titulo: 'Terça é dia de Esfiha em dobro.',
     subtitulo: 'Peça 10 e leve 20. Todo terceiro dia da semana.',
     tipo: 'promo',
   },
@@ -23,7 +23,7 @@ const slidesPromo = [
   },
   {
     id: 'promo-3',
-    imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&q=80',
+    imagem: '../src/assets/pexels-caio-mantovani-97605853-17403246.jpg',
     titulo: 'Combo Família',
     subtitulo: '10 esfihas + 2 refrigerantes por R$ 49,90.',
     tipo: 'promo',

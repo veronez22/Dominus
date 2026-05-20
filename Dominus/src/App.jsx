@@ -9,17 +9,28 @@ import MinhaConta from './components/MinhaConta'
 import { cardapio, categorias } from './data/cardapio'
 import './App.css'
 
+// Categorias que pertencem ao Cardápio (sub-aside)
+const CATS_CARDAPIO = ['esfihas', 'esfihas-doces', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas', 'bebidas', 'diversos']
+
 function App() {
   const [carrinho, setCarrinho] = useState([])
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
   const [contaAberta, setContaAberta] = useState(false)
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
+  const [secaoAtiva, setSecaoAtiva] = useState('destaques') // 'destaques' | 'cardapio' | 'combos'
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const [busca, setBusca] = useState('')
   const [historico, setHistorico] = useState([])
   const [mesa, setMesa] = useState('')
-
   const refs = useRef({})
+
+  // Filtra quais categorias renderizar no main baseado na seção ativa
+  const categoriasVisiveis = categorias.filter(cat => {
+    if (secaoAtiva === 'destaques') return cat.id === 'destaques'
+    if (secaoAtiva === 'combos')    return cat.id === 'combos'
+    if (secaoAtiva === 'cardapio')  return CATS_CARDAPIO.includes(cat.id)
+    return false
+  })
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,7 +50,7 @@ function App() {
       }
     })
     return () => observer.disconnect()
-  }, [])
+  }, [secaoAtiva]) // re-observa quando a seção muda
 
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
   const buscaAtiva = busca.trim().length > 0
@@ -63,17 +74,23 @@ function App() {
     })
   }
 
-function limparCarrinho() {
-  setCarrinho([])
-}
+  function limparCarrinho() {
+    setCarrinho([])
+  }
 
   function removerItem(id) {
     setCarrinho((prev) => prev.filter((i) => i.id !== id))
   }
 
-  function scrollParaCategoria(id) {
+  function scrollParaCategoria(id, secao) {
+    // Se vier com seção explícita (do Sidebar principal), troca a seção
+    if (secao) setSecaoAtiva(secao)
+
     setCategoriaVisivel(id)
-    refs.current[id]?.scrollIntoView({ behavior: 'smooth' })
+    // Aguarda o render das novas categorias antes de scrollar
+    setTimeout(() => {
+      refs.current[id]?.scrollIntoView({ behavior: 'smooth' })
+    }, 50)
   }
 
   function confirmarPedido(itens) {
@@ -99,7 +116,12 @@ function limparCarrinho() {
       />
 
       <div className="app-body">
-        <Sidebar onMudar={scrollParaCategoria} categoriaVisivel={categoriaVisivel} />
+        <Sidebar
+          onMudar={scrollParaCategoria}
+          categoriaVisivel={categoriaVisivel}
+          secaoAtiva={secaoAtiva}
+          onSecaoMudar={setSecaoAtiva}
+        />
 
         <main className="app-conteudo">
           {buscaAtiva ? (
@@ -122,7 +144,7 @@ function limparCarrinho() {
               ))}
             </div>
           ) : (
-            categorias.map((cat) => {
+            categoriasVisiveis.map((cat) => {
               const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
               return (
                 <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
@@ -156,7 +178,7 @@ function limparCarrinho() {
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
           onConfirmar={confirmarPedido}
-          onLimpar={limparCarrinho} 
+          onLimpar={limparCarrinho}
         />
       )}
 
