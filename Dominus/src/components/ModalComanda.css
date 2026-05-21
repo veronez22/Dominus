@@ -1,0 +1,221 @@
+.comanda-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.comanda-modal {
+  width: 600px;
+  height: 600px;
+  max-width: 92vw;
+  background: var(--bg-secundario);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  animation: slideUp 0.25s ease;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.comanda-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: var(--texto-terciario);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.comanda-fechar:hover {
+  background: rgba(255, 80, 80, 0.2);
+  color: #ff5555;
+  transform: rotate(90deg);
+}
+
+/* ── Topo ── */
+.comanda-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.comanda-titulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  margin: 0;
+}
+
+.comanda-subtitulo {
+  font-size: 13px;
+  color: var(--texto-terciario);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Câmera ── */
+.comanda-camera-wrapper {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.comanda-camera-inner {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Força o video a preencher o container */
+.comanda-camera-inner video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Esconde UI padrão da biblioteca */
+#qr-video-container > img,
+#qr-video-container__dashboard,
+#qr-video-container__header_message,
+#qr-video-container__status_span,
+#qr-video-container__camera_selection,
+#qr-video-container__camera_permission_button {
+  display: none !important;
+}
+
+#qr-video-container__scan_region {
+  border: none !important;
+  background: transparent !important;
+}
+
+#qr-video-container__scan_region img {
+  display: none !important;
+}
+
+/* ── Frame dos cantos ── */
+.comanda-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.comanda-frame span {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: var(--cor-primaria);
+  border-style: solid;
+  opacity: 0.9;
+}
+
+.frame-tl { top: 14px;    left: 14px;  border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+.frame-tr { top: 14px;    right: 14px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+.frame-bl { bottom: 14px; left: 14px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+.frame-br { bottom: 14px; right: 14px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+/* ── Linha de scan ── */
+.comanda-scanline {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--cor-primaria), transparent);
+  border-radius: 999px;
+  animation: scanLine 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scanLine {
+  0%   { top: 14px;              opacity: 0.8; }
+  50%  { top: calc(100% - 14px); opacity: 0.8; }
+  100% { top: 14px;              opacity: 0.8; }
+}
+
+/* ── Erro inline ── */
+.comanda-erro {
+  font-size: 13px;
+  color: #f55;
+  text-align: center;
+  animation: fadeIn 0.2s ease;
+  margin: 0;
+}
+
+/* ── Tela de sucesso / erro grave ── */
+.comanda-sucesso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 0 8px;
+  text-align: center;
+}
+
+.comanda-sucesso h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  margin: 0;
+}
+
+.comanda-sucesso p {
+  font-size: 14px;
+  color: var(--texto-terciario);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.comanda-sucesso p strong {
+  color: var(--cor-primaria);
+}
+
+.comanda-btn-retry {
+  margin-top: 8px;
+  background: var(--cor-primaria);
+  border: none;
+  border-radius: 10px;
+  color: #1a1a1a;
+  padding: 10px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comanda-btn-retry:hover {
+  background: var(--cor-primaria-hover);
+  transform: scale(1.03);
+}

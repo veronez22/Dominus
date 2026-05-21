@@ -11,19 +11,20 @@
 }
 
 .conta-modal {
-  width: 500px;
+  width: 540px;
   max-width: 92vw;
   max-height: 88vh;
   background: var(--bg-secundario);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   animation: slideUp 0.25s ease;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
-/* Header */
+/* ── Header ── */
 .conta-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border);
@@ -46,25 +47,135 @@
 }
 
 .conta-btn-fechar {
-  background: rgba(255, 184, 77, 0.15);
-  border: none;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
-  color: var(--cor-primaria);
+  color: var(--texto-terciario);
   width: 34px;
   height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .conta-btn-fechar:hover {
-  background: rgba(255, 184, 77, 0.3);
-  transform: scale(1.1);
+  background: rgba(255, 80, 80, 0.2);
+  color: #ff5555;
+  transform: rotate(90deg) scale(1.1);
 }
 
-/* Resumo */
+/* ── Área do scanner ── */
+.conta-scanner-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 28px 24px;
+}
+
+.conta-scanner-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.conta-scanner-topo p {
+  font-size: 14px;
+  color: var(--texto-terciario);
+  margin: 0;
+}
+
+/* ── Camera ── */
+.conta-camera-wrapper {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.conta-camera-inner {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.conta-camera-inner video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+#qr-conta-container__dashboard,
+#qr-conta-container__header_message,
+#qr-conta-container__status_span,
+#qr-conta-container__camera_selection,
+#qr-conta-container__camera_permission_button {
+  display: none !important;
+}
+
+#qr-conta-container__scan_region {
+  border: none !important;
+  background: transparent !important;
+}
+
+#qr-conta-container__scan_region img {
+  display: none !important;
+}
+
+/* Frame dos cantos */
+.conta-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.conta-frame span {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: var(--cor-primaria);
+  border-style: solid;
+  opacity: 0.9;
+}
+
+.frame-tl { top: 14px;    left: 14px;  border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+.frame-tr { top: 14px;    right: 14px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+.frame-bl { bottom: 14px; left: 14px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+.frame-br { bottom: 14px; right: 14px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+/* Linha de scan */
+.conta-scanline {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--cor-primaria), transparent);
+  border-radius: 999px;
+  animation: scanLine 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scanLine {
+  0%   { top: 14px; opacity: 0.8; }
+  50%  { top: calc(100% - 14px); opacity: 0.8; }
+  100% { top: 14px; opacity: 0.8; }
+}
+
+.conta-erro {
+  font-size: 13px;
+  color: #f55;
+  text-align: center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── Resumo ── */
 .conta-resumo {
   display: flex;
   gap: 12px;
@@ -95,6 +206,7 @@
   font-weight: 800;
   color: var(--texto-principal);
   line-height: 1;
+  margin: 0;
 }
 
 .conta-resumo-card.destaque p {
@@ -108,7 +220,7 @@
   display: block;
 }
 
-/* Histórico */
+/* ── Histórico ── */
 .conta-historico {
   flex: 1;
   overflow-y: auto;
@@ -116,6 +228,11 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  scrollbar-width: none;
+}
+
+.conta-historico::-webkit-scrollbar {
+  display: none;
 }
 
 .conta-vazio {
@@ -128,6 +245,7 @@
   padding: 40px 0;
   color: var(--texto-terciario);
   font-size: 14px;
+  text-align: center;
 }
 
 .conta-btn-pedir {
@@ -145,9 +263,10 @@
 
 .conta-btn-pedir:hover {
   background: var(--cor-primaria-hover);
+  transform: scale(1.03);
 }
 
-/* Pedido individual */
+/* ── Pedido individual ── */
 .conta-pedido {
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
@@ -230,4 +349,30 @@
   font-size: 15px;
   font-weight: 700;
   color: var(--cor-primaria);
+}
+
+/* ── Erro de câmera ── */
+.conta-camera-erro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.conta-camera-erro h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  margin: 0;
+}
+
+.conta-camera-erro p {
+  font-size: 13px;
+  color: var(--texto-terciario);
+  margin: 0;
+  line-height: 1.6;
 }
