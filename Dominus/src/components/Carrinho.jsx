@@ -9,22 +9,22 @@ function Carrinho({ itens, onRemover, onFechar, onConfirmar, onLimpar }) {
   const [comanda, setComanda] = useState(null)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
-  function handleConfirmar() {
-    if (itens.length === 0) {
-      setMensagemErro(true)
-      setTimeout(() => setMensagemErro(false), 2500)
-      return
-    }
-    onConfirmar(itens)
-    onLimpar()
-    setEtapa('comanda')  // ← abre scanner após confirmar
+function handleConfirmar() {
+  if (itens.length === 0) {
+    setMensagemErro(true)
+    setTimeout(() => setMensagemErro(false), 2500)
+    return
   }
+  setEtapa('comanda')  // ← só abre o scanner, não limpa ainda
+}
 
-  function handleComandaLida(codigo) {
-    setComanda(codigo)
-    setEtapa('sucesso')
-    setTimeout(() => onFechar(), 2500)
-  }
+function handleComandaLida(codigo) {
+  setComanda(codigo)
+  onConfirmar(itens, codigo)  // ← itens ainda estão cheios aqui
+  onLimpar()                  // ← limpa só depois de salvar
+  setEtapa('sucesso')
+  setTimeout(() => onFechar(), 2500)
+}
 
   return (
     <>

@@ -11,7 +11,8 @@
 }
 
 .conta-modal {
-  width: 540px;
+  width: 600px;
+  height: 600px;
   max-width: 92vw;
   max-height: 88vh;
   background: var(--bg-secundario);
@@ -35,13 +36,14 @@
 }
 
 .conta-header-info h2 {
-  font-size: 18px;
+  font-size: 30px;
   font-weight: 800;
   color: var(--texto-principal);
+  margin: 0;
 }
 
 .conta-header-info span {
-  font-size: 13px;
+  font-size: 22px;
   color: var(--cor-primaria);
   font-weight: 600;
 }
@@ -66,7 +68,209 @@
   transform: rotate(90deg) scale(1.1);
 }
 
-/* ── Área do scanner ── */
+/* ── Histórico ── */
+.conta-historico {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: none;
+}
+
+.conta-historico::-webkit-scrollbar { display: none; }
+
+/* ── Pedido card ── */
+.conta-pedido {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.conta-pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secundario);
+}
+
+.conta-pedido-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  background: rgba(255, 184, 77, 0.12);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.conta-pedido-horario {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--texto-terciario);
+}
+
+/* ── Itens ── */
+.conta-pedido-itens {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.conta-pedido-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+.conta-pedido-item:last-child {
+  border-bottom: none;
+}
+
+.conta-item-esquerda {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.conta-item-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conta-pedido-item-qtd {
+  background: var(--bg-secundario);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--texto-terciario);
+  flex-shrink: 0;
+}
+
+.conta-pedido-item-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+.conta-pedido-item-preco {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-principal);
+  flex-shrink: 0;
+}
+
+/* ── Tags adicionais ── */
+.conta-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: 28px;
+}
+
+.conta-item-tag {
+  background: rgba(255, 184, 77, 0.1);
+  border: 1px solid rgba(255, 184, 77, 0.25);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cor-primaria);
+  padding: 2px 8px;
+}
+
+/* ── Observação ── */
+.conta-item-obs {
+  font-size: 11px;
+  color: var(--texto-terciario);
+  font-style: italic;
+  margin: 0;
+  padding-left: 28px;
+  line-height: 1.4;
+}
+
+/* ── Total destacado ── */
+.conta-total-destaque {
+  background: rgba(255, 184, 77, 0.08);
+  border: 1px solid rgba(255, 184, 77, 0.3);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.conta-total-label {
+  font-size: 13px;
+  color: var(--texto-terciario);
+  margin: 0 0 4px;
+}
+
+.conta-total-valor {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--cor-primaria);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.conta-total-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.conta-total-info span {
+  font-size: 12px;
+  color: var(--texto-terciario);
+}
+
+/* ── Vazio ── */
+.conta-vazio {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 0;
+  color: var(--texto-terciario);
+  font-size: 14px;
+  text-align: center;
+}
+
+.conta-btn-pedir {
+  background: var(--cor-primaria);
+  border: none;
+  border-radius: 10px;
+  color: #1a1a1a;
+  padding: 10px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.conta-btn-pedir:hover {
+  background: var(--cor-primaria-hover);
+  transform: scale(1.03);
+}
+
+/* ── Scanner ── */
 .conta-scanner-area {
   flex: 1;
   display: flex;
@@ -86,16 +290,15 @@
 }
 
 .conta-scanner-topo p {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--texto-terciario);
   margin: 0;
 }
 
-/* ── Camera ── */
 .conta-camera-wrapper {
   position: relative;
-  width: 320px;
-  height: 320px;
+  width: 350px;
+  height: 360px;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
@@ -129,7 +332,6 @@
   display: none !important;
 }
 
-/* Frame dos cantos */
 .conta-frame {
   position: absolute;
   inset: 0;
@@ -150,7 +352,6 @@
 .frame-bl { bottom: 14px; left: 14px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
 .frame-br { bottom: 14px; right: 14px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
 
-/* Linha de scan */
 .conta-scanline {
   position: absolute;
   left: 14px;
@@ -175,183 +376,7 @@
   animation: fadeIn 0.2s ease;
 }
 
-/* ── Resumo ── */
-.conta-resumo {
-  display: flex;
-  gap: 12px;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.conta-resumo-card {
-  flex: 1;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--texto-terciario);
-}
-
-.conta-resumo-card.destaque {
-  border-color: var(--cor-primaria);
-  background: rgba(255, 184, 77, 0.08);
-}
-
-.conta-resumo-card p {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--texto-principal);
-  line-height: 1;
-  margin: 0;
-}
-
-.conta-resumo-card.destaque p {
-  color: var(--cor-primaria);
-}
-
-.conta-resumo-card span {
-  font-size: 11px;
-  color: var(--texto-terciario);
-  margin-top: 3px;
-  display: block;
-}
-
-/* ── Histórico ── */
-.conta-historico {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  scrollbar-width: none;
-}
-
-.conta-historico::-webkit-scrollbar {
-  display: none;
-}
-
-.conta-vazio {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 40px 0;
-  color: var(--texto-terciario);
-  font-size: 14px;
-  text-align: center;
-}
-
-.conta-btn-pedir {
-  background: var(--cor-primaria);
-  border: none;
-  border-radius: 10px;
-  color: #1a1a1a;
-  padding: 10px 24px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.conta-btn-pedir:hover {
-  background: var(--cor-primaria-hover);
-  transform: scale(1.03);
-}
-
-/* ── Pedido individual ── */
-.conta-pedido {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-.conta-pedido-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.conta-pedido-badge {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  background: rgba(255, 184, 77, 0.12);
-  padding: 4px 10px;
-  border-radius: 999px;
-}
-
-.conta-pedido-horario {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  color: var(--texto-terciario);
-}
-
-.conta-pedido-itens {
-  padding: 10px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.conta-pedido-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-}
-
-.conta-pedido-item-nome {
-  color: var(--texto-secundario);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.conta-pedido-item-qtd {
-  background: var(--bg-secundario);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2px 7px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--texto-terciario);
-}
-
-.conta-pedido-item-preco {
-  font-weight: 600;
-  color: var(--texto-principal);
-}
-
-.conta-pedido-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
-  color: var(--texto-terciario);
-}
-
-.conta-pedido-total strong {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--cor-primaria);
-}
-
-/* ── Erro de câmera ── */
+/* ── Erro câmera ── */
 .conta-camera-erro {
   flex: 1;
   display: flex;

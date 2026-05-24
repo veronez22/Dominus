@@ -9,23 +9,30 @@ const itemPrincipal = cardapio.find(item => item.badge === 'Mais Pedido') || car
 const slidesPromo = [
   {
     id: 'promo-1',
-    imagem: '../src/assets/pexels-wolfart-32402085.jpg',
-    titulo: 'Terça é dia de Esfiha em dobro.',
-    subtitulo: 'Peça 10 e leve 20. Todo terceiro dia da semana.',
+    imagem: '/banners/monte.png',
+    titulo: 'MONTE DO SEU JEITO',
+    subtitulo: 'Salgadas, doces e bebidas para todos os gostos.',
     tipo: 'promo',
   },
   {
     id: 'promo-2',
-    imagem: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80',
-    titulo: 'Quarta-feira do Vinho',
-    subtitulo: 'Harmonize sua esfiha favorita com um bom vinho.',
+    imagem: '/banners/catupiry.png',
+    titulo: 'MAIS CREMOSIDADE ?',
+    subtitulo: 'Adicione catupiry ao seu pedido',
     tipo: 'promo',
   },
   {
     id: 'promo-3',
-    imagem: '../src/assets/pexels-caio-mantovani-97605853-17403246.jpg',
+    imagem: 'banners/familia.png',
     titulo: 'Combo Família',
-    subtitulo: '10 esfihas + 2 refrigerantes por R$ 49,90.',
+    subtitulo: 'Perfeito para compartilhar com quem você ama.',
+    tipo: 'promo',
+  },
+    {
+    id: 'promo-4',
+    imagem: '/banners/doce.png',
+    titulo: 'FINALIZE COM UM DOCE',
+    subtitulo: 'Experimente nossas esfihas doces irresistíveis.',
     tipo: 'promo',
   },
 ]

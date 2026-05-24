@@ -125,7 +125,7 @@
 }
 
 .modal-nome {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 700;
   color: var(--texto-principal);
   margin: 0 0 6px;
@@ -133,7 +133,7 @@
 }
 
 .modal-descricao {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--texto-secundario);
   line-height: 1.6;
   margin: 0;
@@ -164,7 +164,7 @@
 }
 
 .modal-secao-titulo {
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--texto-terciario);
   text-transform: uppercase;
@@ -186,7 +186,7 @@
   border-radius: 999px;
   padding: 6px 14px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -284,7 +284,7 @@
   border-radius: 10px;
   padding: 10px 12px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   color: var(--texto-principal);
   resize: none;
   outline: none;

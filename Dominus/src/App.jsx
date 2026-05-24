@@ -93,15 +93,16 @@ function App() {
     }, 50)
   }
 
-  function confirmarPedido(itens) {
-    const novoPedido = {
-      id: Date.now(),
-      horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      itens: [...itens],
-      total: itens.reduce((s, i) => s + i.preco * i.quantidade, 0)
-    }
-    setHistorico(prev => [...prev, novoPedido])
+function confirmarPedido(itens, comanda) {
+  const novoPedido = {
+    id: Date.now(),
+    comanda,                   // ← vincula ao código CMD-XXXX
+    horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    itens: [...itens],
+    total: itens.reduce((s, i) => s + i.preco * i.quantidade, 0)
   }
+  setHistorico(prev => [...prev, novoPedido])
+}
 
   return (
     <div className="app">
