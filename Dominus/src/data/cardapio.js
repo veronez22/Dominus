@@ -45,22 +45,21 @@ export const cardapio = [
 
   // ── Fogazzas ──
   { id: 15, nome: 'Fogazza de Frango',   preco: 8.90,  descricao: 'Frango desfiado temperado com ingredientes selecionados, envolto em uma massa dourada e crocante que conquista no primeiro pedaço.',     imagem: '/produtos/fogazzas/fogazzaFrango.png', categoria: 'fogazzas'                            },
-  { id: 16, nome: 'Fogazza de Carne',    preco: 8.90,  descricao: 'Carne bovina cuidadosamente temperada, envolta em uma massa dourada e crocante.',       imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=85', categoria: 'fogazzas'                            },
-  { id: 17, nome: 'Fogazza de Queijo',   preco: 7.90,  descricao: 'Queijo cremoso e derretido, envolto em uma massa leve, dourada e irresistivelmente crocante.',    imagem: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=85', categoria: 'fogazzas'                            },
+  { id: 16, nome: 'Fogazza de Carne',    preco: 8.90,  descricao: 'Carne bovina cuidadosamente temperada, envolta em uma massa dourada e crocante.',       imagem: '/produtos/fogazzas/fogazzaCarne.png', categoria: 'fogazzas'                            },
+  { id: 17, nome: 'Fogazza de Queijo',   preco: 7.90,  descricao: 'Queijo cremoso e derretido, envolto em uma massa leve, dourada e irresistivelmente crocante.',    imagem: '/produtos/fogazzas/fogazzaQueijo.png', categoria: 'fogazzas'                            },
 
   // ── Kibes ──
-  { id: 18, nome: 'Kibe Assado',         preco: 5.50,  descricao: 'Tradicional kibe assado, preparado com carne selecionada e temperos especiais, oferecendo sabor e maciez em cada pedaço.',        imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=85', categoria: 'kibes'                               },
-  { id: 19, nome: 'Kibe Frito',          preco: 5.50,  descricao: 'Tradicional kibe frito, elaborado com carne selecionada e temperos especiais, com casquinha crocante e interior macio.', imagem: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=85', categoria: 'kibes'                       },
+  { id: 18, nome: 'Kibe c/queijo',         preco: 5.50,  descricao: 'Tradicional kibe frito, preparado com carne selecionada e queijo, oferecendo sabor e maciez em cada pedaço.',        imagem: '/produtos/kibe/kibe.png', categoria: 'kibes'                               },
+
 
   // ── Cigarretes ──
-  { id: 7,  nome: 'Cigarrete de Carne',  preco: 6.50,  descricao: 'Carne bovina cuidadosamente temperada, envolta em uma massa leve e crocante que valoriza cada sabor.',    imagem: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=85', categoria: 'cigarretes',          },
-  { id: 8,  nome: 'Cigarrete de Frango', preco: 6.50,  descricao: 'Frango desfiado e temperado com ingredientes selecionados, envolto em uma massa fina e crocante, dourada na medida certa.',  imagem: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=85', categoria: 'cigarretes'                          },
-  { id: 21, nome: 'Cigarrete de Queijo', preco: 6.00,  descricao: 'Queijo cremoso e derretido, envolto em uma massa fina e crocante para uma experiência irresistível.',   imagem: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=85', categoria: 'cigarretes'                          },
+  { id: 7,  nome: 'Cigarrete de Carne c/Queijo',  preco: 6.50,  descricao: 'Carne bovina cuidadosamente temperada, com queijo, envolta em uma massa leve e crocante que valoriza cada sabor.',    imagem: '/produtos/cigarrete/cigarreteCarne.png', categoria: 'cigarretes',          },
+  { id: 8,  nome: 'Cigarrete de Frango', preco: 6.50,  descricao: 'Frango desfiado e temperado com ingredientes selecionados, envolto em uma massa fina e crocante, dourada na medida certa.',  imagem: '/produtos/cigarrete/cigarreteFrango.png', categoria: 'cigarretes'                          },
+  { id: 21, nome: 'Cigarrete de Queijo', preco: 6.00,  descricao: 'Queijo cremoso e derretido, envolto em uma massa fina e crocante para uma experiência irresistível.',   imagem: '/produtos/cigarrete/cigarreteQueijo.png', categoria: 'cigarretes'                          },
 
   // ── Coxinhas ──
-  { id: 22, nome: 'Coxinha de Frango',   preco: 6.00,  descricao: 'Frango desfiado e temperado com ingredientes selecionados, envolvido por uma massa macia e dourada, com sabor irresistível em cada mordida.',        imagem: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=85', categoria: 'coxinhas',      badge: 'Novo'        },
-  { id: 23, nome: 'Coxinha Carne c/ Catupiry', preco: 6.50,  descricao: 'Carne bovina temperada combinada com a cremosidade do Catupiry®, envolvida por uma massa macia e dourada que conquista no primeiro pedaço.',         imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=85', categoria: 'coxinhas'                            },
-  { id: 24, nome: 'Coxinha de Carne',    preco: 6.50,  descricao: 'Carne bovina cuidadosamente temperada, envolvida por uma massa leve e macia, frita até alcançar o ponto perfeito.',     imagem: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=85', categoria: 'coxinhas'                            }, 
+  { id: 22, nome: 'Coxinha de Frango',   preco: 6.00,  descricao: 'Frango desfiado e temperado com ingredientes selecionados, envolvido por uma massa macia e dourada, com sabor irresistível em cada mordida.',        imagem: '/produtos/coxinha/coxinhaFrango.png', categoria: 'coxinhas',      badge: 'Novo'        },
+
 
   // ── Bebidas ──
   { id: 9,  nome: 'Coca-Cola',           preco: 5.00,  descricao: 'O sabor clássico e refrescante da Coca-Cola, perfeita para acompanhar qualquer pedido.',                               imagem: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600&q=85', categoria: 'bebidas',       formatos: ['Lata 350ml', '2 Litros'] },
@@ -68,12 +67,9 @@ export const cardapio = [
   { id: 11, nome: 'Limonada Suíça',      preco: 9.00,  descricao: 'Preparada com limões frescos e batida na hora, oferecendo equilíbrio perfeito entre refrescância e cremosidade.',           imagem: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=600&q=85', categoria: 'bebidas',      formatos: ['Copo 300ml', '2 Litros'], badge: 'Novo' },
 
   // ── Diversos ──
-  { id: 25, nome: 'Pão de Queijo',       preco: 4.00,  descricao: 'Pão de queijo quentinho, crocante por fora.',     imagem: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=85', categoria: 'diversos'                            },
-  { id: 26, nome: 'Pastel de Forno',     preco: 5.50,  descricao: 'Pastel assado com recheio a escolha.',            imagem: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=85', categoria: 'diversos'                            },
-  { id: 27, nome: 'Bolinha de Queijo',   preco: 5.00,  descricao: 'Bolinha frita recheada com queijo cremoso.',      imagem: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=85', categoria: 'diversos'                            },
-
+  { id: 25, nome: 'Pão de Queijo',       preco: 4.00,  descricao: 'Pão de queijo quentinho, crocante por fora.',     imagem: '/produtos/paoDeQueijo.jpg', categoria: 'diversos'                            },
   // ── Combos ──
-  { id: 12, nome: 'Combo Família',       preco: 49.90, descricao: '10 esfihas à escolha + 2 refrigerantes lata.',   imagem: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=85', categoria: 'combos',        badge: 'Oferta'      },
-  { id: 13, nome: 'Combo Casal',         preco: 27.90, descricao: '4 esfihas à escolha + 2 refrigerantes lata.',    imagem: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=85', categoria: 'combos'                              },
-  { id: 28, nome: 'Combo Amigos',        preco: 39.90, descricao: '6 esfihas + 2 cigarretes + 2 refrigerantes.',    imagem: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=85', categoria: 'combos'                              },
+  { id: 12, nome: 'Combo Família',       preco: 49.90, descricao: '10 esfihas à escolha + 2 refrigerantes lata.',   imagem: '/banners/comboFamilia.jpg', categoria: 'combos',        badge: 'Oferta'      },
+  { id: 13, nome: 'Combo Casal',         preco: 27.90, descricao: '4 esfihas à escolha + 2 refrigerantes lata.',    imagem: '/produtos/combao.jpg', categoria: 'combos'                              },
+  { id: 28, nome: 'Combo Amigos',        preco: 39.90, descricao: '6 esfihas + 2 cigarretes + 2 refrigerantes.',    imagem: '/banners/esfihas.jpg', categoria: 'combos'                              },
 ]

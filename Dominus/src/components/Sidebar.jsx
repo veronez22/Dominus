@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { categoriasPrincipais, subcategorias } from '../data/cardapio'
 import './Sidebar.css'
 import { UtensilsCrossed, Package, Star, BookOpen } from 'lucide-react'
+import ModalAvaliacao from './ModalAvaliacao'
+import ModalTermos from './ModalTermos'
 
 const idiomas = [
   { codigo: 'pt', bandeira: '🇧🇷' },
@@ -16,6 +18,9 @@ const iconesPrincipais = {
 }
 
 function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar }) {
+  const [modalAvaliacao, setModalAvaliacao] = useState(false)
+  const [modalTermos, setModalTermos] = useState(false)
+
   const subAtivas = subcategorias.filter(s => s.grupo === 'cardapio')
   const mostrarSub = secaoAtiva === 'cardapio'
 
@@ -26,7 +31,6 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar }) {
     } else if (id === 'combos') {
       onMudar('combos', 'combos')
     } else {
-      // Cardápio — vai pra primeira subcategoria
       onMudar(subAtivas[0]?.id || 'esfihas', 'cardapio')
     }
   }
@@ -36,53 +40,72 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar }) {
   }
 
   return (
-    <div className="sidebar-wrapper">
+    <>
+      <div className="sidebar-wrapper">
 
-      {/* ── Aside principal ── */}
-      <aside className="sidebar">
-        <div className="sidebar-categorias">
-          {categoriasPrincipais.map((cat) => (
-            <button
-              key={cat.id}
-              className={`sidebar-btn ${secaoAtiva === cat.id ? 'ativo' : ''}`}
-              onClick={() => handlePrincipal(cat.id)}
-            >
-              {iconesPrincipais[cat.id]}
-              <span className="sidebar-label">{cat.label}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="sidebar-rodape">
-          <a href="#" className="sidebar-link">Sobre nós</a>
-          <a href="#" className="sidebar-link">Avalie-nos</a>
-          <a href="#" className="sidebar-link">Termos de uso</a>
-          <div className="sidebar-idiomas">
-            {idiomas.map((i) => (
-              <button key={i.codigo} className="sidebar-idioma">
-                <span>{i.bandeira}</span>
+        {/* ── Aside principal ── */}
+        <aside className="sidebar">
+          <div className="sidebar-categorias">
+            {categoriasPrincipais.map((cat) => (
+              <button
+                key={cat.id}
+                className={`sidebar-btn ${secaoAtiva === cat.id ? 'ativo' : ''}`}
+                onClick={() => handlePrincipal(cat.id)}
+              >
+                {iconesPrincipais[cat.id]}
+                <span className="sidebar-label">{cat.label}</span>
               </button>
             ))}
           </div>
-        </div>
-      </aside>
 
-      {/* ── Sub-aside (só aparece em Cardápio) ── */}
-      {mostrarSub && (
-        <aside className="sidebar-sub">
-          {subAtivas.map((sub) => (
+          <div className="sidebar-rodape">
             <button
-              key={sub.id}
-              className={`sidebar-sub-btn ${categoriaVisivel === sub.id ? 'ativo' : ''}`}
-              onClick={() => handleSub(sub.id)}
+              className="sidebar-link"
+              onClick={() => setModalAvaliacao(true)}
             >
-              {sub.label}
+              Avalie-nos
             </button>
-          ))}
+            <button
+              className="sidebar-link"
+              onClick={() => setModalTermos(true)}
+            >
+              Termos de uso
+            </button>
+            <div className="sidebar-idiomas">
+              {idiomas.map((i) => (
+                <button key={i.codigo} className="sidebar-idioma">
+                  <span>{i.bandeira}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </aside>
+
+        {/* ── Sub-aside ── */}
+        {mostrarSub && (
+          <aside className="sidebar-sub">
+            {subAtivas.map((sub) => (
+              <button
+                key={sub.id}
+                className={`sidebar-sub-btn ${categoriaVisivel === sub.id ? 'ativo' : ''}`}
+                onClick={() => handleSub(sub.id)}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </aside>
+        )}
+
+      </div>
+
+      {modalAvaliacao && (
+        <ModalAvaliacao onFechar={() => setModalAvaliacao(false)} />
       )}
 
-    </div>
+      {modalTermos && (
+        <ModalTermos onFechar={() => setModalTermos(false)} />
+      )}
+    </>
   )
 }
 

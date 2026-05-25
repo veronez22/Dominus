@@ -6,7 +6,7 @@
   border: 1px solid var(--border);
   margin-bottom: 10px;
   transition: all 0.3s ease;
-  min-height: 120px;
+  height: 150px;
 }
 
 .card-item:hover {
@@ -16,9 +16,9 @@
 }
 
 .card-item-imagem {
-  width: 140px;
-  min-width: 140px;
-  height: 140px;
+  width: 160px;
+  min-width: 160px;
+  height: 150px;
   object-fit: cover;
   background: var(--bg-secundario);
 }
@@ -40,7 +40,7 @@
 
 .card-item-texto h3 {
   font-family: 'DM Sans', sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
   margin-bottom: 5px;
@@ -48,7 +48,7 @@
 
 .card-item-texto p {
   font-family: 'DM Sans', sans-serif;
-  font-size: 19px;
+  font-size: 15px;
   color: var(--texto-secundario);
   line-height: 1.5;
   max-width: 500px;
