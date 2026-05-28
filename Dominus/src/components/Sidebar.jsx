@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { categoriasPrincipais, subcategorias } from '../data/cardapio'
 import './Sidebar.css'
 import { UtensilsCrossed, Package, Star, BookOpen } from 'lucide-react'
-import ModalAvaliacao from './Modalavaliacao'
-import ModalTermos from './Modaltermos'
+import ModalAvaliacao from './ModalAvaliacao'
+import ModalTermos from './ModalTermos'
 
 const idiomas = [
   { codigo: 'pt', bandeira: '🇧🇷' },
