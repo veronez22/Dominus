@@ -8,6 +8,8 @@ const LIMITE_MESAS = 20
 
 function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mesa, onMesaMudou }) {
   const [modalAberto, setModalAberto] = useState(false)
+  const [modalGarcom, setModalGarcom] = useState(false)
+  const [erroGarcom, setErroGarcom] = useState(false)
   const [etapa, setEtapa] = useState('mesa')
   const [inputMesa, setInputMesa] = useState('')
   const [inputSenha, setInputSenha] = useState('')
@@ -54,8 +56,17 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
       setInputSenha('')
       return
     }
-    onMesaMudou(inputMesa)   // ← sobe pro App
+    onMesaMudou(inputMesa)
     handleFechar()
+  }
+
+  function handleChamarGarcom() {
+    if (!mesa) {
+      setErroGarcom(true)
+      return
+    }
+    setModalGarcom(true)
+    setTimeout(() => setModalGarcom(false), 3000)
   }
 
   return (
@@ -87,7 +98,7 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
             <CreditCard size={25} />
             Minha <br/>Conta
           </button>
-          <button className="header-btn">
+          <button className="header-btn" onClick={handleChamarGarcom}>
             <BellRing size={25} />
             Chamar <br/> Garçom
           </button>
@@ -101,6 +112,7 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
         </div>
       </header>
 
+      {/* ── Modal de mesa ── */}
       {modalAberto && (
         <div className="mesa-overlay" onClick={handleFechar}>
           <div className="mesa-modal" onClick={(e) => e.stopPropagation()}>
@@ -143,6 +155,47 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal erro — mesa não definida ── */}
+      {erroGarcom && (
+        <div className="mesa-overlay" onClick={() => setErroGarcom(false)}>
+          <div className="mesa-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="mesa-titulo">Mesa não definida</h2>
+            <p className="mesa-subtitulo">
+              Por favor, informe o número da sua mesa antes de chamar o garçom.
+            </p>
+            <div className="mesa-acoes">
+              <button className="mesa-btn-cancelar" onClick={() => setErroGarcom(false)}>
+                Cancelar
+              </button>
+              <button className="mesa-btn-confirmar" onClick={() => {
+                setErroGarcom(false)
+                setModalAberto(true)
+              }}>
+                Definir mesa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal garçom a caminho ── */}
+      {modalGarcom && (
+        <div className="mesa-overlay" onClick={() => setModalGarcom(false)}>
+          <div className="mesa-modal" onClick={(e) => e.stopPropagation()}>
+            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+              <BellRing size={52} color="var(--cor-primaria)" strokeWidth={1.5} />
+            </div>
+            <h2 className="mesa-titulo" style={{ textAlign: 'center' }}>
+              Garçom a caminho!
+            </h2>
+            <p className="mesa-subtitulo" style={{ textAlign: 'center' }}>
+              Um garçom foi notificado e está indo até a{' '}
+              <strong style={{ color: 'var(--cor-primaria)' }}>Mesa {mesa}</strong>.
+            </p>
           </div>
         </div>
       )}

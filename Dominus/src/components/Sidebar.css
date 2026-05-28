@@ -74,14 +74,17 @@
 }
 
 .sidebar-link {
+  background: transparent;
+  border: none;
+  padding: 2px 0;
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--texto-terciario);
-  text-decoration: none;
   text-align: center;
+  cursor: pointer;
   transition: color 0.2s ease;
-  padding: 2px 0;
+  width: 100%;
 }
 
 .sidebar-link:hover {

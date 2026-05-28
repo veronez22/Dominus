@@ -62,8 +62,8 @@ export const cardapio = [
 
 
   // ── Bebidas ──
-  { id: 9,  nome: 'Coca-Cola',           preco: 5.00,  descricao: 'O sabor clássico e refrescante da Coca-Cola, perfeita para acompanhar qualquer pedido.',                               imagem: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600&q=85', categoria: 'bebidas',       formatos: ['Lata 350ml', '2 Litros'] },
-  { id: 10, nome: 'Suco de Laranja',     preco: 7.50,  descricao: 'Suco de laranja refrescante, preparado para realçar o sabor natural e cítrico da fruta.',                 imagem: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=85', categoria: 'bebidas',      formatos: ['Copo 300ml']             },
+  { id: 9,  nome: 'Coca-Cola',           preco: 5.00,  descricao: 'O sabor clássico e refrescante da Coca-Cola, perfeita para acompanhar qualquer pedido.',                               imagem: '/produtos/coca.jpg', categoria: 'bebidas',       formatos: ['Lata 350ml', '2 Litros'] },
+  { id: 10, nome: 'Suco de Laranja',     preco: 7.50,  descricao: 'Suco de laranja refrescante, preparado para realçar o sabor natural e cítrico da fruta.',                 imagem: '/produtos/suco.jpg', categoria: 'bebidas',      formatos: ['Copo 300ml']             },
   { id: 11, nome: 'Limonada Suíça',      preco: 9.00,  descricao: 'Preparada com limões frescos e batida na hora, oferecendo equilíbrio perfeito entre refrescância e cremosidade.',           imagem: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=600&q=85', categoria: 'bebidas',      formatos: ['Copo 300ml', '2 Litros'], badge: 'Novo' },
 
   // ── Diversos ──
