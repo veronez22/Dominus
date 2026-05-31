@@ -33,7 +33,7 @@ Este projeto está sendo construído com o apoio de ferramentas de Inteligência
 ## 🖼️ Preview
 
 > ![Demo do sistema](../Dominus/Dominus/src/assets/printDominus.png)
-> ![preview](https://github.com/veronez22/Dominus/blob/main/Dominus/src/assets/Dominus.gif)
+> ![preview]()
 
 
 ---
