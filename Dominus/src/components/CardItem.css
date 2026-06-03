@@ -15,12 +15,35 @@
   transform: translateY(-4px);
 }
 
-.card-item-imagem {
+.card-item-imagem-wrap {
+  position: relative;
   width: 160px;
   min-width: 160px;
   height: 150px;
+  flex-shrink: 0;
+}
+
+.card-item-imagem {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   background: var(--bg-secundario);
+  display: block;
+}
+
+/* Overlay "Indisponível" sobre a imagem */
+.card-item-indisponivel-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .card-item-info {
@@ -90,4 +113,32 @@
 
 .card-item-btn:active {
   transform: scale(0.98);
+}
+
+/* Estado indisponível */
+.card-item.indisponivel {
+  opacity: 0.6;
+  pointer-events: none; /* bloqueia todos os cliques */
+}
+
+.card-item.indisponivel:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.card-item.indisponivel .card-item-texto h3 {
+  text-decoration: line-through;
+  color: var(--texto-terciario);
+}
+
+.card-item.indisponivel .card-item-preco {
+  color: var(--texto-terciario);
+}
+
+.card-item-tag-indisp {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-terciario);
+  padding: 8px 0;
 }

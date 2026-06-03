@@ -1,0 +1,101 @@
+.login-wrap {
+  min-height: 100vh;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.login-logo-icon {
+  width: 44px;
+  height: 44px;
+  background: #FFB84D;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.login-logo-nome { font-size: 18px; font-weight: 700; color: #fff; }
+.login-logo-sub  { font-size: 11px; color: #A0A0A0; margin-top: 2px; }
+
+.login-titulo    { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.login-subtitulo { font-size: 13px; color: #A0A0A0; margin-bottom: 28px; }
+
+.login-form { display: flex; flex-direction: column; gap: 18px; }
+
+.login-campo { display: flex; flex-direction: column; gap: 7px; }
+.login-campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #E0E0E0;
+}
+.login-campo input {
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color .2s;
+}
+.login-campo input:focus {
+  outline: none;
+  border-color: #FFB84D;
+  box-shadow: 0 0 0 3px rgba(255,184,77,0.1);
+}
+
+.login-erro {
+  background: rgba(244,67,54,0.1);
+  border: 1px solid rgba(244,67,54,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #ef9a9a;
+}
+
+.login-btn {
+  background: #FFB84D;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .2s;
+  margin-top: 4px;
+}
+.login-btn:hover:not(:disabled) { background: #FFA500; }
+.login-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.login-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}

@@ -1,66 +1,70 @@
 import { useState, useEffect } from 'react'
-import { cardapio } from '../data/cardapio'
+import { supabase } from '../lib/supabase'
 import './Destaques.css'
 
-// Slide 1 — item do cardápio (dinâmico)
-const itemPrincipal = cardapio.find(item => item.badge === 'Mais Pedido') || cardapio.find(item => item.badge)
-
-// Slides promocionais — fixos, sem botão
-const slidesPromo = [
-  {
-    id: 'promo-1',
-    imagem: '/banners/monte.png',
-    titulo: 'MONTE DO SEU JEITO',
-    subtitulo: 'Salgadas, doces e bebidas para todos os gostos.',
-    tipo: 'promo',
-  },
-  {
-    id: 'promo-2',
-    imagem: '/banners/catupiry.png',
-    titulo: 'MAIS CREMOSIDADE ?',
-    subtitulo: 'Adicione catupiry ao seu pedido',
-    tipo: 'promo',
-  },
-  {
-    id: 'promo-3',
-    imagem: 'banners/familia.png',
-    titulo: 'Combo Família',
-    subtitulo: 'Perfeito para compartilhar com quem você ama.',
-    tipo: 'promo',
-  },
-    {
-    id: 'promo-4',
-    imagem: '/banners/doce.png',
-    titulo: 'FINALIZE COM UM DOCE',
-    subtitulo: 'Experimente nossas esfihas doces irresistíveis.',
-    tipo: 'promo',
-  },
-]
-
-// Todos os slides juntos — item principal primeiro
-const slides = [
-  { ...itemPrincipal, tipo: 'produto' },
-  ...slidesPromo,
-]
-
-// Itens dos cards (todos com badge)
-const itensDestaque = cardapio.filter(item => item.badge)
-
-function Destaques({ onAdicionar }) {
+function Destaques({ onAdicionar, produtos = [] }) {
+  const [bannersDB,  setBannersDB]  = useState([])
   const [slideAtivo, setSlideAtivo] = useState(0)
 
+  // Busca banners do banco + Realtime
   useEffect(() => {
+    async function carregarBanners() {
+      const { data } = await supabase
+        .from('banners')
+        .select('*')
+        .eq('ativo', true)
+        .order('ordem')
+      setBannersDB(data ?? [])
+    }
+
+    carregarBanners()
+
+    // Atualiza em tempo real quando admin muda ativo/ordem
+    const canal = supabase
+      .channel('banners-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'banners' }, () => {
+        carregarBanners()
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(canal)
+  }, [])
+
+  // Reinicia o slide quando banners mudam
+  useEffect(() => {
+    setSlideAtivo(0)
+  }, [bannersDB.length])
+
+  const itemPrincipal = produtos.find(p => p.badge === 'Mais Pedido') || produtos.find(p => p.badge)
+  const itensDestaque = produtos.filter(p => p.badge)
+
+  // Slides: produto destaque (se existir) + banners do banco
+  const slidesPromo = bannersDB.map(b => ({
+    id:        b.id,
+    imagem:    b.imagem_url,
+    titulo:    b.titulo,
+    subtitulo: b.subtitulo,
+    tipo:      'promo',
+  }))
+
+  const slides = itemPrincipal
+    ? [{ ...itemPrincipal, tipo: 'produto' }, ...slidesPromo]
+    : slidesPromo
+
+  useEffect(() => {
+    if (slides.length === 0) return
     const timer = setInterval(() => {
       setSlideAtivo(prev => (prev + 1) % slides.length)
     }, 4000)
     return () => clearInterval(timer)
-  }, [])
+  }, [slides.length])
 
-  const slide = slides[slideAtivo]
+  if (slides.length === 0) return null
+
+  const slide = slides[slideAtivo] ?? slides[0]
 
   return (
     <div className="destaques">
-
       <div
         className="destaques-banner"
         style={{ backgroundImage: `url(${slide.imagem})` }}
@@ -82,8 +86,8 @@ function Destaques({ onAdicionar }) {
             </>
           ) : (
             <>
-              <h1 className="destaques-banner-titulo">{slide.titulo}</h1>
-              <p className="destaques-banner-descricao">{slide.subtitulo}</p>
+              {slide.titulo    && <h1 className="destaques-banner-titulo">{slide.titulo}</h1>}
+              {slide.subtitulo && <p className="destaques-banner-descricao">{slide.subtitulo}</p>}
             </>
           )}
         </div>
@@ -105,11 +109,7 @@ function Destaques({ onAdicionar }) {
           {itensDestaque.map((item) => (
             <div key={item.id} className="destaques-card">
               <div className="destaques-card-imagem-wrapper">
-                <img
-                  src={item.imagem}
-                  alt={item.nome}
-                  className="destaques-card-imagem"
-                />
+                <img src={item.imagem} alt={item.nome} className="destaques-card-imagem" />
                 <span className="destaques-card-badge">{item.badge}</span>
               </div>
               <div className="destaques-card-info">
@@ -118,17 +118,13 @@ function Destaques({ onAdicionar }) {
                   R$ {item.preco.toFixed(2).replace('.', ',')}
                 </span>
               </div>
-              <button
-                className="destaques-card-btn"
-                onClick={() => onAdicionar(item)}
-              >
+              <button className="destaques-card-btn" onClick={() => onAdicionar(item)}>
                 + Adicionar
               </button>
             </div>
           ))}
         </div>
       </div>
-
     </div>
   )
 }

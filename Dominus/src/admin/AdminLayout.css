@@ -1,0 +1,72 @@
+.admin-wrap {
+  display: flex;
+  height: 100vh;
+  background: #1a1a1a;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Sidebar ── */
+.admin-side {
+  width: 210px;
+  flex-shrink: 0;
+  background: #252525;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-side-logo {
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.al-logo-icon {
+  width: 36px; height: 36px;
+  background: #FFB84D; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900; font-size: 17px; color: #1a1a1a;
+  flex-shrink: 0;
+}
+.al-logo-nome { font-size: 16px; font-weight: 700; color: #fff; }
+.al-logo-sub  { font-size: 10px; color: #A0A0A0; margin-top: 1px; }
+
+.admin-side-nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+
+.al-nav-section {
+  font-size: 10px; color: #666; text-transform: uppercase;
+  letter-spacing: 1px; padding: 10px 10px 4px; font-weight: 600;
+}
+
+.al-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  color: #A0A0A0; font-size: 13px; font-weight: 500;
+  margin-bottom: 1px; text-decoration: none;
+  transition: all .15s;
+}
+.al-nav-item:hover { background: #2a2a2a; color: #E0E0E0; }
+.al-nav-item svg  { opacity: .55; flex-shrink: 0; transition: opacity .15s; }
+.al-nav-item:hover svg { opacity: 1; }
+.al-nav-item.active { background: #FFB84D; color: #1a1a1a; font-weight: 700; }
+.al-nav-item.active svg { opacity: 1; stroke: #1a1a1a; }
+
+.al-sair {
+  margin: 12px 8px 16px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  background: transparent; border: 1px solid rgba(255,255,255,0.08);
+  color: #666; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.al-sair:hover { background: rgba(244,67,54,0.1); border-color: rgba(244,67,54,0.3); color: #ef9a9a; }
+.al-sair svg { flex-shrink: 0; }
+
+/* ── Main ── */
+.admin-main-area {
+  flex: 1;
+  overflow-y: auto;
+}

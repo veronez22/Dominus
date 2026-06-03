@@ -6,13 +6,16 @@ import Carrinho from './components/Carrinho'
 import ModalProduto from './components/ModalProduto'
 import Destaques from './components/Destaques'
 import MinhaConta from './components/MinhaConta'
-import { cardapio, categorias } from './data/cardapio'
+import { useCardapio } from './lib/useCardapio'
+import { supabase } from './lib/supabase'
 import './App.css'
 
 // Categorias que pertencem ao Cardápio (sub-aside)
 const CATS_CARDAPIO = ['esfihas', 'esfihas-doces', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas', 'bebidas', 'diversos']
 
 function App() {
+  const { produtos, categorias, loading } = useCardapio()
+
   const [carrinho, setCarrinho] = useState([])
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
   const [contaAberta, setContaAberta] = useState(false)
@@ -55,11 +58,17 @@ function App() {
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
   const buscaAtiva = busca.trim().length > 0
   const produtosFiltrados = buscaAtiva
-    ? cardapio.filter(i =>
+    ? produtos.filter(i =>
         i.nome.toLowerCase().includes(busca.toLowerCase()) ||
-        i.descricao.toLowerCase().includes(busca.toLowerCase())
+        i.descricao?.toLowerCase().includes(busca.toLowerCase())
       )
     : []
+
+  if (loading) return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#1a1a1a', color:'#FFB84D', fontSize:18, gap:12 }}>
+      <span style={{ fontSize:28 }}>🍕</span> Carregando cardápio...
+    </div>
+  )
 
   function adicionarItem(item) {
     const quantidadeNova = item.quantidade || 1
@@ -93,15 +102,57 @@ function App() {
     }, 50)
   }
 
-function confirmarPedido(itens, comanda) {
-  const novoPedido = {
-    id: Date.now(),
-    comanda,                   // ← vincula ao código CMD-XXXX
-    horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-    itens: [...itens],
-    total: itens.reduce((s, i) => s + i.preco * i.quantidade, 0)
+async function confirmarPedido(itens, comanda) {
+  const total = itens.reduce((s, i) => s + i.preco * i.quantidade, 0)
+
+  try {
+    // 1. Busca o restaurante_id
+    const { data: rest, error: restErr } = await supabase
+      .from('restaurantes')
+      .select('id')
+      .eq('slug', 'dominus')
+      .single()
+    if (restErr) throw restErr
+
+    // 2. Busca o caixa aberto (se houver)
+    const { data: caixa } = await supabase
+      .from('caixas')
+      .select('id')
+      .eq('restaurante_id', rest.id)
+      .is('fechado_em', null)
+      .single()
+
+    // 3. Insere o pedido
+    const { data: pedido, error: pedErr } = await supabase
+      .from('pedidos')
+      .insert({ restaurante_id: rest.id, comanda, total, status: 'recebido', caixa_id: caixa?.id || null, mesa })
+      .select()
+      .single()
+    if (pedErr) throw pedErr
+
+    // 4. Insere os itens do pedido
+    const itensSup = itens.map(i => ({
+      pedido_id:      pedido.id,
+      produto_id:     i.id,
+      nome_snapshot:  i.nome,
+      preco_snapshot: i.preco,
+      quantidade:     i.quantidade,
+      observacao:     i.extras?.observacao || null,
+    }))
+    const { error: itensErr } = await supabase.from('itens_pedido').insert(itensSup)
+    if (itensErr) throw itensErr
+
+    // 5. Atualiza histórico local
+    setHistorico(prev => [...prev, {
+      id:      pedido.id,
+      comanda,
+      horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      itens:   [...itens],
+      total,
+    }])
+  } catch (err) {
+    console.error('Erro ao salvar pedido:', err)
   }
-  setHistorico(prev => [...prev, novoPedido])
 }
 
   return (
@@ -122,6 +173,7 @@ function confirmarPedido(itens, comanda) {
           categoriaVisivel={categoriaVisivel}
           secaoAtiva={secaoAtiva}
           onSecaoMudar={setSecaoAtiva}
+          mesa={mesa}
         />
 
         <main className="app-conteudo">
@@ -140,20 +192,21 @@ function confirmarPedido(itens, comanda) {
                   preco={item.preco}
                   descricao={item.descricao}
                   imagem={item.imagem}
+                  disponivel={item.disponivel !== false}
                   onAdicionar={() => setProdutoSelecionado(item)}
                 />
               ))}
             </div>
           ) : (
             categoriasVisiveis.map((cat) => {
-              const itensDaCategoria = cardapio.filter(i => i.categoria === cat.id)
+              const itensDaCategoria = produtos.filter(i => i.categoria === cat.id)
               return (
                 <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
                   {cat.id !== 'destaques' && (
                     <div className="secao-titulo"><h2>{cat.label}</h2></div>
                   )}
                   {cat.id === 'destaques' ? (
-                    <Destaques onAdicionar={setProdutoSelecionado} />
+                    <Destaques onAdicionar={setProdutoSelecionado} produtos={produtos} />
                   ) : (
                     itensDaCategoria.map((item) => (
                       <CardItem
@@ -162,6 +215,7 @@ function confirmarPedido(itens, comanda) {
                         preco={item.preco}
                         descricao={item.descricao}
                         imagem={item.imagem}
+                        disponivel={item.disponivel !== false}
                         onAdicionar={() => setProdutoSelecionado(item)}
                       />
                     ))
@@ -180,6 +234,7 @@ function confirmarPedido(itens, comanda) {
           onRemover={removerItem}
           onConfirmar={confirmarPedido}
           onLimpar={limparCarrinho}
+          mesa={mesa}
         />
       )}
 

@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dominus — Preview dos Painéis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#1a1a1a; color:#fff; }
+
+  :root {
+    --primaria:       #FFB84D;
+    --primaria-hover: #FFA500;
+    --bg1: #1a1a1a;
+    --bg2: #252525;
+    --bg3: #2a2a2a;
+    --bg4: #303030;
+    --borda: rgba(255,255,255,0.1);
+    --t1: #FFFFFF;
+    --t2: #E0E0E0;
+    --t3: #A0A0A0;
+    --verde:    #4CAF50;
+    --vermelho: #F44336;
+    --azul:     #2196F3;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-previews {
+    position:fixed; top:0; left:0; right:0; z-index:999;
+    background:var(--bg2); border-bottom:1px solid var(--borda);
+    display:flex; gap:8px; padding:10px 20px; overflow-x:auto;
+  }
+  .nav-previews button {
+    background:var(--bg3); border:1px solid var(--borda); color:var(--t3);
+    padding:7px 18px; border-radius:20px; cursor:pointer; font-size:13px;
+    font-family:'DM Sans',sans-serif; font-weight:500; white-space:nowrap; transition:all .2s;
+  }
+  .nav-previews button.active, .nav-previews button:hover {
+    background:var(--primaria); border-color:var(--primaria); color:#1a1a1a; font-weight:700;
+  }
+
+  .screen { display:none; padding-top:52px; min-height:100vh; }
+  .screen.active { display:block; }
+
+  /* ══════════════════════════════════
+     SIDEBAR ADMIN — estilo tablet
+  ══════════════════════════════════ */
+  .admin-layout { display:flex; height:calc(100vh - 52px); }
+
+  .admin-sidebar {
+    width:200px; background:var(--bg2); border-right:1px solid var(--borda);
+    display:flex; flex-direction:column; flex-shrink:0;
+  }
+  .admin-logo {
+    padding:18px 16px; border-bottom:1px solid var(--borda);
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo-icon {
+    width:36px; height:36px; background:var(--primaria); border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-weight:900; font-size:17px; color:#1a1a1a;
+    flex-shrink:0;
+  }
+  .logo-nome { font-size:16px; font-weight:700; }
+  .logo-sub  { font-size:10px; color:var(--t3); margin-top:1px; }
+
+  .admin-nav { flex:1; padding:10px 8px; overflow-y:auto; }
+  .nav-section {
+    font-size:10px; color:var(--t3); text-transform:uppercase;
+    letter-spacing:1px; padding:10px 10px 5px; font-weight:600;
+  }
+
+  /* Item de nav — estilo lucide (ícone + texto, horizontal) */
+  .nav-item {
+    display:flex; align-items:center; gap:10px; padding:9px 10px;
+    border-radius:10px; cursor:pointer; color:var(--t3); font-size:13px;
+    margin-bottom:1px; transition:all .15s; font-weight:500;
+  }
+  .nav-item:hover { background:var(--bg3); color:var(--t2); }
+  .nav-item:hover .nav-icon { opacity:1; }
+  .nav-item.active { background:var(--primaria); color:#1a1a1a; font-weight:700; }
+  .nav-item.active .nav-icon { opacity:1; stroke:#1a1a1a; }
+
+  /* Ícone SVG monocromático */
+  .nav-icon {
+    width:16px; height:16px; flex-shrink:0; opacity:.55;
+    stroke:var(--t2); fill:none; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round; transition:opacity .15s;
+  }
+  .nav-item:hover .nav-icon { stroke:var(--t2); }
+  .nav-item.active .nav-icon { stroke:#1a1a1a; opacity:1; }
+
+  .nav-badge {
+    margin-left:auto; background:var(--vermelho); color:#fff;
+    font-size:10px; padding:1px 6px; border-radius:10px; font-weight:700;
+  }
+  .nav-item.active .nav-badge { background:rgba(0,0,0,.25); color:#1a1a1a; }
+
+  .admin-user {
+    padding:14px 16px; border-top:1px solid var(--borda);
+    display:flex; align-items:center; gap:10px;
+  }
+  .user-avatar {
+    width:32px; height:32px; border-radius:50%; background:var(--primaria);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; color:#1a1a1a; font-size:14px; flex-shrink:0;
+  }
+  .user-nome  { font-size:13px; font-weight:600; color:var(--t1); }
+  .user-cargo { font-size:11px; color:var(--t3); }
+
+  /* ══════════════════════════════════
+     ÁREA PRINCIPAL
+  ══════════════════════════════════ */
+  .admin-main { flex:1; overflow-y:auto; padding:26px; }
+  .topbar {
+    display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px;
+  }
+  .topbar h1 { font-size:22px; font-weight:700; }
+  .topbar p  { font-size:13px; color:var(--t3); margin-top:3px; }
+
+  .btn-primary {
+    background:var(--primaria); color:#1a1a1a; border:none; padding:10px 20px;
+    border-radius:8px; font-size:14px; font-weight:700; cursor:pointer;
+    font-family:'DM Sans',sans-serif; white-space:nowrap; flex-shrink:0;
+  }
+  .btn-primary:hover { background:var(--primaria-hover); }
+
+  /* Métricas */
+  .metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+  .metric-card {
+    background:var(--bg2); border:1px solid var(--borda); border-radius:12px; padding:18px;
+  }
+  .metric-label { font-size:11px; color:var(--t3); font-weight:500; margin-bottom:8px; }
+  .metric-value { font-size:26px; font-weight:700; }
+  .metric-sub   { font-size:12px; color:var(--verde); margin-top:5px; font-weight:500; }
+
+  /* Gráfico */
+  .chart-row { display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:22px; }
+  .chart-card {
+    background:var(--bg2); border:1px solid var(--borda); border-radius:12px; padding:20px;
+  }
+  .chart-card h3 { font-size:14px; font-weight:600; margin-bottom:16px; }
+  .chart-bars { display:flex; align-items:flex-end; gap:8px; height:100px; }
+  .bar-wrap   { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .bar { width:100%; background:var(--primaria); border-radius:4px 4px 0 0; opacity:.8; }
+  .bar-lbl { font-size:10px; color:var(--t3); }
+  .pie-list { display:flex; flex-direction:column; gap:9px; margin-top:4px; }
+  .pie-row  { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--t2); }
+  .pie-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .pie-pct  { margin-left:auto; font-size:12px; color:var(--t3); }
+
+  /* Tabela */
+  .table-card { background:var(--bg2); border:1px solid var(--borda); border-radius:12px; overflow:hidden; }
+  .table-hdr  { padding:15px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--borda); }
+  .table-hdr h3 { font-size:14px; font-weight:600; }
+  .srch {
+    background:var(--bg3); border:1px solid var(--borda); color:var(--t1);
+    padding:7px 13px; border-radius:8px; font-size:13px; width:190px; font-family:'DM Sans',sans-serif;
+  }
+  table { width:100%; border-collapse:collapse; }
+  th { padding:9px 20px; text-align:left; font-size:11px; color:var(--t3); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--borda); font-weight:600; }
+  td { padding:12px 20px; font-size:13px; color:var(--t2); border-bottom:1px solid rgba(255,255,255,.04); }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(255,255,255,.02); }
+  .sbadge { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+  .sbadge.r { background:rgba(33,150,243,.15); color:#64b5f6; }
+  .sbadge.p { background:rgba(255,184,77,.15); color:#FFB84D; }
+  .sbadge.o { background:rgba(76,175,80,.15); color:#81c784; }
+  .sbadge.e { background:rgba(255,255,255,.06); color:var(--t3); }
+
+  /* ══════════════════════════════════
+     GESTÃO CARDÁPIO
+  ══════════════════════════════════ */
+  .filtros-bar { display:flex; gap:8px; flex-wrap:wrap; }
+  .filtro-btn {
+    padding:6px 15px; border-radius:20px; font-size:13px; cursor:pointer; font-weight:500;
+    border:1px solid var(--borda); background:var(--bg3); color:var(--t3); font-family:'DM Sans',sans-serif;
+  }
+  .filtro-btn.active  { background:var(--primaria); border-color:var(--primaria); color:#1a1a1a; font-weight:700; }
+  .filtro-btn:hover:not(.active) { border-color:rgba(255,184,77,.4); color:var(--t1); }
+
+  .produtos-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+  .prod-card {
+    background:var(--bg2); border:1px solid var(--borda); border-radius:12px; overflow:hidden;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .prod-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  .prod-img {
+    height:130px; position:relative; overflow:hidden; background:var(--bg3);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .prod-img img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+  .prod-card:hover .prod-img img { transform:scale(1.05); }
+  .prod-badge {
+    position:absolute; top:8px; left:8px; background:var(--primaria);
+    color:#1a1a1a; font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px;
+  }
+  .prod-badge.azul { background:var(--azul); color:#fff; }
+  .toggle-vis {
+    position:absolute; top:8px; right:8px; background:rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.15); width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .toggle-vis svg { width:14px; height:14px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .prod-info { padding:13px 15px; }
+  .prod-info h4 { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .prod-info .cat { font-size:11px; color:var(--t3); margin-bottom:7px; }
+  .prod-info .preco { font-size:16px; font-weight:700; color:var(--primaria); }
+  .prod-actions { display:flex; gap:7px; margin-top:11px; }
+  .btn-edit { flex:1; padding:7px; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; border:1px solid rgba(255,184,77,.35); background:rgba(255,184,77,.1); color:var(--primaria); }
+  .btn-del  { flex:1; padding:7px; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; border:1px solid rgba(244,67,54,.35); background:rgba(244,67,54,.1); color:#ef9a9a; }
+  .prod-card.indisp .prod-img img { opacity:.3; filter:grayscale(1); }
+  .prod-card.indisp h4 { color:var(--t3); }
+  .indisp-tag {
+    display:inline-flex; align-items:center; gap:4px; margin-top:6px;
+    background:rgba(244,67,54,.1); color:#ef9a9a; font-size:11px; padding:3px 8px;
+    border-radius:6px; border:1px solid rgba(244,67,54,.2);
+  }
+
+  /* ══════════════════════════════════
+     PAINEL COZINHA — REDESIGN
+  ══════════════════════════════════ */
+  .cozinha-wrap { background:#111; height:calc(100vh - 52px); display:flex; flex-direction:column; }
+
+  /* Barra de status topo */
+  .coz-topbar {
+    background:var(--bg2); border-bottom:1px solid var(--borda);
+    padding:0 24px; display:flex; align-items:stretch; gap:0; height:56px;
+  }
+  .coz-topbar-left {
+    display:flex; align-items:center; gap:12px; flex:1;
+  }
+  .coz-topbar-left h1 { font-size:17px; font-weight:700; }
+  .vivo-pill {
+    display:flex; align-items:center; gap:6px; font-size:12px; color:var(--verde);
+    background:rgba(76,175,80,.12); padding:4px 10px; border-radius:20px;
+    border:1px solid rgba(76,175,80,.25); font-weight:600;
+  }
+  .pulse { width:7px; height:7px; border-radius:50%; background:var(--verde); animation:pulso 1.5s infinite; }
+  @keyframes pulso { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .coz-clock { font-size:13px; color:var(--t3); margin-left:auto; }
+
+  /* Contadores de status no topo */
+  .coz-counters { display:flex; align-items:stretch; }
+  .coz-counter {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0 22px; gap:2px; border-left:1px solid var(--borda); cursor:default;
+  }
+  .coz-counter .cnt-num { font-size:20px; font-weight:700; }
+  .coz-counter .cnt-lbl { font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+  .coz-counter.rec  .cnt-num { color:#64b5f6; }
+  .coz-counter.prep .cnt-num { color:var(--primaria); }
+  .coz-counter.pron .cnt-num { color:#81c784; }
+
+  /* Colunas kanban */
+  .coz-cols { display:grid; grid-template-columns:repeat(3,1fr); flex:1; min-height:0; }
+  .coz-col  { border-right:1px solid var(--borda); display:flex; flex-direction:column; overflow:hidden; }
+  .coz-col:last-child { border-right:none; }
+
+  /* Header da coluna */
+  .coz-col-hdr {
+    padding:12px 16px; border-bottom:1px solid var(--borda);
+    display:flex; align-items:center; gap:8px; flex-shrink:0;
+  }
+  .coz-col-hdr.rec  { background:rgba(33,150,243,.08); }
+  .coz-col-hdr.prep { background:rgba(255,184,77,.08); }
+  .coz-col-hdr.pron { background:rgba(76,175,80,.08); }
+
+  .col-icon {
+    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  }
+  .col-icon svg { width:15px; height:15px; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+  .coz-col-hdr.rec  .col-icon { background:rgba(33,150,243,.2); }
+  .coz-col-hdr.rec  .col-icon svg { stroke:#64b5f6; }
+  .coz-col-hdr.prep .col-icon { background:rgba(255,184,77,.2); }
+  .coz-col-hdr.prep .col-icon svg { stroke:var(--primaria); }
+  .coz-col-hdr.pron .col-icon { background:rgba(76,175,80,.2); }
+  .coz-col-hdr.pron .col-icon svg { stroke:#81c784; }
+
+  .col-hdr-info { flex:1; }
+  .col-hdr-title { font-size:13px; font-weight:700; }
+  .coz-col-hdr.rec  .col-hdr-title { color:#64b5f6; }
+  .coz-col-hdr.prep .col-hdr-title { color:var(--primaria); }
+  .coz-col-hdr.pron .col-hdr-title { color:#81c784; }
+  .col-hdr-sub { font-size:11px; color:var(--t3); margin-top:1px; }
+
+  .col-badge {
+    width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+  }
+  .coz-col-hdr.rec  .col-badge { background:var(--azul); color:#fff; }
+  .coz-col-hdr.prep .col-badge { background:var(--primaria); color:#1a1a1a; }
+  .coz-col-hdr.pron .col-badge { background:var(--verde); color:#fff; }
+
+  /* Área de scroll dos cards */
+  .coz-col-body { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:10px; }
+
+  /* Card de pedido */
+  .pedido-card {
+    background:var(--bg2); border:1px solid var(--borda); border-radius:12px; overflow:hidden;
+  }
+  .pedido-card.urgente { border-color:rgba(244,67,54,.35); }
+  .pedido-card.em-atraso { border-color:rgba(255,184,77,.4); }
+
+  /* Timer bar no topo do card */
+  .pedido-timer-bar { height:3px; background:var(--bg3); }
+  .pedido-timer-bar .bar-fill { height:100%; border-radius:0; transition:width .5s; }
+  .pedido-card .bar-fill        { background:rgba(255,255,255,.2); }
+  .pedido-card.em-atraso .bar-fill { background:var(--primaria); }
+  .pedido-card.urgente .bar-fill   { background:var(--vermelho); }
+
+  .pedido-hdr {
+    padding:10px 14px; display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .pedido-mesa { font-size:13px; font-weight:700; }
+  .pedido-cmd  { font-size:11px; color:var(--t3); margin-top:1px; }
+
+  /* Timer badge */
+  .timer-badge {
+    display:flex; align-items:center; gap:4px; font-size:11px; font-weight:700;
+    padding:3px 8px; border-radius:20px;
+  }
+  .timer-badge svg { width:11px; height:11px; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+  .timer-badge.ok      { background:rgba(255,255,255,.07); color:var(--t3); }
+  .timer-badge.ok svg  { stroke:var(--t3); }
+  .timer-badge.alerta  { background:rgba(255,184,77,.15); color:var(--primaria); }
+  .timer-badge.alerta svg { stroke:var(--primaria); }
+  .timer-badge.urgente { background:rgba(244,67,54,.15); color:#ef9a9a; }
+  .timer-badge.urgente svg { stroke:#ef9a9a; }
+
+  /* Itens do pedido */
+  .pedido-itens { padding:10px 14px; display:flex; flex-direction:column; gap:6px; }
+  .pedido-item  { display:flex; align-items:flex-start; gap:8px; font-size:13px; }
+  .item-qtd  { color:var(--primaria); font-weight:700; min-width:22px; font-size:13px; }
+  .item-nome { color:var(--t2); flex:1; }
+  .item-obs  { font-size:11px; color:var(--t3); font-style:italic; display:block; margin-top:2px; }
+
+  /* Botão de ação */
+  .pedido-footer { padding:10px 14px; border-top:1px solid rgba(255,255,255,.06); }
+  .btn-acao {
+    width:100%; padding:9px; border-radius:8px; font-size:13px; font-weight:700;
+    cursor:pointer; border:none; font-family:'DM Sans',sans-serif;
+    display:flex; align-items:center; justify-content:center; gap:7px; transition:all .15s;
+  }
+  .btn-acao svg { width:14px; height:14px; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+  .btn-iniciar  { background:var(--primaria); color:#1a1a1a; }
+  .btn-iniciar:hover  { background:var(--primaria-hover); }
+  .btn-pronto   { background:rgba(76,175,80,.2); color:#81c784; border:1px solid rgba(76,175,80,.3); }
+  .btn-pronto:hover   { background:rgba(76,175,80,.35); }
+  .btn-entregar { background:var(--verde); color:#fff; }
+  .btn-entregar:hover { background:#43A047; }
+  .btn-iniciar svg  { stroke:#1a1a1a; }
+  .btn-pronto svg   { stroke:#81c784; }
+  .btn-entregar svg { stroke:#fff; }
+
+  /* Estado vazio */
+  .col-empty {
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; color:var(--t3); padding:24px;
+  }
+  .col-empty svg { width:28px; height:28px; stroke:var(--t3); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; opacity:.4; }
+  .col-empty p { font-size:12px; opacity:.6; text-align:center; }
+
+  /* ══════════════════════════════════
+     RELATÓRIOS
+  ══════════════════════════════════ */
+  .relatorios-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:18px; }
+  .rel-card { background:var(--bg2); border:1px solid var(--borda); border-radius:12px; padding:20px; }
+  .rel-card h3 { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .rel-card > p { font-size:12px; color:var(--t3); margin-bottom:16px; }
+
+  .periodo-tabs { display:flex; gap:6px; }
+  .ptab {
+    padding:6px 13px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:500;
+    border:1px solid var(--borda); background:var(--bg3); color:var(--t3); font-family:'DM Sans',sans-serif;
+  }
+  .ptab.active { background:var(--primaria); border-color:var(--primaria); color:#1a1a1a; font-weight:700; }
+
+  .rank-item { display:flex; align-items:center; gap:10px; margin-bottom:13px; }
+  .rank-pos { width:24px; height:24px; border-radius:50%; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--t3); flex-shrink:0; }
+  .rank-pos.g { background:rgba(255,184,77,.2); color:var(--primaria); }
+  .rank-pos.s { background:rgba(255,255,255,.1); color:var(--t2); }
+  .rank-pos.b { background:rgba(244,67,54,.1); color:#ef9a9a; }
+  .rank-info  { flex:1; min-width:0; }
+  .rank-info strong { font-size:13px; display:block; }
+  .rank-info small  { font-size:11px; color:var(--t3); }
+  .rank-bar-w { width:65px; height:5px; background:var(--bg3); border-radius:3px; }
+  .rank-bar   { height:100%; background:var(--primaria); border-radius:3px; }
+  .rank-val   { font-size:13px; font-weight:700; color:var(--primaria); min-width:50px; text-align:right; }
+
+  .aval-big { font-size:46px; font-weight:700; color:var(--primaria); line-height:1; }
+  .aval-stars { color:var(--primaria); font-size:15px; margin:4px 0 2px; }
+  .aval-sub   { font-size:12px; color:var(--t3); }
+  .aval-row   { display:flex; align-items:center; gap:8px; margin-bottom:5px; font-size:12px; }
+  .aval-lbl   { width:34px; color:var(--t3); }
+  .aval-bw { flex:1; height:5px; background:var(--bg3); border-radius:3px; }
+  .aval-bf { height:100%; border-radius:3px; background:var(--primaria); }
+  .aval-pct { width:28px; text-align:right; color:var(--t3); font-size:11px; }
+  .comment-box { background:var(--bg3); border-radius:8px; padding:11px 13px; margin-top:12px; border-left:3px solid var(--primaria); }
+  .comment-lbl  { font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+  .comment-text { font-size:13px; font-style:italic; color:var(--t2); line-height:1.5; }
+  .comment-meta { font-size:11px; color:var(--t3); margin-top:5px; }
+
+  .hora-grid { display:flex; align-items:flex-end; gap:4px; height:80px; margin-top:10px; }
+  .hora-col  { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .hora-bar  { width:100%; background:rgba(255,184,77,.25); border-radius:3px 3px 0 0; }
+  .hora-bar.pico { background:var(--primaria); }
+  .hora-lbl  { font-size:9px; color:var(--t3); }
+  .pico-info { margin-top:11px; font-size:12px; color:var(--t3); background:var(--bg3); padding:9px 12px; border-radius:8px; line-height:1.6; }
+
+  .mesa-table { width:100%; font-size:13px; }
+  .mesa-table th { font-size:11px; color:var(--t3); font-weight:500; padding-bottom:9px; text-align:left; }
+  .mesa-table td { padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06); color:var(--t2); }
+  .mesa-table tr:last-child td { border-bottom:none; }
+  .insight { margin-top:11px; font-size:12px; color:var(--t2); background:rgba(255,184,77,.08); padding:9px 12px; border-radius:8px; border:1px solid rgba(255,184,77,.2); }
+
+  /* ══════════════════════════════════
+     PLANOS SAAS
+  ══════════════════════════════════ */
+  .planos-screen { background:var(--bg1); min-height:calc(100vh - 52px); padding:44px 28px; }
+  .planos-hdr { text-align:center; margin-bottom:40px; }
+  .planos-hdr h1 { font-family:'Playfair Display',serif; font-size:34px; font-weight:900; margin-bottom:8px; }
+  .planos-hdr p  { color:var(--t3); font-size:15px; }
+  .planos-toggle { display:flex; align-items:center; justify-content:center; gap:12px; margin-top:18px; font-size:14px; color:var(--t2); }
+  .tog-sw { width:42px; height:23px; background:var(--primaria); border-radius:12px; position:relative; cursor:pointer; flex-shrink:0; }
+  .tog-sw::after { content:''; position:absolute; width:17px; height:17px; background:#1a1a1a; border-radius:50%; top:3px; right:3px; }
+  .desc-pill { background:rgba(76,175,80,.15); color:#81c784; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; border:1px solid rgba(76,175,80,.3); }
+
+  .planos-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-width:1080px; margin:0 auto 36px; }
+  .plano-card { background:var(--bg2); border:1px solid var(--borda); border-radius:14px; padding:24px; position:relative; transition:transform .2s; }
+  .plano-card:hover { transform:translateY(-4px); }
+  .plano-card.pop { border-color:rgba(255,184,77,.45); background:linear-gradient(145deg,#252525,#201a10); }
+  .pop-tag { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--primaria); color:#1a1a1a; font-size:11px; font-weight:700; padding:3px 14px; border-radius:20px; white-space:nowrap; }
+  .plano-nome { font-size:11px; color:var(--t3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:5px; font-weight:600; }
+  .plano-preco { font-size:36px; font-weight:700; line-height:1; margin-bottom:3px; }
+  .plano-preco small { font-size:13px; color:var(--t3); font-weight:400; }
+  .plano-desc { font-size:12px; color:var(--t3); margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--borda); line-height:1.5; }
+  .plano-feat { display:flex; align-items:flex-start; gap:7px; margin-bottom:9px; font-size:13px; color:var(--t2); }
+  .ck { color:var(--verde); flex-shrink:0; }
+  .no { color:var(--t3); flex-shrink:0; }
+  .plano-feat.dim { color:var(--t3); }
+  .btn-plano { width:100%; padding:10px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:18px; font-family:'DM Sans',sans-serif; border:1px solid var(--borda); background:var(--bg3); color:var(--t2); transition:all .15s; }
+  .btn-plano:hover { border-color:var(--primaria); color:var(--primaria); }
+  .btn-plano.dest { background:var(--primaria); border-color:var(--primaria); color:#1a1a1a; }
+  .btn-plano.dest:hover { background:var(--primaria-hover); }
+
+  .tablets-box { max-width:1080px; margin:0 auto; background:var(--bg2); border:1px solid var(--borda); border-radius:14px; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .tablets-box h2 { font-size:19px; font-weight:700; margin-bottom:8px; }
+  .tablets-box > div > p { color:var(--t3); font-size:14px; line-height:1.6; margin-bottom:14px; }
+  .tab-opcao { background:var(--bg3); border:1px solid var(--borda); border-radius:10px; padding:13px 15px; display:flex; align-items:center; gap:11px; margin-bottom:9px; }
+  .tab-opcao .ico { font-size:22px; }
+  .tab-opcao strong { font-size:13px; display:block; color:var(--t1); margin-bottom:2px; }
+  .tab-opcao small  { font-size:12px; color:var(--t3); }
+  .tag-rec  { margin-left:auto; font-size:11px; padding:3px 9px; border-radius:20px; background:rgba(76,175,80,.15); color:#81c784; border:1px solid rgba(76,175,80,.3); font-weight:600; }
+  .tag-prem { margin-left:auto; font-size:11px; padding:3px 9px; border-radius:20px; background:rgba(255,184,77,.1); color:var(--primaria); border:1px solid rgba(255,184,77,.2); font-weight:600; }
+  .estrat-box { background:var(--bg3); border-radius:12px; padding:20px; border:1px solid var(--borda); }
+  .estrat-box h3 { font-size:14px; font-weight:600; margin-bottom:10px; }
+  .estrat-box p  { font-size:13px; color:var(--t3); line-height:1.8; }
+</style>
+</head>
+<body>
+
+<nav class="nav-previews">
+  <button class="active" onclick="show('dashboard',this)">📊 Dashboard Admin</button>
+  <button onclick="show('cardapio',this)">🍕 Gestão Cardápio</button>
+  <button onclick="show('cozinha',this)">👨‍🍳 Painel Cozinha</button>
+  <button onclick="show('relatorios',this)">📈 Relatórios</button>
+  <button onclick="show('planos',this)">💎 Planos SaaS</button>
+</nav>
+
+<!-- SVG Lucide icons reutilizáveis -->
+<svg style="display:none">
+  <symbol id="ic-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+  <symbol id="ic-orders"    viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="ic-pizza"     viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10"/><path d="M12 2a15.3 15.3 0 014 10"/><path d="M12 2a15.3 15.3 0 00-4 10"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="ic-category"  viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="ic-star"      viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="ic-table"     viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="4" rx="1"/><path d="M6 7v13M18 7v13M6 12h12"/></symbol>
+  <symbol id="ic-chart"     viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></symbol>
+  <symbol id="ic-chat"      viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
+  <symbol id="ic-settings"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></symbol>
+  <symbol id="ic-printer"   viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+  <symbol id="ic-inbox"     viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></symbol>
+  <symbol id="ic-flame"     viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 01-7 7 7 7 0 01-7-7c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></symbol>
+  <symbol id="ic-check"     viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="ic-arrow-r"   viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="ic-clock"     viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="ic-eye"       viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+</svg>
+
+<!-- ══════════════════════════════════
+     DASHBOARD ADMIN
+══════════════════════════════════ -->
+<div class="screen active" id="screen-dashboard">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <div class="logo-icon">D</div>
+        <div><div class="logo-nome">Dominus</div><div class="logo-sub">Painel Admin</div></div>
+      </div>
+      <nav class="admin-nav">
+        <div class="nav-section">Geral</div>
+        <div class="nav-item active">
+          <svg class="nav-icon"><use href="#ic-dashboard"/></svg> Dashboard
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon"><use href="#ic-orders"/></svg> Pedidos
+          <span class="nav-badge">3</span>
+        </div>
+        <div class="nav-section">Cardápio</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-pizza"/></svg> Produtos</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-category"/></svg> Categorias</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-star"/></svg> Destaques</div>
+        <div class="nav-section">Gestão</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-table"/></svg> Mesas / QR Code</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-chart"/></svg> Relatórios</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-chat"/></svg> Avaliações</div>
+        <div class="nav-section">Sistema</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-settings"/></svg> Configurações</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-printer"/></svg> Impressora</div>
+      </nav>
+      <div class="admin-user">
+        <div class="user-avatar">V</div>
+        <div><div class="user-nome">Vinicius</div><div class="user-cargo">Administrador</div></div>
+      </div>
+    </aside>
+    <main class="admin-main">
+      <div class="topbar">
+        <div><h1>Bom dia, Vinicius 👋</h1><p>Terça-feira, 03 de junho de 2026 · <strong style="color:var(--t1)">Dominus</strong></p></div>
+        <button class="btn-primary">+ Novo Produto</button>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-label">💰 Faturamento Hoje</div><div class="metric-value">R$ 1.842</div><div class="metric-sub">↑ 12% vs ontem</div></div>
+        <div class="metric-card"><div class="metric-label">🧾 Pedidos Hoje</div><div class="metric-value">47</div><div class="metric-sub">↑ 8% vs ontem</div></div>
+        <div class="metric-card"><div class="metric-label">🪑 Ticket Médio</div><div class="metric-value">R$ 39,20</div><div class="metric-sub">↑ 4% vs ontem</div></div>
+        <div class="metric-card"><div class="metric-label">⭐ Avaliação Média</div><div class="metric-value">4.7</div><div class="metric-sub">↑ +0.2 este mês</div></div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>Faturamento — Últimos 7 dias</h3>
+          <div class="chart-bars">
+            <div class="bar-wrap"><div class="bar" style="height:55%"></div><div class="bar-lbl">Seg</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:70%"></div><div class="bar-lbl">Ter</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:45%"></div><div class="bar-lbl">Qua</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:88%"></div><div class="bar-lbl">Qui</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:100%"></div><div class="bar-lbl">Sex</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:92%"></div><div class="bar-lbl">Sáb</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:78%"></div><div class="bar-lbl">Dom</div></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Vendas por Categoria</h3>
+          <div class="pie-list">
+            <div class="pie-row"><div class="pie-dot" style="background:#FFB84D"></div> Esfihas <span class="pie-pct">38%</span></div>
+            <div class="pie-row"><div class="pie-dot" style="background:#2196F3"></div> Bebidas <span class="pie-pct">22%</span></div>
+            <div class="pie-row"><div class="pie-dot" style="background:#4CAF50"></div> Combos <span class="pie-pct">18%</span></div>
+            <div class="pie-row"><div class="pie-dot" style="background:#9C27B0"></div> Fogazzas <span class="pie-pct">12%</span></div>
+            <div class="pie-row"><div class="pie-dot" style="background:#F44336"></div> Cigarretes <span class="pie-pct">7%</span></div>
+            <div class="pie-row"><div class="pie-dot" style="background:#607D8B"></div> Outros <span class="pie-pct">3%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-hdr"><h3>Pedidos Recentes</h3><input class="srch" placeholder="🔍  Buscar pedido..."/></div>
+        <table>
+          <thead><tr><th>Comanda</th><th>Mesa</th><th>Horário</th><th>Itens</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>CMD-0041</td><td>Mesa 5</td><td>14:32</td><td>3 itens</td><td><strong style="color:var(--primaria)">R$ 32,50</strong></td><td><span class="sbadge p">Em preparo</span></td></tr>
+            <tr><td>CMD-0040</td><td>Mesa 2</td><td>14:20</td><td>5 itens</td><td><strong style="color:var(--primaria)">R$ 67,80</strong></td><td><span class="sbadge o">Pronto</span></td></tr>
+            <tr><td>CMD-0039</td><td>Mesa 8</td><td>14:10</td><td>2 itens</td><td><strong style="color:var(--primaria)">R$ 18,90</strong></td><td><span class="sbadge e">Entregue</span></td></tr>
+            <tr><td>CMD-0038</td><td>Mesa 1</td><td>13:58</td><td>7 itens</td><td><strong style="color:var(--primaria)">R$ 89,40</strong></td><td><span class="sbadge e">Entregue</span></td></tr>
+            <tr><td>CMD-0037</td><td>Mesa 6</td><td>13:45</td><td>4 itens</td><td><strong style="color:var(--primaria)">R$ 51,20</strong></td><td><span class="sbadge r">Recebido</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     GESTÃO CARDÁPIO
+══════════════════════════════════ -->
+<div class="screen" id="screen-cardapio">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-logo"><div class="logo-icon">D</div><div><div class="logo-nome">Dominus</div><div class="logo-sub">Painel Admin</div></div></div>
+      <nav class="admin-nav">
+        <div class="nav-section">Geral</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-dashboard"/></svg> Dashboard</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-orders"/></svg> Pedidos <span class="nav-badge">3</span></div>
+        <div class="nav-section">Cardápio</div>
+        <div class="nav-item active"><svg class="nav-icon"><use href="#ic-pizza"/></svg> Produtos</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-category"/></svg> Categorias</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-star"/></svg> Destaques</div>
+        <div class="nav-section">Gestão</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-table"/></svg> Mesas / QR Code</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-chart"/></svg> Relatórios</div>
+        <div class="nav-section">Sistema</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-settings"/></svg> Configurações</div>
+      </nav>
+      <div class="admin-user"><div class="user-avatar">V</div><div><div class="user-nome">Vinicius</div><div class="user-cargo">Administrador</div></div></div>
+    </aside>
+    <main class="admin-main">
+      <div class="topbar">
+        <div><h1>Gestão de Produtos</h1><p>24 produtos cadastrados · 2 indisponíveis</p></div>
+        <button class="btn-primary">+ Adicionar Produto</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+        <div class="filtros-bar">
+          <div class="filtro-btn active">Todos</div>
+          <div class="filtro-btn">Esfihas</div>
+          <div class="filtro-btn">Fogazzas</div>
+          <div class="filtro-btn">Bebidas</div>
+          <div class="filtro-btn">Combos</div>
+          <div class="filtro-btn">⚠️ Indisponíveis</div>
+        </div>
+        <input class="srch" placeholder="🔍  Buscar produto..." style="flex-shrink:0"/>
+      </div>
+      <div class="produtos-grid">
+        <div class="prod-card">
+          <div class="prod-img"><img src="/produtos/esfihasSalgadas/esfihaCarneCatupiry.jpg" alt="Carne c/ Catupiry"/><span class="prod-badge">Mais Pedido</span><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#fff"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Carne c/ Catupiry</h4><div class="cat">Esfihas Salgadas</div><div class="preco">R$ 5,75</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="/produtos/esfihasSalgadas/esfihaCalabresaCatupiry.png" alt="Calabresa c/ Catupiry"/><span class="prod-badge">Mais Pedido</span><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#fff"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Calabresa c/ Catupiry</h4><div class="cat">Esfihas Salgadas</div><div class="preco">R$ 4,50</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+        <div class="prod-card indisp">
+          <div class="prod-img"><img src="/produtos/fogazzas/fogazzaFrango.png" alt="Fogazza de Frango"/><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#ef9a9a"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Fogazza de Frango</h4><div class="cat">Fogazzas</div><div class="preco">R$ 8,90</div><div class="indisp-tag">⚠️ Indisponível</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="/produtos/esfihasDoces/esfihaChocolate.png" alt="Chocolate"/><span class="prod-badge">Mais Pedido</span><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#fff"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Esfiha de Chocolate</h4><div class="cat">Esfihas Doces</div><div class="preco">R$ 4,50</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img"><img src="/produtos/coca.jpg" alt="Coca-Cola"/><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#fff"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Coca-Cola</h4><div class="cat">Bebidas</div><div class="preco">R$ 5,00</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+        <div class="prod-card indisp">
+          <div class="prod-img"><img src="/produtos/coxinha/coxinhaFrango.png" alt="Coxinha"/><span class="prod-badge azul">Novo</span><button class="toggle-vis"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" style="width:14px;height:14px;stroke:#ef9a9a"><use href="#ic-eye"/></svg></button></div>
+          <div class="prod-info"><h4>Coxinha de Frango</h4><div class="cat">Coxinhas</div><div class="preco">R$ 6,00</div><div class="indisp-tag">⚠️ Indisponível</div><div class="prod-actions"><button class="btn-edit">✏️ Editar</button><button class="btn-del">🗑 Excluir</button></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PAINEL COZINHA — REDESIGN
+══════════════════════════════════ -->
+<div class="screen" id="screen-cozinha">
+  <div class="cozinha-wrap">
+
+    <!-- Topbar com contadores -->
+    <div class="coz-topbar">
+      <div class="coz-topbar-left">
+        <h1>Painel da Cozinha</h1>
+        <div class="vivo-pill"><div class="pulse"></div> Ao vivo</div>
+      </div>
+      <div class="coz-counters">
+        <div class="coz-counter rec">
+          <div class="cnt-num">2</div>
+          <div class="cnt-lbl">Aguardando</div>
+        </div>
+        <div class="coz-counter prep">
+          <div class="cnt-num">2</div>
+          <div class="cnt-lbl">Em preparo</div>
+        </div>
+        <div class="coz-counter pron">
+          <div class="cnt-num">1</div>
+          <div class="cnt-lbl">Prontos</div>
+        </div>
+      </div>
+      <div class="coz-clock">⏰ 14:38</div>
+    </div>
+
+    <!-- Colunas Kanban -->
+    <div class="coz-cols">
+
+      <!-- COLUNA 1: Recebido -->
+      <div class="coz-col">
+        <div class="coz-col-hdr rec">
+          <div class="col-icon">
+            <svg><use href="#ic-inbox"/></svg>
+          </div>
+          <div class="col-hdr-info">
+            <div class="col-hdr-title">Aguardando Preparo</div>
+            <div class="col-hdr-sub">Pedidos que chegaram e precisam ser iniciados</div>
+          </div>
+          <div class="col-badge">2</div>
+        </div>
+        <div class="coz-col-body">
+
+          <div class="pedido-card urgente">
+            <div class="pedido-timer-bar"><div class="bar-fill" style="width:80%"></div></div>
+            <div class="pedido-hdr">
+              <div>
+                <div class="pedido-mesa">Mesa 7</div>
+                <div class="pedido-cmd">CMD-0042</div>
+              </div>
+              <div class="timer-badge urgente">
+                <svg><use href="#ic-clock"/></svg> 8 min
+              </div>
+            </div>
+            <div class="pedido-itens">
+              <div class="pedido-item"><span class="item-qtd">2x</span><span class="item-nome">Carne c/ Catupiry</span></div>
+              <div class="pedido-item"><span class="item-qtd">1x</span><span class="item-nome">Coca-Cola Lata<span class="item-obs">bem gelada</span></span></div>
+              <div class="pedido-item"><span class="item-qtd">1x</span><span class="item-nome">Fogazza de Frango</span></div>
+            </div>
+            <div class="pedido-footer">
+              <button class="btn-acao btn-iniciar">
+                <svg><use href="#ic-flame"/></svg> Iniciar Preparo
+              </button>
+            </div>
+          </div>
+
+          <div class="pedido-card">
+            <div class="pedido-timer-bar"><div class="bar-fill" style="width:20%"></div></div>
+            <div class="pedido-hdr">
+              <div>
+                <div class="pedido-mesa">Mesa 3</div>
+                <div class="pedido-cmd">CMD-0043</div>
+              </div>
+              <div class="timer-badge ok">
+                <svg><use href="#ic-clock"/></svg> 2 min
+              </div>
+            </div>
+            <div class="pedido-itens">
+              <div class="pedido-item"><span class="item-qtd">3x</span><span class="item-nome">Kibe c/ Queijo</span></div>
+              <div class="pedido-item"><span class="item-qtd">2x</span><span class="item-nome">Suco de Laranja</span></div>
+            </div>
+            <div class="pedido-footer">
+              <button class="btn-acao btn-iniciar">
+                <svg><use href="#ic-flame"/></svg> Iniciar Preparo
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COLUNA 2: Em Preparo -->
+      <div class="coz-col">
+        <div class="coz-col-hdr prep">
+          <div class="col-icon">
+            <svg><use href="#ic-flame"/></svg>
+          </div>
+          <div class="col-hdr-info">
+            <div class="col-hdr-title">Em Preparo</div>
+            <div class="col-hdr-sub">Sendo preparados agora — avise quando pronto</div>
+          </div>
+          <div class="col-badge">2</div>
+        </div>
+        <div class="coz-col-body">
+
+          <div class="pedido-card em-atraso">
+            <div class="pedido-timer-bar"><div class="bar-fill" style="width:90%"></div></div>
+            <div class="pedido-hdr">
+              <div>
+                <div class="pedido-mesa">Mesa 5</div>
+                <div class="pedido-cmd">CMD-0041</div>
+              </div>
+              <div class="timer-badge alerta">
+                <svg><use href="#ic-clock"/></svg> 14 min
+              </div>
+            </div>
+            <div class="pedido-itens">
+              <div class="pedido-item"><span class="item-qtd">2x</span><span class="item-nome">Cigarrete de Carne c/ Queijo</span></div>
+              <div class="pedido-item"><span class="item-qtd">1x</span><span class="item-nome">Coca-Cola 2L</span></div>
+            </div>
+            <div class="pedido-footer">
+              <button class="btn-acao btn-pronto">
+                <svg><use href="#ic-check"/></svg> Marcar como Pronto
+              </button>
+            </div>
+          </div>
+
+          <div class="pedido-card">
+            <div class="pedido-timer-bar"><div class="bar-fill" style="width:45%"></div></div>
+            <div class="pedido-hdr">
+              <div>
+                <div class="pedido-mesa">Mesa 1</div>
+                <div class="pedido-cmd">CMD-0040</div>
+              </div>
+              <div class="timer-badge ok">
+                <svg><use href="#ic-clock"/></svg> 6 min
+              </div>
+            </div>
+            <div class="pedido-itens">
+              <div class="pedido-item"><span class="item-qtd">1x</span><span class="item-nome">Combo Família<span class="item-obs">5 carne · 3 calabresa · 2 chocolate</span></span></div>
+              <div class="pedido-item"><span class="item-qtd">2x</span><span class="item-nome">Limonada Suíça</span></div>
+            </div>
+            <div class="pedido-footer">
+              <button class="btn-acao btn-pronto">
+                <svg><use href="#ic-check"/></svg> Marcar como Pronto
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COLUNA 3: Pronto -->
+      <div class="coz-col">
+        <div class="coz-col-hdr pron">
+          <div class="col-icon">
+            <svg><use href="#ic-check"/></svg>
+          </div>
+          <div class="col-hdr-info">
+            <div class="col-hdr-title">Pronto para Entregar</div>
+            <div class="col-hdr-sub">Confirme após o garçom retirar o pedido</div>
+          </div>
+          <div class="col-badge">1</div>
+        </div>
+        <div class="coz-col-body">
+
+          <div class="pedido-card" style="border-color:rgba(76,175,80,.3)">
+            <div class="pedido-timer-bar"><div class="bar-fill" style="width:100%;background:rgba(76,175,80,.5)"></div></div>
+            <div class="pedido-hdr">
+              <div>
+                <div class="pedido-mesa">Mesa 2</div>
+                <div class="pedido-cmd">CMD-0039</div>
+              </div>
+              <div class="timer-badge ok" style="background:rgba(76,175,80,.15);color:#81c784;">
+                <svg style="stroke:#81c784"><use href="#ic-check"/></svg> pronto
+              </div>
+            </div>
+            <div class="pedido-itens">
+              <div class="pedido-item"><span class="item-qtd">5x</span><span class="item-nome">Esfiha de Carne</span></div>
+              <div class="pedido-item"><span class="item-qtd">2x</span><span class="item-nome">Coca-Cola Lata</span></div>
+            </div>
+            <div class="pedido-footer">
+              <button class="btn-acao btn-entregar">
+                <svg><use href="#ic-arrow-r"/></svg> Confirmar Entrega
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     RELATÓRIOS
+══════════════════════════════════ -->
+<div class="screen" id="screen-relatorios">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-logo"><div class="logo-icon">D</div><div><div class="logo-nome">Dominus</div><div class="logo-sub">Painel Admin</div></div></div>
+      <nav class="admin-nav">
+        <div class="nav-section">Geral</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-dashboard"/></svg> Dashboard</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-orders"/></svg> Pedidos</div>
+        <div class="nav-section">Cardápio</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-pizza"/></svg> Produtos</div>
+        <div class="nav-section">Gestão</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-table"/></svg> Mesas / QR Code</div>
+        <div class="nav-item active"><svg class="nav-icon"><use href="#ic-chart"/></svg> Relatórios</div>
+        <div class="nav-item"><svg class="nav-icon"><use href="#ic-chat"/></svg> Avaliações</div>
+      </nav>
+      <div class="admin-user"><div class="user-avatar">V</div><div><div class="user-nome">Vinicius</div><div class="user-cargo">Administrador</div></div></div>
+    </aside>
+    <main class="admin-main">
+      <div class="topbar">
+        <div><h1>Relatórios & Métricas</h1><p>Dados para tomar melhores decisões</p></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="periodo-tabs">
+            <div class="ptab active">Hoje</div><div class="ptab">7 dias</div><div class="ptab">Mês</div><div class="ptab">Personalizado</div>
+          </div>
+          <button class="btn-primary">⬇ Exportar</button>
+        </div>
+      </div>
+      <div class="relatorios-grid">
+        <div class="rel-card">
+          <h3>🏆 Produtos Mais Vendidos</h3>
+          <p>Ranking por quantidade no período selecionado</p>
+          <div class="rank-item"><div class="rank-pos g">1</div><div class="rank-info"><strong>Carne c/ Catupiry</strong><small>Esfihas · 143 un.</small></div><div class="rank-bar-w"><div class="rank-bar" style="width:100%"></div></div><div class="rank-val">R$822</div></div>
+          <div class="rank-item"><div class="rank-pos s">2</div><div class="rank-info"><strong>Coca-Cola Lata</strong><small>Bebidas · 118 un.</small></div><div class="rank-bar-w"><div class="rank-bar" style="width:82%"></div></div><div class="rank-val">R$590</div></div>
+          <div class="rank-item"><div class="rank-pos b">3</div><div class="rank-info"><strong>Combo Família</strong><small>Combos · 34 un.</small></div><div class="rank-bar-w"><div class="rank-bar" style="width:65%"></div></div><div class="rank-val">R$1.697</div></div>
+          <div class="rank-item"><div class="rank-pos">4</div><div class="rank-info"><strong>Cigarrete de Carne</strong><small>Cigarretes · 89 un.</small></div><div class="rank-bar-w"><div class="rank-bar" style="width:55%"></div></div><div class="rank-val">R$578</div></div>
+          <div class="rank-item"><div class="rank-pos">5</div><div class="rank-info"><strong>Fogazza de Frango</strong><small>Fogazzas · 61 un.</small></div><div class="rank-bar-w"><div class="rank-bar" style="width:40%"></div></div><div class="rank-val">R$543</div></div>
+        </div>
+        <div class="rel-card">
+          <h3>⭐ Satisfação dos Clientes</h3>
+          <p>Avaliações coletadas pelos tablets · 287 respostas</p>
+          <div style="display:flex;align-items:flex-start;gap:22px;">
+            <div><div class="aval-big">4.7</div><div class="aval-stars">★★★★★</div><div class="aval-sub">287 avaliações</div></div>
+            <div style="flex:1;">
+              <div class="aval-row"><span class="aval-lbl">5 ★</span><div class="aval-bw"><div class="aval-bf" style="width:72%"></div></div><span class="aval-pct">72%</span></div>
+              <div class="aval-row"><span class="aval-lbl">4 ★</span><div class="aval-bw"><div class="aval-bf" style="width:18%"></div></div><span class="aval-pct">18%</span></div>
+              <div class="aval-row"><span class="aval-lbl">3 ★</span><div class="aval-bw"><div class="aval-bf" style="width:6%"></div></div><span class="aval-pct">6%</span></div>
+              <div class="aval-row"><span class="aval-lbl">2 ★</span><div class="aval-bw"><div class="aval-bf" style="width:3%"></div></div><span class="aval-pct">3%</span></div>
+              <div class="aval-row"><span class="aval-lbl">1 ★</span><div class="aval-bw"><div class="aval-bf" style="width:1%"></div></div><span class="aval-pct">1%</span></div>
+            </div>
+          </div>
+          <div class="comment-box">
+            <div class="comment-lbl">💬 Comentário recente</div>
+            <div class="comment-text">"Esfihas deliciosas, atendimento rápido! A limonada suíça estava incrível."</div>
+            <div class="comment-meta">Mesa 4 · hoje às 13:22 · ⭐⭐⭐⭐⭐</div>
+          </div>
+        </div>
+        <div class="rel-card">
+          <h3>⏰ Horários de Pico</h3>
+          <p>Volume de pedidos por hora — saiba quando se preparar mais</p>
+          <div class="hora-grid">
+            <div class="hora-col"><div class="hora-bar" style="height:10%"></div><div class="hora-lbl">10h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:20%"></div><div class="hora-lbl">11h</div></div>
+            <div class="hora-col"><div class="hora-bar pico" style="height:100%"></div><div class="hora-lbl">12h</div></div>
+            <div class="hora-col"><div class="hora-bar pico" style="height:90%"></div><div class="hora-lbl">13h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:55%"></div><div class="hora-lbl">14h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:30%"></div><div class="hora-lbl">15h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:25%"></div><div class="hora-lbl">16h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:40%"></div><div class="hora-lbl">17h</div></div>
+            <div class="hora-col"><div class="hora-bar pico" style="height:85%"></div><div class="hora-lbl">18h</div></div>
+            <div class="hora-col"><div class="hora-bar pico" style="height:95%"></div><div class="hora-lbl">19h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:70%"></div><div class="hora-lbl">20h</div></div>
+            <div class="hora-col"><div class="hora-bar" style="height:35%"></div><div class="hora-lbl">21h</div></div>
+          </div>
+          <div class="pico-info">🔥 Picos: <strong style="color:var(--t1)">12h–13h</strong> e <strong style="color:var(--t1)">18h–19h</strong><br>💡 Reforce equipe e estoque nesses horários</div>
+        </div>
+        <div class="rel-card">
+          <h3>🪑 Ticket Médio por Mesa</h3>
+          <p>Identifique mesas com maior e menor consumo</p>
+          <table class="mesa-table">
+            <thead><tr><th>Mesa</th><th>Pedidos</th><th>Ticket Médio</th><th>Avaliação</th></tr></thead>
+            <tbody>
+              <tr><td>Mesa 6</td><td>18</td><td style="color:var(--verde);font-weight:700">R$ 72,40</td><td>⭐ 4.9</td></tr>
+              <tr><td>Mesa 2</td><td>22</td><td style="color:var(--verde);font-weight:700">R$ 61,80</td><td>⭐ 4.8</td></tr>
+              <tr><td>Mesa 4</td><td>15</td><td style="color:var(--primaria);font-weight:700">R$ 45,20</td><td>⭐ 4.7</td></tr>
+              <tr><td>Mesa 1</td><td>20</td><td style="font-weight:700">R$ 39,60</td><td>⭐ 4.5</td></tr>
+              <tr><td>Mesa 8</td><td>11</td><td style="color:var(--vermelho);font-weight:700">R$ 28,30</td><td>⭐ 4.2</td></tr>
+            </tbody>
+          </table>
+          <div class="insight">💡 Mesa 8 tem o menor ticket e avaliação mais baixa — vale investigar</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PLANOS SAAS
+══════════════════════════════════ -->
+<div class="screen" id="screen-planos">
+  <div class="planos-screen">
+    <div class="planos-hdr">
+      <h1>Planos Dominus</h1>
+      <p>Tecnologia de ponta para o seu restaurante crescer</p>
+      <div class="planos-toggle">
+        <span>Mensal</span><div class="tog-sw"></div><span>Anual</span>
+        <span class="desc-pill">-30% OFF</span>
+      </div>
+    </div>
+    <div class="planos-grid">
+      <div class="plano-card">
+        <div class="plano-nome">Grátis</div><div class="plano-preco">R$ 0<small>/mês</small></div>
+        <div class="plano-desc">Para testar antes de assinar</div>
+        <div class="plano-feat"><span class="ck">✓</span> Cardápio digital básico</div>
+        <div class="plano-feat"><span class="ck">✓</span> Até 20 produtos</div>
+        <div class="plano-feat"><span class="ck">✓</span> 1 mesa / QR Code</div>
+        <div class="plano-feat"><span class="ck">✓</span> Pedidos manuais</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Painel da cozinha</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Relatórios</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Modo offline</div>
+        <button class="btn-plano">Começar grátis</button>
+      </div>
+      <div class="plano-card">
+        <div class="plano-nome">Básico</div><div class="plano-preco">R$ 79<small>/mês</small></div>
+        <div class="plano-desc">Para digitalizar o cardápio com QR Code por mesa</div>
+        <div class="plano-feat"><span class="ck">✓</span> Produtos ilimitados</div>
+        <div class="plano-feat"><span class="ck">✓</span> Até 10 mesas</div>
+        <div class="plano-feat"><span class="ck">✓</span> QR Code por mesa</div>
+        <div class="plano-feat"><span class="ck">✓</span> Modo offline</div>
+        <div class="plano-feat"><span class="ck">✓</span> Avaliações no tablet</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Painel da cozinha</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Relatórios avançados</div>
+        <button class="btn-plano">Assinar Básico</button>
+      </div>
+      <div class="plano-card pop">
+        <div class="pop-tag">⭐ Mais Popular</div>
+        <div class="plano-nome">Pro</div><div class="plano-preco">R$ 149<small>/mês</small></div>
+        <div class="plano-desc">Para automatizar pedidos e gerir com dados</div>
+        <div class="plano-feat"><span class="ck">✓</span> Tudo do Básico</div>
+        <div class="plano-feat"><span class="ck">✓</span> Mesas ilimitadas</div>
+        <div class="plano-feat"><span class="ck">✓</span> Painel da cozinha</div>
+        <div class="plano-feat"><span class="ck">✓</span> Relatórios completos</div>
+        <div class="plano-feat"><span class="ck">✓</span> Horários de pico</div>
+        <div class="plano-feat"><span class="ck">✓</span> Métricas de avaliação</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Impressora térmica</div>
+        <div class="plano-feat dim"><span class="no">✗</span> Multi-unidade</div>
+        <button class="btn-plano dest">Assinar Pro</button>
+      </div>
+      <div class="plano-card">
+        <div class="plano-nome">Premium</div><div class="plano-preco">R$ 249<small>/mês</small></div>
+        <div class="plano-desc">Para redes e restaurantes de alto volume</div>
+        <div class="plano-feat"><span class="ck">✓</span> Tudo do Pro</div>
+        <div class="plano-feat"><span class="ck">✓</span> Impressora térmica</div>
+        <div class="plano-feat"><span class="ck">✓</span> Multi-unidade</div>
+        <div class="plano-feat"><span class="ck">✓</span> API de integração</div>
+        <div class="plano-feat"><span class="ck">✓</span> Suporte prioritário</div>
+        <div class="plano-feat"><span class="ck">✓</span> Relatório PDF/XLS</div>
+        <div class="plano-feat"><span class="ck">✓</span> White-label (em breve)</div>
+        <button class="btn-plano">Assinar Premium</button>
+      </div>
+    </div>
+    <div class="tablets-box">
+      <div>
+        <h2>📱 E os tablets?</h2>
+        <p>Duas formas de o restaurante ter os tablets para usar o Dominus.</p>
+        <div class="tab-opcao"><span class="ico">🏪</span><div><strong>O restaurante compra o tablet</strong><small>Samsung Tab A8 · ~R$ 800–1.200 · investimento único do cliente</small></div><span class="tag-rec">Recomendado</span></div>
+        <div class="tab-opcao"><span class="ico">📦</span><div><strong>Dominus fornece em comodato</strong><small>Tablet incluso no plano Premium anual</small></div><span class="tag-prem">Premium</span></div>
+      </div>
+      <div class="estrat-box">
+        <h3>💡 Estratégia recomendada</h3>
+        <p>Inicialmente o restaurante compra o tablet — reduz seu custo operacional.<br><br>No plano <strong style="color:var(--t1)">Premium anual</strong> você oferece o tablet em comodato, embutindo no contrato. Derruba a barreira de entrada e aumenta conversão.<br><br>Concorrentes como <strong style="color:var(--t1)">Goomer e Abrahão</strong> não fornecem tablets — esse é o seu diferencial.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-previews button').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

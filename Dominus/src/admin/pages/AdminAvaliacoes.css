@@ -1,0 +1,146 @@
+.av-wrap { padding: 28px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+.av-topbar h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.av-topbar p  { font-size: 13px; color: #A0A0A0; margin-top: 3px; }
+
+.av-loading { color: #A0A0A0; font-size: 14px; padding: 40px 0; }
+
+/* ── Resumo ── */
+.av-resumo {
+  display: flex;
+  gap: 24px;
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 24px;
+  align-items: center;
+}
+
+.av-resumo-destaque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+  border-right: 1px solid #333;
+  padding-right: 24px;
+}
+
+.av-nota-grande {
+  font-size: 52px;
+  font-weight: 800;
+  color: #FFB84D;
+  line-height: 1;
+}
+
+.av-total-label { font-size: 12px; color: #666; }
+
+.av-resumo-categorias {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.av-cat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.av-cat-label { font-size: 13px; color: #ccc; min-width: 120px; }
+
+.av-cat-bar {
+  flex: 1;
+  height: 6px;
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.av-cat-fill {
+  height: 100%;
+  background: #FFB84D;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.av-cat-nota { font-size: 13px; font-weight: 700; color: #FFB84D; min-width: 28px; text-align: right; }
+
+/* ── Estrelas ── */
+.av-estrelas { display: flex; gap: 2px; }
+.av-estrela  { font-size: 16px; color: #444; }
+.av-estrela.ativa { color: #FFB84D; }
+
+/* ── Vazio ── */
+.av-vazio {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; color: #555; padding: 60px 0;
+}
+.av-vazio span { font-size: 48px; }
+.av-vazio p    { font-size: 14px; }
+
+/* ── Lista de cards ── */
+.av-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.av-card {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.av-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.av-card-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.av-mesa {
+  font-size: 12px;
+  font-weight: 600;
+  background: #2a2a2a;
+  color: #aaa;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid #333;
+}
+
+.av-data { font-size: 12px; color: #555; }
+
+.av-notas-detalhe {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.av-nota-tag {
+  font-size: 11px;
+  background: #1e1e1e;
+  color: #888;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid #333;
+}
+
+.av-comentario {
+  font-size: 13px;
+  color: #ccc;
+  font-style: italic;
+  border-left: 3px solid #FFB84D;
+  padding-left: 12px;
+  margin: 0;
+}

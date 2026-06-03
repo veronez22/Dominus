@@ -1,0 +1,168 @@
+.dash-wrap { padding: 28px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Topbar ── */
+.dash-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dash-topbar h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.dash-topbar p  { font-size: 13px; color: #A0A0A0; margin-top: 3px; }
+
+/* ── Caixa status ── */
+.dash-caixa-aberto,
+.dash-caixa-fechado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.dash-caixa-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4caf50;
+  box-shadow: 0 0 6px #4caf50;
+  animation: pulsar 1.5s infinite;
+}
+.dash-caixa-dot--off {
+  background: #555;
+  box-shadow: none;
+  animation: none;
+}
+@keyframes pulsar {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.dash-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.dash-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.dash-btn--abrir  { background: #4caf50; color: #111; }
+.dash-btn--fechar { background: #e55; color: #fff; }
+.dash-btn:hover:not(:disabled) { opacity: 0.85; }
+
+/* ── Seletor de período ── */
+.dash-periodo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dash-periodo-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.dash-periodo-btn:hover { border-color: #FFB84D; color: #fff; }
+.dash-periodo-btn.active { border-color: #FFB84D; color: #FFB84D; background: #2a2000; }
+
+.dash-periodo-fat {
+  font-weight: 700;
+  color: #4caf50;
+  font-size: 11px;
+}
+
+/* ── Loading ── */
+.dash-loading { color: #A0A0A0; font-size: 14px; padding: 40px 0; }
+
+/* ── Métricas ── */
+.dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.dash-metric {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dm-label { font-size: 12px; color: #A0A0A0; font-weight: 500; }
+.dm-value { font-size: 24px; font-weight: 700; color: #fff; }
+.dm-sub   { font-size: 12px; color: #666; }
+
+/* ── Grid inferior ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.dash-card {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.dash-card-titulo {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.dash-vazio {
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* ── Tabela ── */
+.dash-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dash-table th {
+  text-align: left; color: #666; font-weight: 600;
+  padding-bottom: 10px; border-bottom: 1px solid #333;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.dash-table td { padding: 10px 0; color: #ddd; border-bottom: 1px solid #2a2a2a; }
+.dash-table tr:last-child td { border-bottom: none; }
+.dash-status { font-weight: 600; font-size: 12px; }
+
+/* ── Ranking ── */
+.dash-ranking { display: flex; flex-direction: column; gap: 12px; }
+
+.dash-rank-item { display: flex; align-items: center; gap: 10px; }
+
+.dash-rank-pos { font-size: 12px; font-weight: 700; color: #FFB84D; min-width: 24px; }
+
+.dash-rank-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.dash-rank-nome { font-size: 13px; color: #e0e0e0; }
+
+.dash-rank-bar { height: 4px; background: #333; border-radius: 4px; overflow: hidden; }
+
+.dash-rank-fill { height: 100%; background: #FFB84D; border-radius: 4px; transition: width 0.4s ease; }
+
+.dash-rank-qtd { font-size: 13px; font-weight: 700; color: #aaa; min-width: 32px; text-align: right; }

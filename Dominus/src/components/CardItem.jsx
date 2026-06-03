@@ -1,9 +1,12 @@
 import './CardItem.css'
 
-function CardItem({ nome, preco, descricao, imagem, onAdicionar }) {
+function CardItem({ nome, preco, descricao, imagem, onAdicionar, disponivel = true }) {
   return (
-    <div className="card-item">
-      <img className="card-item-imagem" src={imagem} alt={nome} />
+    <div className={`card-item${!disponivel ? ' indisponivel' : ''}`}>
+      <div className="card-item-imagem-wrap">
+        <img className="card-item-imagem" src={imagem} alt={nome} />
+        {!disponivel && <div className="card-item-indisponivel-overlay">Indisponível</div>}
+      </div>
 
       <div className="card-item-info">
         <div className="card-item-topo">
@@ -17,9 +20,13 @@ function CardItem({ nome, preco, descricao, imagem, onAdicionar }) {
         </div>
 
         <div className="card-item-rodape">
-          <button className="card-item-btn" onClick={onAdicionar}>
-            Adicionar
-          </button>
+          {disponivel ? (
+            <button className="card-item-btn" onClick={onAdicionar}>
+              Adicionar
+            </button>
+          ) : (
+            <span className="card-item-tag-indisp">⚠️ Indisponível no momento</span>
+          )}
         </div>
       </div>
     </div>

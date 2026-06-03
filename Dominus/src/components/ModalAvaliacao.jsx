@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X, Star } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import './ModalAvaliacao.css'
 
 const perguntas = [
@@ -8,15 +9,33 @@ const perguntas = [
   { id: 'ambiente', label: 'O ambiente te agradou?' },
 ]
 
-function ModalAvaliacao({ onFechar }) {
+function ModalAvaliacao({ onFechar, mesa }) {
   const [estrelas, setEstrelas] = useState({ comida: 0, atendimento: 0, ambiente: 0 })
   const [hover, setHover] = useState({ comida: 0, atendimento: 0, ambiente: 0 })
   const [comentario, setComentario] = useState('')
   const [enviado, setEnviado] = useState(false)
 
-  function handleEnviar() {
+  async function handleEnviar() {
     const todasAvaliadas = Object.values(estrelas).every(v => v > 0)
     if (!todasAvaliadas) return
+
+    const media = Math.round((estrelas.comida + estrelas.atendimento + estrelas.ambiente) / 3)
+
+    const { data: rest } = await supabase
+      .from('restaurantes').select('id').eq('slug', 'dominus').single()
+
+    if (rest) {
+      await supabase.from('avaliacoes').insert({
+        restaurante_id:   rest.id,
+        nota:             media,
+        nota_comida:      estrelas.comida,
+        nota_atendimento: estrelas.atendimento,
+        nota_ambiente:    estrelas.ambiente,
+        comentario:       comentario || null,
+        mesa:             mesa || null,
+      })
+    }
+
     setEnviado(true)
     setTimeout(() => onFechar(), 2500)
   }

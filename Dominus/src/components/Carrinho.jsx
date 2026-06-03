@@ -3,32 +3,35 @@ import { X, ShoppingCart, CheckCircle } from 'lucide-react'
 import ModalComanda from './ModalComanda'
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover, onFechar, onConfirmar, onLimpar }) {
+function Carrinho({ itens, onRemover, onFechar, onConfirmar, onLimpar, mesa }) {
   const [etapa, setEtapa] = useState('carrinho')  // 'carrinho' | 'comanda' | 'sucesso'
-  const [mensagemErro, setMensagemErro] = useState(false)
+  const [mensagemErro, setMensagemErro] = useState('')
   const [comanda, setComanda] = useState(null)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
 function handleConfirmar() {
   if (itens.length === 0) {
-    setMensagemErro(true)
-    setTimeout(() => setMensagemErro(false), 2500)
+    setMensagemErro('Adicione pelo menos um produto!')
+    setTimeout(() => setMensagemErro(''), 2500)
     return
   }
-  setEtapa('comanda')  // ← só abre o scanner, não limpa ainda
+  if (!mesa) {
+    setMensagemErro('Defina o número da mesa antes de confirmar.')
+    setTimeout(() => setMensagemErro(''), 2500)
+    return
+  }
+  setEtapa('comanda')
 }
 
 function handleComandaLida(codigo) {
-  setComanda(codigo)
-  onConfirmar(itens, codigo)  // ← itens ainda estão cheios aqui
-  onLimpar()                  // ← limpa só depois de salvar
-  setEtapa('sucesso')
-  setTimeout(() => onFechar(), 2500)
+  onConfirmar(itens, codigo)  // salva no banco
+  onLimpar()                  // limpa o carrinho
+  onFechar()                  // fecha tudo imediatamente
 }
 
   return (
     <>
-      <div className="modal-overlay carrinho-overlay" onClick={onFechar}>
+      <div className="modal-overlay carrinho-overlay" onClick={onFechar} style={etapa === 'comanda' ? { display: 'none' } : {}}>
         <div className="carrinho" onClick={(e) => e.stopPropagation()}>
 
           {etapa === 'sucesso' ? (
@@ -107,7 +110,7 @@ function handleComandaLida(codigo) {
                   <strong>R$ {total.toFixed(2).replace('.', ',')}</strong>
                 </div>
                 {mensagemErro && (
-                  <p className="carrinho-erro">Adicione pelo menos um produto!</p>
+                  <p className="carrinho-erro">{mensagemErro}</p>
                 )}
                 <button className="carrinho-btn-confirmar" onClick={handleConfirmar}>
                   Confirmar Pedido

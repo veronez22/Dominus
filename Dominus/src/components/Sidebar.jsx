@@ -17,7 +17,7 @@ const iconesPrincipais = {
   combos:    <Package size={22} />,
 }
 
-function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar }) {
+function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar, mesa }) {
   const [modalAvaliacao, setModalAvaliacao] = useState(false)
   const [modalTermos, setModalTermos] = useState(false)
 
@@ -99,7 +99,7 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar }) {
       </div>
 
       {modalAvaliacao && (
-        <ModalAvaliacao onFechar={() => setModalAvaliacao(false)} />
+        <ModalAvaliacao onFechar={() => setModalAvaliacao(false)} mesa={mesa} />
       )}
 
       {modalTermos && (
