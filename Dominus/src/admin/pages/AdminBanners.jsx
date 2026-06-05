@@ -93,6 +93,7 @@ export default function AdminBanners() {
                 <div className="ban-textos">
                   <div className="ban-titulo">{b.titulo || <span className="ban-sem-texto">Sem título</span>}</div>
                   <div className="ban-subtitulo">{b.subtitulo || <span className="ban-sem-texto">Sem subtítulo</span>}</div>
+                  {b.btn_texto && <div className="ban-btn-preview">🔘 Botão: "{b.btn_texto}"</div>}
                 </div>
                 <div className="ban-actions">
                   <div className="ban-ordem">
@@ -130,7 +131,7 @@ export default function AdminBanners() {
 
 /* ── Modal de novo banner ── */
 function ModalNovoBanner({ onSalvar, onFechar }) {
-  const [form,      setForm]      = useState({ titulo: '', subtitulo: '', imagem_url: '' })
+  const [form,      setForm]      = useState({ titulo: '', subtitulo: '', imagem_url: '', btn_texto: '', btn_destino: 'cardapio' })
   const [preview,   setPreview]   = useState(null)
   const [uploading, setUploading] = useState(false)
   const [erro,      setErro]      = useState('')
@@ -145,12 +146,6 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
     // Valida formato
     if (!FORMATOS.includes(arquivo.type)) {
       setErro('Formato inválido. Use JPG, PNG ou WEBP.')
-      return
-    }
-
-    // Valida tamanho em MB
-    if (arquivo.size > MAX_MB * 1024 * 1024) {
-      setErro(`Imagem muito grande. Máximo ${MAX_MB}MB.`)
       return
     }
 
@@ -211,6 +206,8 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
       imagem_url:     form.imagem_url,
       titulo:         form.titulo    || null,
       subtitulo:      form.subtitulo || null,
+      btn_texto:      form.btn_texto    || null,
+      btn_destino:    form.btn_texto ? (form.btn_destino || 'cardapio') : null,
       ordem:          proximaOrdem,
       ativo:          true,
     })
@@ -275,6 +272,31 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
               placeholder="Ex: Salgadas, doces e bebidas para todos os gostos."
             />
           </div>
+          <div className="mf-campo">
+            <label>Texto do Botão <span className="opcional">(opcional — aparece no banner do tablet)</span></label>
+            <input
+              value={form.btn_texto}
+              onChange={e => setForm(f => ({...f, btn_texto: e.target.value}))}
+              placeholder="Ex: Ver Cardápio, Aproveite!, Ver Combos"
+            />
+          </div>
+          {form.btn_texto && (
+            <div className="mf-campo">
+              <label>Destino do Botão</label>
+              <select value={form.btn_destino} onChange={e => setForm(f => ({...f, btn_destino: e.target.value}))}>
+                <option value="destaques">Destaques</option>
+                <option value="cardapio">Cardápio (Esfihas)</option>
+                <option value="combos">Combos</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="esfihas-doces">Esfihas Doces</option>
+                <option value="fogazzas">Fogazzas</option>
+                <option value="coxinhas">Coxinhas</option>
+                <option value="cigarretes">Cigarretes</option>
+                <option value="kibes">Kibes</option>
+                <option value="diversos">Diversos</option>
+              </select>
+            </div>
+          )}
 
           <div className="modal-footer">
             <button type="button" className="btn-cancelar" onClick={onFechar}>Cancelar</button>

@@ -231,7 +231,19 @@ async function confirmarPedido(itens, comanda) {
                     </div>
                   )}
                   {cat.id === 'destaques' ? (
-                    <Destaques onAdicionar={setProdutoSelecionado} produtos={produtos} />
+                    <Destaques
+                    onAdicionar={setProdutoSelecionado}
+                    produtos={produtos}
+                    onNavegar={(destino) => {
+                      if (!destino || destino === 'destaques') {
+                        scrollParaCategoria('destaques', 'destaques')
+                      } else if (destino === 'combos') {
+                        scrollParaCategoria('combos', 'combos')
+                      } else {
+                        scrollParaCategoria(destino, 'cardapio')
+                      }
+                    }}
+                  />
                   ) : (
                     itensDaCategoria.map((item) => (
                       <CardItem

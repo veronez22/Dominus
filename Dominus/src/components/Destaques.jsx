@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import './Destaques.css'
 
-function Destaques({ onAdicionar, produtos = [] }) {
+function Destaques({ onAdicionar, produtos = [], onNavegar }) {
   const [bannersDB,  setBannersDB]  = useState([])
   const [slideAtivo, setSlideAtivo] = useState(0)
 
@@ -40,11 +40,13 @@ function Destaques({ onAdicionar, produtos = [] }) {
 
   // Slides: produto destaque (se existir) + banners do banco
   const slidesPromo = bannersDB.map(b => ({
-    id:        b.id,
-    imagem:    b.imagem_url,
-    titulo:    b.titulo,
-    subtitulo: b.subtitulo,
-    tipo:      'promo',
+    id:          b.id,
+    imagem:      b.imagem_url,
+    titulo:      b.titulo,
+    subtitulo:   b.subtitulo,
+    btn_texto:   b.btn_texto,
+    btn_destino: b.btn_destino,
+    tipo:        'promo',
   }))
 
   const slides = itemPrincipal
@@ -88,6 +90,11 @@ function Destaques({ onAdicionar, produtos = [] }) {
             <>
               {slide.titulo    && <h1 className="destaques-banner-titulo">{slide.titulo}</h1>}
               {slide.subtitulo && <p className="destaques-banner-descricao">{slide.subtitulo}</p>}
+              {slide.btn_texto && (
+                <button className="destaques-banner-btn" onClick={() => onNavegar?.(slide.btn_destino)}>
+                  {slide.btn_texto}
+                </button>
+              )}
             </>
           )}
         </div>
