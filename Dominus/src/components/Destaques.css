@@ -156,8 +156,8 @@
 
 /* ── Card individual ── */
 .destaques-card {
-  min-width: 200px;
-  max-width: 200px;
+  min-width: 230px;
+  max-width: 230px;
   background: var(--bg-secundario);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -176,7 +176,7 @@
 .destaques-card-imagem-wrapper {
   position: relative;
   width: 100%;
-  height: 120px;
+  height: 145px;
 }
 
 .destaques-card-imagem {
@@ -214,10 +214,25 @@
   line-height: 1.3;
 }
 
+.destaques-card-precos {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .destaques-card-preco {
   font-size: 14px;
   font-weight: 700;
   color: var(--cor-primaria);
+  line-height: 1;
+}
+
+.destaques-card-preco-original {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  text-decoration: line-through;
+  line-height: 1;
 }
 
 .destaques-card-btn {

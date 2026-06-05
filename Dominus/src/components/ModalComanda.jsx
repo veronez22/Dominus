@@ -4,31 +4,33 @@ import { Html5Qrcode } from 'html5-qrcode'
 import './ModalComanda.css'
 
 function ModalComanda({ onFechar, onComandaLida }) {
-  const [etapa, setEtapa] = useState('lendo')
+  const [etapa,   setEtapa]   = useState('lendo') // 'lendo' | 'sucesso' | 'erro'
   const [comanda, setComanda] = useState(null)
   const [erroMsg, setErroMsg] = useState('')
   const scannerRef = useRef(null)
-  const rodandoRef = useRef(false)
+  const ativoRef   = useRef(false)
 
   useEffect(() => {
-    const scanner = new Html5Qrcode('qr-video-container')
-    scannerRef.current = scanner
+    let scanner
+    try {
+      scanner = new Html5Qrcode('qr-video-container')
+      scannerRef.current = scanner
+    } catch {
+      setEtapa('erro')
+      return
+    }
 
     scanner.start(
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 220, height: 220 } },
       (texto) => {
+        if (!ativoRef.current) return
         if (/^CMD-\d{4}$/.test(texto)) {
-          if (rodandoRef.current) {
-            rodandoRef.current = false
-            scanner.stop().catch(() => {})
-          }
+          pararScanner()
           setComanda(texto)
           setEtapa('sucesso')
-          setTimeout(() => {
-            onComandaLida(texto)
-            onFechar()
-          }, 2500)
+          onComandaLida(texto)
+          setTimeout(() => onFechar(), 2000)
         } else {
           setErroMsg('QR Code inválido. Use a comanda do estabelecimento.')
           setTimeout(() => setErroMsg(''), 2500)
@@ -36,18 +38,21 @@ function ModalComanda({ onFechar, onComandaLida }) {
       },
       () => {}
     ).then(() => {
-      rodandoRef.current = true
+      ativoRef.current = true
     }).catch(() => {
       setEtapa('erro')
     })
 
     return () => {
-      if (rodandoRef.current) {
-        rodandoRef.current = false
-        scanner.stop().catch(() => {})
-      }
+      ativoRef.current = false
+      try { scanner?.stop().catch(() => {}) } catch {}
     }
   }, [])
+
+  function pararScanner() {
+    ativoRef.current = false
+    try { scannerRef.current?.stop().catch(() => {}) } catch {}
+  }
 
   return (
     <div className="comanda-overlay" onClick={onFechar}>
@@ -57,6 +62,7 @@ function ModalComanda({ onFechar, onComandaLida }) {
           <X size={18} />
         </button>
 
+        {/* ── Câmera ── */}
         {etapa === 'lendo' && (
           <>
             <div className="comanda-topo">
@@ -80,20 +86,22 @@ function ModalComanda({ onFechar, onComandaLida }) {
           </>
         )}
 
+        {/* ── Sucesso ── */}
         {etapa === 'sucesso' && (
           <div className="comanda-sucesso">
             <CheckCircle size={72} strokeWidth={1.5} color="var(--cor-primaria)" />
-            <h2>Pedido Confirmado!</h2>
+            <h2>Pedido Registrado!</h2>
             <p>Comanda <strong>{comanda}</strong> vinculada com sucesso.</p>
           </div>
         )}
 
+        {/* ── Câmera indisponível ── */}
         {etapa === 'erro' && (
           <div className="comanda-sucesso">
             <X size={72} strokeWidth={1.5} color="#f55" />
             <h2 style={{ color: '#f55' }}>Câmera indisponível</h2>
-            <p>Não foi possível acessar a câmera. Verifique as permissões do navegador.</p>
-            <button className="comanda-btn-retry" onClick={onFechar}>Fechar</button>
+            <p>Não foi possível acessar a câmera.<br/>Chame um garçom para ajudar.</p>
+            <button className="comanda-btn-confirmar" onClick={onFechar}>Fechar</button>
           </div>
         )}
 

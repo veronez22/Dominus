@@ -1,20 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Clock, Camera } from 'lucide-react'
+import { X, Clock, Camera, ShoppingBag } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
+import { supabase } from '../lib/supabase'
 import './MinhaConta.css'
 
-function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
-  const [etapa, setEtapa] = useState('scanner')
-  const [comanda, setComanda] = useState(null)
-  const [erroMsg, setErroMsg] = useState('')
-  const scannerRef = useRef(null)
-  const rodandoRef = useRef(false)
+function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
+  const [etapa,            setEtapa]            = useState('scanner')
+  const [comanda,          setComanda]          = useState(null)
+  const [erroMsg,          setErroMsg]          = useState('')
+  const [pedidos,          setPedidos]          = useState([])
+  const [loadingPedidos,   setLoadingPedidos]   = useState(false)
+  const scannerRef  = useRef(null)
+  const rodandoRef  = useRef(false)
 
-  const pedidosDaComanda = historico.filter(p => p.comanda === comanda)
-  const totalGasto = pedidosDaComanda.reduce((s, p) => s + p.total, 0)
-  const totalItens = pedidosDaComanda.reduce((s, p) =>
-    s + p.itens.reduce((si, i) => si + i.quantidade, 0), 0)
+  const totalGasto = pedidos.reduce((s, p) => s + Number(p.total), 0)
+  const totalItens = pedidos.reduce((s, p) =>
+    s + (p.itens_pedido || []).reduce((si, i) => si + i.quantidade, 0), 0)
 
+  // ── Scanner ──
   useEffect(() => {
     if (etapa !== 'scanner') return
 
@@ -25,11 +28,10 @@ function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 220, height: 220 } },
       (texto) => {
+        if (!rodandoRef.current) return
         if (/^CMD-\d{4}$/.test(texto)) {
-          if (rodandoRef.current) {
-            rodandoRef.current = false
-            scanner.stop().catch(() => {})
-          }
+          rodandoRef.current = false
+          scanner.stop().catch(() => {})
           setComanda(texto)
           setEtapa('conta')
         } else {
@@ -38,11 +40,7 @@ function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
         }
       },
       () => {}
-    ).then(() => {
-      rodandoRef.current = true
-    }).catch(() => {
-      setEtapa('erro')
-    })
+    ).then(() => { rodandoRef.current = true }).catch(() => setEtapa('erro'))
 
     return () => {
       if (rodandoRef.current) {
@@ -52,11 +50,49 @@ function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
     }
   }, [etapa])
 
+  // ── Busca pedidos do caixa atual por comanda ──
+  useEffect(() => {
+    if (!comanda) return
+    async function buscar() {
+      setLoadingPedidos(true)
+
+      const { data: rest } = await supabase
+        .from('restaurantes').select('id').eq('slug', 'dominus').single()
+
+      const { data: caixa } = await supabase
+        .from('caixas')
+        .select('id')
+        .eq('restaurante_id', rest.id)
+        .is('fechado_em', null)
+        .single()
+
+      let query = supabase
+        .from('pedidos')
+        .select('*, itens_pedido(*)')
+        .eq('comanda', comanda)
+        .neq('status', 'baixa')
+        .order('criado_em', { ascending: true })
+
+      if (caixa) query = query.eq('caixa_id', caixa.id)
+
+      const { data } = await query
+      setPedidos(data || [])
+      setLoadingPedidos(false)
+    }
+    buscar()
+  }, [comanda])
+
+  const fmtHora  = (iso) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  const fmtPreco = (v)   => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+  const STATUS_LABEL = { recebido: 'Recebido', preparo: 'Em Preparo', pronto: 'Pronto ✓', entregue: 'Entregue ✓' }
+  const STATUS_COR   = { recebido: '#FFB84D', preparo: '#6fa3ef', pronto: '#4caf50', entregue: '#4caf50' }
+
   return (
     <div className="modal-overlay conta-overlay" onClick={onFechar}>
       <div className="conta-modal" onClick={(e) => e.stopPropagation()}>
 
-        {/* ── Scanner ── */}
+        {/* ══ SCANNER ══ */}
         {etapa === 'scanner' && (
           <>
             <div className="conta-header">
@@ -84,106 +120,98 @@ function MinhaConta({ mesa, historico, onFechar, onAbrirCarrinho }) {
           </>
         )}
 
-        {/* ── Conta da comanda ── */}
+        {/* ══ CONTA ══ */}
         {etapa === 'conta' && (
           <>
+            {/* Header */}
             <div className="conta-header">
               <div className="conta-header-info">
                 <h2>Minha Conta</h2>
-                <span>{comanda} · {mesa ? `Mesa ${mesa}` : 'Mesa não definida'}</span>
+                <span>{comanda}{mesa ? ` · Mesa ${mesa}` : ''}</span>
               </div>
               <button className="conta-btn-fechar" onClick={onFechar}><X size={20} /></button>
             </div>
 
-            <div className="conta-historico">
-              {pedidosDaComanda.length === 0 ? (
+            {/* Conteúdo */}
+            <div className="conta-corpo">
+              {loadingPedidos ? (
+                <div className="conta-vazio"><p>Carregando...</p></div>
+
+              ) : pedidos.length === 0 ? (
                 <div className="conta-vazio">
-                  <p>Nenhum pedido realizado nesta comanda.</p>
+                  <ShoppingBag size={48} strokeWidth={1.2} color="var(--texto-terciario)" />
+                  <p>Nenhum pedido nesta comanda ainda.</p>
                   <button className="conta-btn-pedir" onClick={() => { onFechar(); onAbrirCarrinho() }}>
                     Fazer pedido
                   </button>
                 </div>
-              ) : (
-                <>
-                  {[...pedidosDaComanda].reverse().map((pedido, idx) => (
-                    <div key={pedido.id} className="conta-pedido">
 
-                      {/* Header do pedido */}
-                      <div className="conta-pedido-header">
-                        <span className="conta-pedido-badge">
-                          Pedido #{pedidosDaComanda.length - idx}
-                        </span>
-                        <span className="conta-pedido-horario">
-                          <Clock size={13} />
-                          {pedido.horario}
+              ) : (
+                <div className="conta-recibo">
+                  {pedidos.map((pedido, idx) => (
+                    <div key={pedido.id} className="conta-grupo">
+
+                      {/* ── Separador de pedido ── */}
+                      <div className="conta-grupo-header">
+                        <div className="conta-grupo-linha">
+                          <span className="conta-grupo-num">Pedido #{idx + 1}</span>
+                          <span className="conta-grupo-hora">
+                            <Clock size={11} /> {fmtHora(pedido.criado_em)}
+                          </span>
+                        </div>
+                        <span className="conta-grupo-status" style={{ color: STATUS_COR[pedido.status] }}>
+                          {STATUS_LABEL[pedido.status]}
                         </span>
                       </div>
 
-                      {/* Itens com adicionais e obs */}
-                      <div className="conta-pedido-itens">
-                        {pedido.itens.map((item) => {
-                          const adicionais = item.extras?.adicionais || []
-                          const observacao = item.extras?.observacao || ''
-                          const gelo = item.extras?.gelo
-                          const limao = item.extras?.limao
-                          const formato = item.extras?.formato
+                      {/* ── Itens ── */}
+                      {(pedido.itens_pedido || []).length === 0 ? (
+                        <p className="conta-sem-itens">Itens não disponíveis</p>
+                      ) : (
+                        (pedido.itens_pedido || []).map(item => (
+                          <div key={item.id} className="conta-item">
+                            <span className="conta-item-qtd">{item.quantidade}x</span>
+                            <span className="conta-item-nome">{item.nome_snapshot}</span>
+                            {item.observacao && (
+                              <span className="conta-item-obs">{item.observacao}</span>
+                            )}
+                            <span className="conta-item-preco">
+                              {fmtPreco(Number(item.preco_snapshot) * item.quantidade)}
+                            </span>
+                          </div>
+                        ))
+                      )}
 
-                          const tags = [
-                            ...adicionais.map(a => `+ ${a}`),
-                            gelo ? 'Gelo' : null,
-                            limao ? 'Limão' : null,
-                            formato || null,
-                          ].filter(Boolean)
-
-                          return (
-                            <div key={item.id} className="conta-pedido-item">
-                              <div className="conta-item-esquerda">
-                                <div className="conta-item-linha">
-                                  <span className="conta-pedido-item-qtd">x{item.quantidade}</span>
-                                  <span className="conta-pedido-item-nome">{item.nome}</span>
-                                </div>
-                                {tags.length > 0 && (
-                                  <div className="conta-item-tags">
-                                    {tags.map((tag) => (
-                                      <span key={tag} className="conta-item-tag">{tag}</span>
-                                    ))}
-                                  </div>
-                                )}
-                                {observacao && (
-                                  <p className="conta-item-obs">Obs: {observacao}</p>
-                                )}
-                              </div>
-                              <span className="conta-pedido-item-preco">
-                                R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
-                              </span>
-                            </div>
-                          )
-                        })}
+                      {/* ── Subtotal do pedido ── */}
+                      <div className="conta-subtotal">
+                        <span>Subtotal</span>
+                        <span>{fmtPreco(Number(pedido.total))}</span>
                       </div>
 
                     </div>
                   ))}
-
-                  {/* Total destacado */}
-                  <div className="conta-total-destaque">
-                    <div>
-                      <p className="conta-total-label">Total da comanda</p>
-                      <p className="conta-total-valor">
-                        R$ {totalGasto.toFixed(2).replace('.', ',')}
-                      </p>
-                    </div>
-                    <div className="conta-total-info">
-                      <span>{pedidosDaComanda.length} {pedidosDaComanda.length === 1 ? 'pedido' : 'pedidos'} · {totalItens} {totalItens === 1 ? 'item' : 'itens'}</span>
-                      {mesa && <span>Mesa {mesa}</span>}
-                    </div>
-                  </div>
-                </>
+                </div>
               )}
             </div>
+
+            {/* Total fixo no rodapé */}
+            {pedidos.length > 0 && (
+              <div className="conta-rodape">
+                <div className="conta-rodape-info">
+                  <span>{pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}</span>
+                  <span>{totalItens} {totalItens !== 1 ? 'itens' : 'item'}</span>
+                  {mesa && <span>Mesa {mesa}</span>}
+                </div>
+                <div className="conta-rodape-total">
+                  <span>Total da comanda</span>
+                  <strong>{fmtPreco(totalGasto)}</strong>
+                </div>
+              </div>
+            )}
           </>
         )}
 
-        {/* ── Erro câmera ── */}
+        {/* ══ ERRO CÂMERA ══ */}
         {etapa === 'erro' && (
           <div className="conta-camera-erro">
             <X size={64} strokeWidth={1.5} color="#f55" />

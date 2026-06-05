@@ -219,3 +219,113 @@
   background: var(--cor-primaria-hover);
   transform: scale(1.03);
 }
+
+/* ── Botão digitar manualmente (câmera) ── */
+.comanda-btn-manual {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--texto-terciario);
+  padding: 9px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.comanda-btn-manual:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+/* ── Tela de entrada manual ── */
+.comanda-manual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.comanda-input {
+  width: 100%;
+  max-width: 260px;
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  color: var(--texto-principal);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+  padding: 16px;
+  letter-spacing: 4px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.comanda-input:focus {
+  border-color: var(--cor-primaria);
+}
+
+.comanda-input::placeholder {
+  color: var(--texto-terciario);
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+/* Remove setas do input number */
+.comanda-input::-webkit-outer-spin-button,
+.comanda-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.comanda-input[type=number] { -moz-appearance: textfield; }
+
+.comanda-manual-btns {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.comanda-btn-voltar {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--texto-secundario);
+  padding: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comanda-btn-voltar:hover {
+  border-color: var(--texto-terciario);
+}
+
+.comanda-btn-confirmar {
+  flex: 2;
+  background: var(--cor-primaria);
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  padding: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comanda-btn-confirmar:hover {
+  background: var(--cor-primaria-hover);
+  transform: scale(1.02);
+}

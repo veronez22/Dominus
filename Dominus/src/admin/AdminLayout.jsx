@@ -4,11 +4,13 @@ import AdminDashboard from './pages/AdminDashboard'
 import AdminProdutos from './pages/AdminProdutos'
 import AdminBanners from './pages/AdminBanners'
 import AdminAvaliacoes from './pages/AdminAvaliacoes'
+import AdminPedidos from './pages/AdminPedidos'
+import AdminRelatorios from './pages/AdminRelatorios'
 import './AdminLayout.css'
 
 const NAV_GERAL = [
   { to: '/admin',          label: 'Dashboard', end: true, icon: <IconDashboard /> },
-  { to: '/admin/pedidos',  label: 'Pedidos',              icon: <IconOrders /> },
+  { to: '/admin/pedidos',  label: 'Comandas',             icon: <IconOrders /> },
 ]
 
 const NAV_CARDAPIO = [
@@ -75,9 +77,9 @@ export default function AdminLayout() {
           <Route index           element={<AdminDashboard />} />
           <Route path="produtos" element={<AdminProdutos />} />
           <Route path="banners"  element={<AdminBanners />} />
-          <Route path="pedidos"    element={<EmBreve titulo="Pedidos" />} />
+          <Route path="pedidos"    element={<AdminPedidos />} />
           <Route path="avaliacoes" element={<AdminAvaliacoes />} />
-          <Route path="relatorios" element={<EmBreve titulo="Relatórios" />} />
+          <Route path="relatorios" element={<AdminRelatorios />} />
           <Route path="configuracoes" element={<EmBreve titulo="Configurações" />} />
         </Routes>
       </main>

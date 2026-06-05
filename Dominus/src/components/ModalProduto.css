@@ -1,379 +1,328 @@
-.modal-overlay {
+/* ══ OVERLAY ══ */
+.mp-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
   z-index: 200;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   animation: fadeIn 0.2s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-/* ── Modal container ── */
-.modal {
-  background: var(--bg-secundario);
-  border-radius: 20px;
-  width: 860px;
-  max-width: 92vw;
-  height: 600px;
-  max-height: 88vh;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  animation: slideUp 0.25s ease;
-  border: 1px solid var(--border);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-}
-
-/* ── Imagem ── */
-.modal-imagem-wrapper {
-  width: 280px;
-  min-width: 280px;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-  
-}
-
-.modal-imagem {
+/* ══ SHEET — sobe de baixo ══ */
+.mp-sheet {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.modal:hover .modal-imagem {
-  transform: scale(1.04);
-}
-
-.modal-imagem-badge {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  background: var(--cor-primaria);
-  color: #1a1a1a;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 4px 12px;
-  border-radius: 999px;
-}
-
-/* ── Botão fechar ── */
-.modal-fechar {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
-}
-
-.modal-fechar:hover {
-  background: rgba(255, 80, 80, 0.4);
-  border-color: rgba(255, 80, 80, 0.3);
-  transform: scale(1.1) rotate(90deg);
-}
-
-/* ── Conteúdo direito ── */
-.modal-conteudo {
-  flex: 1;
-  padding: 24px 24px 20px;
+  max-width: 700px;
+  max-height: 94vh;
+  background: #181818;
+  border-radius: 28px 28px 0 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  animation: sheetUp 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Handle ── */
+.mp-handle {
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  margin: 12px auto 0;
+  flex-shrink: 0;
+}
+
+/* ── Hero ── */
+.mp-hero {
+  position: relative;
+  height: 240px;
+  flex-shrink: 0;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.mp-hero-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mp-hero-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #181818 0%, transparent 55%);
+}
+
+.mp-hero-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: #FFB84D;
+  color: #111;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mp-fechar {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 38px; height: 38px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+.mp-fechar:hover { background: rgba(255,80,80,0.3); }
+
+/* ── Corpo scrollável ── */
+.mp-corpo {
+  flex: 1;
   overflow-y: auto;
+  padding: 0 24px 16px;
   scrollbar-width: none;
 }
-
-.modal-conteudo::-webkit-scrollbar {
-  display: none;
-}
+.mp-corpo::-webkit-scrollbar { display: none; }
 
 /* ── Cabeçalho ── */
-.modal-cabecalho {
+.mp-cabecalho {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-right: 36px;
+  gap: 16px;
+  padding: 20px 0 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.modal-nome {
-  font-size: 25px;
-  font-weight: 700;
-  color: var(--texto-principal);
-  margin: 0 0 6px;
+.mp-nome {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
   line-height: 1.2;
 }
 
-.modal-descricao {
-  font-size: 17px;
-  color: var(--texto-secundario);
-  line-height: 1.6;
-  margin: 0;
+.mp-desc {
+  font-size: 14px;
+  color: #666;
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
-.modal-preco {
-  font-size: 22px;
+.mp-precos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mp-preco-original {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  text-decoration: line-through;
+  line-height: 1;
+}
+
+.mp-preco {
+  font-size: 24px;
   font-weight: 800;
-  color: var(--cor-primaria);
+  color: #FFB84D;
   white-space: nowrap;
   letter-spacing: -0.5px;
+  flex-shrink: 0;
 }
 
-/* ── Divisor ── */
-.modal-divisor {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 16px;
+/* ── Seção ── */
+.mp-secao {
+  padding-top: 20px;
 }
 
-/* ── Seções ── */
-.modal-secao {
-  margin-bottom: 14px;
-}
-
-.modal-secao-obs {
-  flex: 1;
-}
-
-.modal-secao-titulo {
-  font-size: 15px;
+.mp-secao-titulo {
+  font-size: 12px;
   font-weight: 700;
-  color: var(--texto-terciario);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin: 0 0 10px;
+  letter-spacing: 1.5px;
+  color: #555;
+  margin-bottom: 12px;
 }
 
 /* ── Pills ── */
-.modal-pills {
+.mp-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.modal-pill {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--texto-secundario);
-  border-radius: 999px;
-  padding: 6px 14px;
+.mp-pill {
+  background: #242424;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px 18px;
   font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   font-weight: 600;
+  color: #ccc;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mp-pill:active { transform: scale(0.95); }
+
+.mp-pill--ativo {
+  background: rgba(255,184,77,0.12);
+  border-color: #FFB84D;
+  color: #FFB84D;
+}
+
+.mp-pill--add {
   display: flex;
-  align-items: center;
-  gap: 2px;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
 }
 
-.modal-pill:hover {
-  border-color: var(--cor-primaria);
-  color: var(--texto-principal);
-}
-
-.modal-pill.ativo {
-  border-color: var(--cor-primaria);
-  background: rgba(255, 184, 77, 0.12);
-  color: var(--cor-primaria);
-}
-
-.modal-pill-preco {
-  color: var(--texto-terciario);
+.mp-pill-preco {
+  font-size: 12px;
   font-weight: 500;
+  color: #555;
 }
-
-.modal-pill.ativo .modal-pill-preco {
-  color: var(--cor-primaria);
-  opacity: 0.8;
-}
+.mp-pill--ativo .mp-pill-preco { color: rgba(255,184,77,0.6); }
 
 /* ── Copos ── */
-.modal-copos {
+.mp-copos {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 12px;
-  padding: 10px 14px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #242424;
+  border: 1.5px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
 }
 
-.modal-copos-label {
-  font-size: 13px;
-  color: var(--texto-secundario);
-  font-weight: 500;
-}
-
-.modal-copos-contador {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.modal-copos-contador button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--texto-terciario);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.modal-copos-contador button:hover {
-  background: rgba(255, 184, 77, 0.12);
-  color: var(--cor-primaria);
-}
-
-.modal-copos-contador span {
+.mp-copos-label {
   font-size: 14px;
-  font-weight: 700;
-  color: var(--texto-principal);
-  min-width: 28px;
-  text-align: center;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: 600;
+  color: #ccc;
 }
 
 /* ── Textarea ── */
-.modal-textarea {
+.mp-textarea {
   width: 100%;
-  height: 64px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
+  background: #242424;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  color: #fff;
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  color: var(--texto-principal);
+  font-size: 14px;
+  padding: 14px 16px;
   resize: none;
+  height: 80px;
   outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
 }
+.mp-textarea:focus { border-color: rgba(255,184,77,0.4); }
+.mp-textarea::placeholder { color: #444; }
 
-.modal-textarea:focus {
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
-}
-
-/* ── Rodapé ── */
-.modal-rodape {
+/* ── Contador ── */
+.mp-contador {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  margin-top: auto;
-}
-
-/* ── Quantidade ── */
-.modal-quantidade {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  background: #242424;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.modal-quantidade button {
+.mp-contador--sm .mp-contador-btn { width: 38px; height: 42px; }
+.mp-contador--sm .mp-contador-num  { min-width: 32px; height: 42px; font-size: 15px; }
+
+.mp-contador-btn {
+  width: 50px; height: 54px;
   background: transparent;
   border: none;
+  color: #FFB84D;
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
-  color: var(--texto-terciario);
-  width: 38px;
-  height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-contador-btn:hover { background: rgba(255,184,77,0.1); }
+.mp-contador-btn:active { background: rgba(255,184,77,0.2); }
+
+.mp-contador-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  min-width: 40px;
+  text-align: center;
+  border-left: 1.5px solid rgba(255,255,255,0.08);
+  border-right: 1.5px solid rgba(255,255,255,0.08);
+  height: 54px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Rodapé ── */
+.mp-rodape {
+  flex-shrink: 0;
+  padding: 16px 24px 28px;
+  background: #181818;
+  border-top: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  gap: 14px;
 }
 
-.modal-quantidade button:hover {
-  background: rgba(255, 184, 77, 0.12);
-  color: var(--cor-primaria);
+.mp-btns {
+  flex: 1;
+  display: flex;
+  gap: 10px;
 }
 
-.modal-quantidade span {
+.mp-btn {
+  border-radius: 14px;
+  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  color: var(--texto-principal);
-  min-width: 32px;
-  text-align: center;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ── Botão adicionar ── */
-.modal-btn-adicionar {
-  flex: 1;
-  background: var(--cor-primaria);
-  border: none;
-  border-radius: 10px;
-  color: #1a1a1a;
-  padding: 12px 20px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  height: 54px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  padding: 0 20px;
 }
 
-.modal-btn-adicionar:hover {
-  background: var(--cor-primaria-hover);
-  transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.3);
+.mp-btn--sec {
+  flex: 0 0 auto;
+  background: #242424;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  color: #aaa;
 }
+.mp-btn--sec:hover  { border-color: #555; color: #fff; }
+.mp-btn--sec:active { transform: scale(0.96); }
 
-.modal-btn-adicionar:active {
-  transform: scale(0.97);
+.mp-btn--pri {
+  flex: 1;
+  background: #FFB84D;
+  color: #111;
 }
+.mp-btn--pri:hover  { background: #ffc55a; box-shadow: 0 6px 24px rgba(255,184,77,0.35); }
+.mp-btn--pri:active { transform: scale(0.97); }

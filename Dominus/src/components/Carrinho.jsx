@@ -1,33 +1,46 @@
 import { useState } from 'react'
-import { X, ShoppingCart, CheckCircle } from 'lucide-react'
+import { X, ShoppingCart, CheckCircle, Minus, Plus } from 'lucide-react'
 import ModalComanda from './ModalComanda'
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover, onFechar, onConfirmar, onLimpar, mesa }) {
-  const [etapa, setEtapa] = useState('carrinho')  // 'carrinho' | 'comanda' | 'sucesso'
+function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar, mesa }) {
+  const [etapa,        setEtapa]        = useState('carrinho')
   const [mensagemErro, setMensagemErro] = useState('')
-  const [comanda, setComanda] = useState(null)
+  const [comanda,      setComanda]      = useState(null)
+  const [finalizando,  setFinalizando]  = useState(false)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
-function handleConfirmar() {
-  if (itens.length === 0) {
-    setMensagemErro('Adicione pelo menos um produto!')
-    setTimeout(() => setMensagemErro(''), 2500)
-    return
+  function handleConfirmar() {
+    if (itens.length === 0) {
+      setMensagemErro('Adicione pelo menos um produto!')
+      setTimeout(() => setMensagemErro(''), 5000)
+      return
+    }
+    if (!mesa) {
+      setMensagemErro('Defina o número da mesa antes de confirmar.')
+      setTimeout(() => setMensagemErro(''), 5000)
+      return
+    }
+    setEtapa('comanda')
   }
-  if (!mesa) {
-    setMensagemErro('Defina o número da mesa antes de confirmar.')
-    setTimeout(() => setMensagemErro(''), 2500)
-    return
-  }
-  setEtapa('comanda')
-}
 
-function handleComandaLida(codigo) {
-  onConfirmar(itens, codigo)  // salva no banco
-  onLimpar()                  // limpa o carrinho
-  onFechar()                  // fecha tudo imediatamente
-}
+  async function handleComandaLida(codigo) {
+    if (finalizando) return
+    setFinalizando(true)
+    try {
+      await onConfirmar(itens, codigo)  // salva no banco
+      onLimpar()                         // limpa o carrinho
+      setComanda(codigo)
+      setEtapa('sucesso')
+      setTimeout(() => onFechar(), 3000) // fecha após 3s mostrando o sucesso
+    } catch {
+      setMensagemErro('Erro ao salvar pedido. Tente novamente.')
+      setTimeout(() => setMensagemErro(''), 5000)
+      setEtapa('carrinho')
+    } finally {
+      setFinalizando(false)
+    }
+  }
 
   return (
     <>
@@ -73,20 +86,31 @@ function handleComandaLida(codigo) {
                     ].filter(Boolean)
 
                     return (
-                      <div key={item.id} className="carrinho-item">
+                      <div key={item._key || item.id} className="carrinho-item">
                         <div className="carrinho-item-info">
                           <div className="carrinho-item-topo">
                             <p>{item.nome}</p>
                             <button
                               className="carrinho-item-remover"
-                              onClick={() => onRemover(item.id)}
+                              onClick={() => onRemover(item._key)}
                             >
                               <X size={13} />
                             </button>
                           </div>
-                          <span className="carrinho-item-preco">
-                            x{item.quantidade} · R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
-                          </span>
+                          <div className="carrinho-item-qtd-row">
+                            <div className="carrinho-item-contador">
+                              <button className="carrinho-qtd-btn" onClick={() => onAlterar(item._key, item.quantidade - 1)}>
+                                <Minus size={12} />
+                              </button>
+                              <span className="carrinho-qtd-num">{item.quantidade}</span>
+                              <button className="carrinho-qtd-btn" onClick={() => onAlterar(item._key, item.quantidade + 1)}>
+                                <Plus size={12} />
+                              </button>
+                            </div>
+                            <span className="carrinho-item-preco">
+                              R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
+                            </span>
+                          </div>
                           {tagExtras.length > 0 && (
                             <div className="carrinho-item-tags">
                               {tagExtras.map((tag) => (
@@ -112,9 +136,18 @@ function handleComandaLida(codigo) {
                 {mensagemErro && (
                   <p className="carrinho-erro">{mensagemErro}</p>
                 )}
-                <button className="carrinho-btn-confirmar" onClick={handleConfirmar}>
-                  Confirmar Pedido
-                </button>
+                <div className="carrinho-footer-btns">
+                  <button className="carrinho-btn-pedir-mais" onClick={onFechar}>
+                    Pedir Mais
+                  </button>
+                  <button
+                    className="carrinho-btn-confirmar"
+                    onClick={handleConfirmar}
+                    disabled={finalizando}
+                  >
+                    {finalizando ? 'Salvando...' : 'Finalizar Pedido'}
+                  </button>
+                </div>
               </div>
             </>
           )}

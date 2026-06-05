@@ -11,19 +11,17 @@ const ADICIONAIS = [
 
 const CATEGORIAS_UPSELL = ['esfihas', 'cigarretes']
 
-function ModalProduto({ produto, onFechar, onAdicionar }) {
-  const [quantidade, setQuantidade] = useState(1)
-  const [observacao, setObservacao] = useState('')
-  const [gelo, setGelo] = useState(false)
-  const [limao, setLimao] = useState(false)
-  const [copos, setCopos] = useState(1)
-  const [formatoSelecionado, setFormatoSelecionado] = useState(
-    produto.formatos?.[0] || null
-  )
+function ModalProduto({ produto, onFechar, onAdicionar, onPedirAgora }) {
+  const [quantidade,             setQuantidade]             = useState(1)
+  const [observacao,             setObservacao]             = useState('')
+  const [gelo,                   setGelo]                   = useState(false)
+  const [limao,                  setLimao]                  = useState(false)
+  const [copos,                  setCopos]                  = useState(1)
+  const [formatoSelecionado,     setFormatoSelecionado]     = useState(produto.formatos?.[0] || null)
   const [adicionaisSelecionados, setAdicionaisSelecionados] = useState([])
 
-  const temUpsell = CATEGORIAS_UPSELL.includes(produto.categoria)
-  const ehBebida = produto.categoria === 'bebidas'
+  const temUpsell  = CATEGORIAS_UPSELL.includes(produto.categoria)
+  const ehBebida   = produto.categoria === 'bebidas'
   const temFormatos = produto.formatos && produto.formatos.length > 1
 
   const totalAdicionais = adicionaisSelecionados.reduce((s, id) => {
@@ -31,7 +29,9 @@ function ModalProduto({ produto, onFechar, onAdicionar }) {
     return s + (a?.preco || 0)
   }, 0)
 
-  const precoTotal = (produto.preco + totalAdicionais) * quantidade
+  const precoBase  = produto.precoPromo ?? produto.preco
+  const precoUnit  = precoBase + totalAdicionais
+  const precoTotal = precoUnit * quantidade
 
   function toggleAdicional(id) {
     setAdicionaisSelecionados(prev =>
@@ -39,11 +39,11 @@ function ModalProduto({ produto, onFechar, onAdicionar }) {
     )
   }
 
-  function handleConfirmar() {
-    onAdicionar({
+  function montarItem() {
+    return {
       ...produto,
       quantidade,
-      preco: produto.preco + totalAdicionais,
+      preco: precoUnit,
       extras: {
         gelo,
         limao,
@@ -52,53 +52,60 @@ function ModalProduto({ produto, onFechar, onAdicionar }) {
         adicionais: adicionaisSelecionados,
         observacao,
       }
-    })
+    }
+  }
+
+  function handleAdicionar() {
+    onAdicionar(montarItem())
     onFechar()
   }
 
+  function handlePedirAgora() {
+    onAdicionar(montarItem())
+    onFechar()
+    onPedirAgora?.()
+  }
+
   return (
-    <div className="modal-overlay" onClick={onFechar}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className="mp-overlay" onClick={onFechar}>
+      <div className="mp-sheet" onClick={e => e.stopPropagation()}>
 
-        <button className="modal-fechar" onClick={onFechar}>
-          <X size={18} />
-        </button>
+        <div className="mp-handle" />
 
-        {/* Imagem */}
-        <div className="modal-imagem-wrapper">
-          <img src={produto.imagem} alt={produto.nome} className="modal-imagem" />
-          {produto.badge && (
-            <span className="modal-imagem-badge">{produto.badge}</span>
-          )}
+        {/* ── Hero ── */}
+        <div className="mp-hero">
+          {produto.imagem && <img src={produto.imagem} alt={produto.nome} className="mp-hero-img" />}
+          <div className="mp-hero-grad" />
+          {produto.badge && <span className="mp-hero-badge">{produto.badge}</span>}
+          <button className="mp-fechar" onClick={onFechar}><X size={18} /></button>
         </div>
 
-        {/* Conteúdo */}
-        <div className="modal-conteudo">
+        {/* ── Corpo ── */}
+        <div className="mp-corpo">
 
-          {/* Cabeçalho */}
-          <div className="modal-cabecalho">
+          <div className="mp-cabecalho">
             <div>
-              <h2 className="modal-nome">{produto.nome}</h2>
-              <p className="modal-descricao">{produto.descricao}</p>
+              <h2 className="mp-nome">{produto.nome}</h2>
+              {produto.descricao && <p className="mp-desc">{produto.descricao}</p>}
             </div>
-            <span className="modal-preco">
-              R$ {produto.preco.toFixed(2).replace('.', ',')}
-            </span>
+            <div className="mp-precos">
+              {produto.precoPromo
+                ? <>
+                    <span className="mp-preco-original">R$ {produto.preco.toFixed(2).replace('.', ',')}</span>
+                    <span className="mp-preco">R$ {produto.precoPromo.toFixed(2).replace('.', ',')}</span>
+                  </>
+                : <span className="mp-preco">R$ {produto.preco.toFixed(2).replace('.', ',')}</span>
+              }
+            </div>
           </div>
 
-          <div className="modal-divisor" />
-
-          {/* Formatos — só se tiver mais de um */}
+          {/* Formatos */}
           {temFormatos && (
-            <div className="modal-secao">
-              <p className="modal-secao-titulo">Tamanho</p>
-              <div className="modal-pills">
-                {produto.formatos.map((f) => (
-                  <button
-                    key={f}
-                    className={`modal-pill ${formatoSelecionado === f ? 'ativo' : ''}`}
-                    onClick={() => setFormatoSelecionado(f)}
-                  >
+            <div className="mp-secao">
+              <p className="mp-secao-titulo">Tamanho</p>
+              <div className="mp-pills">
+                {produto.formatos.map(f => (
+                  <button key={f} className={`mp-pill ${formatoSelecionado === f ? 'mp-pill--ativo' : ''}`} onClick={() => setFormatoSelecionado(f)}>
                     {f}
                   </button>
                 ))}
@@ -106,58 +113,36 @@ function ModalProduto({ produto, onFechar, onAdicionar }) {
             </div>
           )}
 
-          {/* Opções bebidas */}
+          {/* Opções bebida */}
           {ehBebida && (
-            <div className="modal-secao">
-              <p className="modal-secao-titulo">Opções</p>
-              <div className="modal-pills">
-                <button
-                  className={`modal-pill ${gelo ? 'ativo' : ''}`}
-                  onClick={() => setGelo(g => !g)}
-                >
-                  Gelo
-                </button>
-                <button
-                  className={`modal-pill ${limao ? 'ativo' : ''}`}
-                  onClick={() => setLimao(l => !l)}
-                >
-                  Limão
-                </button>
+            <div className="mp-secao">
+              <p className="mp-secao-titulo">Opções</p>
+              <div className="mp-pills">
+                <button className={`mp-pill ${gelo ? 'mp-pill--ativo' : ''}`} onClick={() => setGelo(g => !g)}>Gelo</button>
+                <button className={`mp-pill ${limao ? 'mp-pill--ativo' : ''}`} onClick={() => setLimao(l => !l)}>Limão</button>
               </div>
-
-              {/* Quantidade de copos */}
-              <div className="modal-copos">
-                <span className="modal-copos-label">Quantidade de copos</span>
-                <div className="modal-copos-contador">
-                  <button onClick={() => setCopos(c => Math.max(1, c - 1))}>
-                    <Minus size={14} />
-                  </button>
-                  <span>{copos}</span>
-                  <button onClick={() => setCopos(c => c + 1)}>
-                    <Plus size={14} />
-                  </button>
+              <div className="mp-copos">
+                <span className="mp-copos-label">Quantidade de copos</span>
+                <div className="mp-contador mp-contador--sm">
+                  <button className="mp-contador-btn" onClick={() => setCopos(c => Math.max(1, c - 1))}><Minus size={14}/></button>
+                  <span className="mp-contador-num">{copos}</span>
+                  <button className="mp-contador-btn" onClick={() => setCopos(c => c + 1)}><Plus size={14}/></button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Adicionais — só esfihas e cigarretes */}
+          {/* Adicionais */}
           {temUpsell && (
-            <div className="modal-secao">
-              <p className="modal-secao-titulo">Adicionais</p>
-              <div className="modal-pills">
-                {ADICIONAIS.map((a) => {
+            <div className="mp-secao">
+              <p className="mp-secao-titulo">Adicionais</p>
+              <div className="mp-pills">
+                {ADICIONAIS.map(a => {
                   const ativo = adicionaisSelecionados.includes(a.id)
                   return (
-                    <button
-                      key={a.id}
-                      className={`modal-pill ${ativo ? 'ativo' : ''}`}
-                      onClick={() => toggleAdicional(a.id)}
-                    >
-                      {a.label}
-                      <span className="modal-pill-preco">
-                        {a.preco === 0 ? ' · Grátis' : ` · + R$ ${a.preco.toFixed(2).replace('.', ',')}`}
-                      </span>
+                    <button key={a.id} className={`mp-pill mp-pill--add ${ativo ? 'mp-pill--ativo' : ''}`} onClick={() => toggleAdicional(a.id)}>
+                      <span>{a.label}</span>
+                      <span className="mp-pill-preco">{a.preco === 0 ? 'Grátis' : `+ R$ ${a.preco.toFixed(2).replace('.', ',')}`}</span>
                     </button>
                   )
                 })}
@@ -166,33 +151,33 @@ function ModalProduto({ produto, onFechar, onAdicionar }) {
           )}
 
           {/* Observação */}
-          <div className="modal-secao modal-secao-obs">
-            <p className="modal-secao-titulo">Observação</p>
+          <div className="mp-secao">
+            <p className="mp-secao-titulo">Observação</p>
             <textarea
-              className="modal-textarea"
+              className="mp-textarea"
               placeholder="Ex: sem cebola, bem passado..."
               value={observacao}
-              onChange={(e) => setObservacao(e.target.value)}
+              onChange={e => setObservacao(e.target.value)}
             />
           </div>
 
-          {/* Rodapé */}
-          <div className="modal-rodape">
-            <div className="modal-quantidade">
-              <button onClick={() => setQuantidade(q => Math.max(1, q - 1))}>
-                <Minus size={15} />
-              </button>
-              <span>{quantidade}</span>
-              <button onClick={() => setQuantidade(q => q + 1)}>
-                <Plus size={15} />
-              </button>
-            </div>
-            <button className="modal-btn-adicionar" onClick={handleConfirmar}>
-              Adicionar · R$ {precoTotal.toFixed(2).replace('.', ',')}
+        </div>
+
+        {/* ── Rodapé fixo ── */}
+        <div className="mp-rodape">
+          <div className="mp-contador">
+            <button className="mp-contador-btn" onClick={() => setQuantidade(q => Math.max(1, q - 1))}><Minus size={16}/></button>
+            <span className="mp-contador-num">{quantidade}</span>
+            <button className="mp-contador-btn" onClick={() => setQuantidade(q => q + 1)}><Plus size={16}/></button>
+          </div>
+          <div className="mp-btns">
+            <button className="mp-btn mp-btn--sec" onClick={handleAdicionar}>Adicionar</button>
+            <button className="mp-btn mp-btn--pri" onClick={handlePedirAgora}>
+              Pedir Agora · R$ {precoTotal.toFixed(2).replace('.', ',')}
             </button>
           </div>
-
         </div>
+
       </div>
     </div>
   )

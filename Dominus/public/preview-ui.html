@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Preview UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; font-family: 'DM Sans', sans-serif; color: #fff; }
+
+    /* ══ LAYOUT GERAL ══ */
+    .app {
+      display: grid;
+      grid-template-rows: 70px 1fr;
+      grid-template-columns: 80px 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ══ HEADER ══ */
+    .header {
+      grid-column: 1 / -1;
+      background: #161616;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #FFB84D;
+      flex-shrink: 0;
+    }
+
+    .header-busca {
+      flex: 1;
+      max-width: 460px;
+      position: relative;
+    }
+
+    .header-busca-input {
+      width: 100%;
+      background: #222;
+      border: 1.5px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 11px 16px 11px 40px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .header-busca-input:focus { border-color: rgba(255,184,77,0.4); }
+    .header-busca-input::placeholder { color: #444; }
+
+    .header-busca-icon {
+      position: absolute;
+      left: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: #444;
+      font-size: 15px;
+    }
+
+    .header-acoes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .header-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      color: #aaa;
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .header-btn:hover { border-color: rgba(255,184,77,0.4); color: #FFB84D; }
+
+    .header-btn-icon { font-size: 18px; }
+
+    .header-mesa {
+      background: rgba(255,184,77,0.1);
+      border: 1.5px solid rgba(255,184,77,0.3);
+      color: #FFB84D;
+      border-radius: 14px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .header-carrinho {
+      background: #FFB84D;
+      border: none;
+      border-radius: 14px;
+      color: #111;
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .header-carrinho:hover { background: #ffc55a; transform: scale(1.03); }
+
+    .header-badge {
+      background: #111;
+      color: #FFB84D;
+      font-size: 11px;
+      font-weight: 800;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ══ SIDEBAR ══ */
+    .sidebar {
+      background: #161616;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      gap: 4px;
+      overflow-y: auto;
+    }
+
+    .sidebar-btn {
+      width: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      color: #555;
+      padding: 12px 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sidebar-btn:hover { background: rgba(255,255,255,0.05); color: #aaa; }
+
+    .sidebar-btn.ativo {
+      background: rgba(255,184,77,0.12);
+      color: #FFB84D;
+    }
+
+    .sidebar-btn-icon { font-size: 22px; }
+
+    .sidebar-divider {
+      width: 36px; height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 8px 0;
+    }
+
+    .sidebar-rodape {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      width: 100%;
+    }
+
+    .sidebar-link {
+      font-size: 9px;
+      font-weight: 600;
+      color: #444;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-link:hover { color: #FFB84D; }
+
+    /* ══ MAIN ══ */
+    .main { background: #141414; padding: 20px; overflow-y: auto; }
+
+    /* ══ CARRINHO MODAL ══ */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .carrinho {
+      width: 420px;
+      height: 100vh;
+      background: #181818;
+      display: flex;
+      flex-direction: column;
+      animation: slideLeft 0.3s cubic-bezier(0.34, 1.1, 0.64, 1);
+    }
+
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to   { transform: translateX(0); }
+    }
+
+    .carr-header {
+      padding: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .carr-titulo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 20px; font-weight: 800; color: #fff;
+    }
+
+    .carr-titulo-icon { font-size: 22px; }
+
+    .carr-fechar {
+      width: 36px; height: 36px;
+      background: #242424;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50%;
+      color: #aaa;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .carr-fechar:hover { background: rgba(255,80,80,0.2); color: #f55; }
+
+    .carr-itens {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scrollbar-width: none;
+    }
+
+    .carr-item {
+      background: #222;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .carr-item-img {
+      width: 56px; height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #2a2a2a;
+      flex-shrink: 0;
+      font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .carr-item-info { flex: 1; }
+
+    .carr-item-nome { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .carr-item-extra { font-size: 12px; color: #555; }
+
+    .carr-item-dir {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .carr-item-preco { font-size: 16px; font-weight: 800; color: #FFB84D; }
+
+    .carr-item-remover {
+      background: none; border: none;
+      color: #444; font-size: 16px; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .carr-item-remover:hover { color: #f55; }
+
+    .carr-footer {
+      padding: 20px 24px 28px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: #181818;
+    }
+
+    .carr-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .carr-total-label { font-size: 14px; color: #555; }
+    .carr-total-valor { font-size: 28px; font-weight: 800; color: #FFB84D; letter-spacing: -1px; }
+
+    .carr-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .carr-btn-sec {
+      flex: 0 0 auto;
+      background: #242424;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      color: #aaa;
+      padding: 0 20px;
+      height: 54px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .carr-btn-sec:hover { border-color: #555; color: #fff; }
+
+    .carr-btn-pri {
+      flex: 1;
+      background: #FFB84D;
+      border: none;
+      border-radius: 14px;
+      color: #111;
+      height: 54px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .carr-btn-pri:hover { background: #ffc55a; box-shadow: 0 6px 24px rgba(255,184,77,0.35); }
+
+    /* ══ DEMO ══ */
+    .demo-card {
+      background: #1e1e1e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      height: 140px;
+      display: flex;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .demo-card-img {
+      width: 130px; height: 140px;
+      background: #2a2a2a;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+    }
+
+    .demo-card-body {
+      flex: 1; padding: 16px 18px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    .demo-card-nome { font-size: 17px; font-weight: 700; color: #fff; }
+    .demo-card-desc { font-size: 13px; color: #555; margin-top: 5px; }
+
+    .demo-card-rodape {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .demo-card-preco { font-size: 22px; font-weight: 800; color: #FFB84D; }
+
+    .demo-card-btn {
+      background: #FFB84D; border: none; border-radius: 12px;
+      color: #111; padding: 11px 22px;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px;
+      cursor: pointer;
+    }
+
+    /* toggle */
+    .toggle {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: #FFB84D; color: #111;
+      border: none; border-radius: 14px;
+      padding: 14px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer; z-index: 200;
+      box-shadow: 0 8px 24px rgba(255,184,77,0.4);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <span class="header-logo">DOMINUS</span>
+
+    <div class="header-busca">
+      <span class="header-busca-icon">🔍</span>
+      <input class="header-busca-input" placeholder="Buscar produto..." />
+    </div>
+
+    <div class="header-acoes">
+      <button class="header-mesa">Mesa 3</button>
+
+      <button class="header-btn">
+        <span class="header-btn-icon">💳</span>
+        Minha Conta
+      </button>
+
+      <button class="header-btn">
+        <span class="header-btn-icon">🔔</span>
+        Chamar Garçom
+      </button>
+
+      <button class="header-carrinho" onclick="toggleCarrinho()">
+        🛒 Meu Carrinho
+        <span class="header-badge">3</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <button class="sidebar-btn ativo">
+      <span class="sidebar-btn-icon">⭐</span>
+      Destaques
+    </button>
+    <button class="sidebar-btn">
+      <span class="sidebar-btn-icon">📖</span>
+      Cardápio
+    </button>
+    <button class="sidebar-btn">
+      <span class="sidebar-btn-icon">📦</span>
+      Combos
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-rodape">
+      <button class="sidebar-link">Avaliar</button>
+      <button class="sidebar-link">Termos</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="demo-card">
+      <div class="demo-card-img">🍕</div>
+      <div class="demo-card-body">
+        <div>
+          <div class="demo-card-nome">Esfiha de Carne</div>
+          <div class="demo-card-desc">Massa artesanal com recheio de carne temperada</div>
+        </div>
+        <div class="demo-card-rodape">
+          <span class="demo-card-preco">R$ 5,75</span>
+          <button class="demo-card-btn">+ Adicionar</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-card">
+      <div class="demo-card-img">🥤</div>
+      <div class="demo-card-body">
+        <div>
+          <div class="demo-card-nome">Coca-Cola 350ml</div>
+          <div class="demo-card-desc">Gelada e refrescante</div>
+        </div>
+        <div class="demo-card-rodape">
+          <span class="demo-card-preco">R$ 6,00</span>
+          <button class="demo-card-btn">+ Adicionar</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-card">
+      <div class="demo-card-img">🍋</div>
+      <div class="demo-card-body">
+        <div>
+          <div class="demo-card-nome">Limonada Suíça</div>
+          <div class="demo-card-desc">Feita na hora com limão siciliano</div>
+        </div>
+        <div class="demo-card-rodape">
+          <span class="demo-card-preco">R$ 10,00</span>
+          <button class="demo-card-btn">+ Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- CARRINHO (slideout lateral) -->
+<div class="overlay" id="overlay" style="display:none" onclick="toggleCarrinho()">
+  <div class="carrinho" onclick="event.stopPropagation()">
+
+    <div class="carr-header">
+      <div class="carr-titulo">
+        <span class="carr-titulo-icon">🛒</span>
+        Meu Pedido
+      </div>
+      <button class="carr-fechar" onclick="toggleCarrinho()">✕</button>
+    </div>
+
+    <div class="carr-itens">
+      <div class="carr-item">
+        <div class="carr-item-img">🍕</div>
+        <div class="carr-item-info">
+          <div class="carr-item-nome">Esfiha de Carne</div>
+          <div class="carr-item-extra">+ Catupiry</div>
+        </div>
+        <div class="carr-item-dir">
+          <span class="carr-item-preco">R$ 6,75</span>
+          <button class="carr-item-remover">✕</button>
+        </div>
+      </div>
+
+      <div class="carr-item">
+        <div class="carr-item-img">🥤</div>
+        <div class="carr-item-info">
+          <div class="carr-item-nome">Coca-Cola 350ml</div>
+          <div class="carr-item-extra">Com gelo</div>
+        </div>
+        <div class="carr-item-dir">
+          <span class="carr-item-preco">R$ 6,00</span>
+          <button class="carr-item-remover">✕</button>
+        </div>
+      </div>
+
+      <div class="carr-item">
+        <div class="carr-item-img">🍋</div>
+        <div class="carr-item-info">
+          <div class="carr-item-nome">Limonada Suíça</div>
+          <div class="carr-item-extra">Obs: bem gelada</div>
+        </div>
+        <div class="carr-item-dir">
+          <span class="carr-item-preco">R$ 10,00</span>
+          <button class="carr-item-remover">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="carr-footer">
+      <div class="carr-total">
+        <span class="carr-total-label">Total</span>
+        <span class="carr-total-valor">R$ 22,75</span>
+      </div>
+      <div class="carr-btns">
+        <button class="carr-btn-sec" onclick="toggleCarrinho()">Pedir Mais</button>
+        <button class="carr-btn-pri">Finalizar Pedido</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="toggle" onclick="toggleCarrinho()">👆 Ver Carrinho</button>
+
+<script>
+  function toggleCarrinho() {
+    const overlay = document.getElementById('overlay')
+    overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none'
+  }
+</script>
+
+</body>
+</html>

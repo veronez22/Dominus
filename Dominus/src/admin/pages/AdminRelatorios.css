@@ -1,0 +1,194 @@
+.rel-wrap { padding: 28px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Topbar ── */
+.rel-topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.rel-topbar h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.rel-topbar p  { font-size: 13px; color: #A0A0A0; margin-top: 3px; }
+
+.rel-topbar-dir { display: flex; align-items: center; gap: 10px; }
+
+.rel-periodos { display: flex; gap: 8px; }
+
+.rel-btn-pdf {
+  display: flex; align-items: center; gap: 6px;
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: #aaa;
+  padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.rel-btn-pdf:hover { border-color: #FFB84D; color: #FFB84D; }
+
+.rel-periodo-btn {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: #777;
+  padding: 8px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.rel-periodo-btn:hover { color: #fff; border-color: #444; }
+.rel-periodo-btn.active { background: #FFB84D; color: #111; border-color: #FFB84D; }
+
+.rel-loading { color: #A0A0A0; font-size: 14px; padding: 40px 0; }
+
+/* ── Métricas ── */
+.rel-metrics {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.rel-metric {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+.rel-metric:hover { border-color: rgba(255,184,77,0.2); }
+
+.rel-metric-topo  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.rel-metric-icon  { color: #FFB84D; display: flex; }
+.rel-metric-label { font-size: 11px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.rel-metric-valor { font-size: 20px; font-weight: 800; color: #fff; }
+.rel-metric-sub   { font-size: 11px; color: #444; }
+
+/* ── Comparativo ── */
+.rel-comp {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 6px; border-radius: 6px;
+}
+.rel-comp--up     { background: rgba(76,175,80,0.15);  color: #4caf50; }
+.rel-comp--down   { background: rgba(255,80,80,0.15);  color: #f55; }
+.rel-comp--neutro { background: rgba(255,255,255,0.05); color: #666; }
+
+/* ── Cards ── */
+.rel-card {
+  background: #252525;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.rel-card-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rel-vazio { font-size: 13px; color: #444; text-align: center; padding: 24px 0; }
+
+/* ── Grid ── */
+.rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ── Ranking ── */
+.rel-ranking { display: flex; flex-direction: column; gap: 14px; }
+
+.rel-rank-item { display: flex; align-items: center; gap: 10px; }
+
+.rel-rank-pos { font-size: 12px; font-weight: 700; color: #FFB84D; min-width: 28px; }
+
+.rel-rank-info { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+.rel-rank-topo { display: flex; justify-content: space-between; align-items: center; }
+
+.rel-rank-nome { font-size: 13px; color: #ddd; }
+
+.rel-rank-receita { font-size: 12px; color: #4caf50; font-weight: 600; }
+
+.rel-rank-bar { height: 5px; background: #1e1e1e; border-radius: 4px; overflow: hidden; }
+
+.rel-rank-fill { height: 100%; background: linear-gradient(to right, #FFB84D, #ffd280); border-radius: 4px; transition: width 0.5s ease; }
+
+.rel-rank-qtd { font-size: 13px; font-weight: 700; color: #666; min-width: 36px; text-align: right; }
+
+/* ── Insights ── */
+.rel-insights { display: flex; flex-direction: column; gap: 10px; }
+
+.rel-insight {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  align-items: flex-start;
+}
+
+.rel-insight--alerta   { background: rgba(255,80,80,0.07);  border-color: rgba(255,80,80,0.15); }
+.rel-insight--sugestao { background: rgba(255,184,77,0.07); border-color: rgba(255,184,77,0.15); }
+.rel-insight--info     { background: rgba(100,160,255,0.07); border-color: rgba(100,160,255,0.15); }
+.rel-insight--ok       { background: rgba(76,175,80,0.07);  border-color: rgba(76,175,80,0.15); }
+
+.rel-insight-icon { flex-shrink: 0; margin-top: 1px; color: inherit; display: flex; }
+
+.rel-insight-titulo { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+
+.rel-insight-texto { font-size: 13px; color: #888; line-height: 1.5; }
+
+/* ── Avaliações ── */
+.rel-avals { display: flex; flex-direction: column; gap: 14px; }
+
+.rel-aval-item { display: flex; align-items: center; gap: 14px; }
+
+.rel-aval-label { font-size: 13px; color: #ccc; min-width: 130px; }
+
+.rel-aval-bar { flex: 1; height: 6px; background: #1e1e1e; border-radius: 4px; overflow: hidden; }
+
+.rel-aval-fill { height: 100%; background: #FFB84D; border-radius: 4px; transition: width 0.4s ease; }
+
+.rel-aval-nota { font-size: 14px; font-weight: 700; color: #FFB84D; min-width: 30px; text-align: right; }
+
+/* ── Tabela caixas ── */
+.rel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.rel-table th {
+  text-align: left; color: #555; font-weight: 600;
+  padding-bottom: 10px; border-bottom: 1px solid #333;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.rel-table td { padding: 10px 0; color: #ccc; border-bottom: 1px solid #1e1e1e; }
+.rel-table tr:last-child td { border-bottom: none; }
+.rel-table-val { font-weight: 700; color: #FFB84D !important; }
+
+/* ══ PRINT / PDF ══ */
+@media print {
+  body { background: #fff !important; color: #111 !important; }
+
+  .admin-side, .rel-btn-pdf, .rel-periodos { display: none !important; }
+
+  .rel-wrap { padding: 20px; }
+
+  .rel-metric, .rel-card {
+    background: #f9f9f9 !important;
+    border: 1px solid #ddd !important;
+    color: #111 !important;
+    break-inside: avoid;
+  }
+
+  .rel-metric-label, .rel-metric-sub, .rel-rank-nome,
+  .rel-insight-texto, .rel-table td, .rel-table th { color: #444 !important; }
+
+  .rel-metric-valor, .rel-card-titulo { color: #111 !important; }
+
+  .rel-rank-fill, .rel-aval-fill { background: #333 !important; }
+
+  .rel-comp--up   { color: green !important; background: #e8f5e9 !important; }
+  .rel-comp--down { color: red   !important; background: #ffebee !important; }
+}

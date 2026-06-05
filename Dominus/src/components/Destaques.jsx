@@ -114,9 +114,15 @@ function Destaques({ onAdicionar, produtos = [] }) {
               </div>
               <div className="destaques-card-info">
                 <p className="destaques-card-nome">{item.nome}</p>
-                <span className="destaques-card-preco">
-                  R$ {item.preco.toFixed(2).replace('.', ',')}
-                </span>
+                <div className="destaques-card-precos">
+                  {item.precoPromo
+                    ? <>
+                        <span className="destaques-card-preco-original">R$ {item.preco.toFixed(2).replace('.', ',')}</span>
+                        <span className="destaques-card-preco">R$ {item.precoPromo.toFixed(2).replace('.', ',')}</span>
+                      </>
+                    : <span className="destaques-card-preco">R$ {item.preco.toFixed(2).replace('.', ',')}</span>
+                  }
+                </div>
               </div>
               <button className="destaques-card-btn" onClick={() => onAdicionar(item)}>
                 + Adicionar

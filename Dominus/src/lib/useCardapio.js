@@ -9,16 +9,17 @@ export function useCardapio() {
 
   function normalizar(prods, cats) {
     const produtosNormalizados = prods.map(p => ({
-      id:         p.id,
-      nome:       p.nome,
-      descricao:  p.descricao,
-      preco:      Number(p.preco),
-      imagem:     p.imagem_url,
-      categoria:  p.categorias?.slug,
-      badge:      p.badge,
-      destaque:   p.destaque,
-      disponivel: p.disponivel,
-      formatos:   p.formatos ?? undefined,
+      id:               p.id,
+      nome:             p.nome,
+      descricao:        p.descricao,
+      preco:            Number(p.preco),
+      precoPromo:       p.preco_promocional ? Number(p.preco_promocional) : null,
+      imagem:           p.imagem_url,
+      categoria:        p.categorias?.slug,
+      badge:            p.badge,
+      destaque:         p.destaque,
+      disponivel:       p.disponivel,
+      formatos:         p.formatos ?? undefined,
     }))
 
     const categoriasNormalizadas = [

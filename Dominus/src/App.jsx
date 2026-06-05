@@ -72,14 +72,23 @@ function App() {
 
   function adicionarItem(item) {
     const quantidadeNova = item.quantidade || 1
+    // Chave única combina id + opções escolhidas para não colapsar variações diferentes
+    const chaveOpcoes = JSON.stringify({
+      adicionais: [...(item.extras?.adicionais || [])].sort(),
+      gelo: item.extras?.gelo || false,
+      limao: item.extras?.limao || false,
+      formato: item.extras?.formato || null,
+    })
+    const itemKey = `${item.id}__${chaveOpcoes}`
+
     setCarrinho((prev) => {
-      const jaExiste = prev.find((i) => i.id === item.id)
+      const jaExiste = prev.find((i) => i._key === itemKey)
       if (jaExiste) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantidade: i.quantidade + quantidadeNova } : i
+          i._key === itemKey ? { ...i, quantidade: i.quantidade + quantidadeNova } : i
         )
       }
-      return [...prev, { ...item, quantidade: quantidadeNova }]
+      return [...prev, { ...item, quantidade: quantidadeNova, _key: itemKey }]
     })
   }
 
@@ -87,8 +96,18 @@ function App() {
     setCarrinho([])
   }
 
-  function removerItem(id) {
-    setCarrinho((prev) => prev.filter((i) => i.id !== id))
+  function removerItem(key) {
+    setCarrinho((prev) => prev.filter((i) => i._key !== key))
+  }
+
+  function alterarQuantidade(key, novaQtd) {
+    if (novaQtd <= 0) {
+      removerItem(key)
+      return
+    }
+    setCarrinho((prev) =>
+      prev.map((i) => i._key === key ? { ...i, quantidade: novaQtd } : i)
+    )
   }
 
   function scrollParaCategoria(id, secao) {
@@ -151,7 +170,8 @@ async function confirmarPedido(itens, comanda) {
       total,
     }])
   } catch (err) {
-    console.error('Erro ao salvar pedido:', err)
+    console.error('Erro ao salvar pedido:', err?.message || err?.code || JSON.stringify(err))
+    throw err
   }
 }
 
@@ -190,9 +210,11 @@ async function confirmarPedido(itens, comanda) {
                   key={item.id}
                   nome={item.nome}
                   preco={item.preco}
+                  precoPromo={item.precoPromo}
                   descricao={item.descricao}
                   imagem={item.imagem}
                   disponivel={item.disponivel !== false}
+                  badge={item.badge}
                   onAdicionar={() => setProdutoSelecionado(item)}
                 />
               ))}
@@ -203,7 +225,10 @@ async function confirmarPedido(itens, comanda) {
               return (
                 <div key={cat.id} ref={(el) => refs.current[cat.id] = el}>
                   {cat.id !== 'destaques' && (
-                    <div className="secao-titulo"><h2>{cat.label}</h2></div>
+                    <div className="secao-titulo">
+                      <span className="secao-titulo-texto">{cat.label}</span>
+                      <div className="secao-titulo-linha" />
+                    </div>
                   )}
                   {cat.id === 'destaques' ? (
                     <Destaques onAdicionar={setProdutoSelecionado} produtos={produtos} />
@@ -213,6 +238,7 @@ async function confirmarPedido(itens, comanda) {
                         key={item.id}
                         nome={item.nome}
                         preco={item.preco}
+                        precoPromo={item.precoPromo}
                         descricao={item.descricao}
                         imagem={item.imagem}
                         disponivel={item.disponivel !== false}
@@ -232,6 +258,7 @@ async function confirmarPedido(itens, comanda) {
           itens={carrinho}
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
+          onAlterar={alterarQuantidade}
           onConfirmar={confirmarPedido}
           onLimpar={limparCarrinho}
           mesa={mesa}
@@ -241,7 +268,6 @@ async function confirmarPedido(itens, comanda) {
       {contaAberta && (
         <MinhaConta
           mesa={mesa}
-          historico={historico}
           onFechar={() => setContaAberta(false)}
           onAbrirCarrinho={() => { setContaAberta(false); setCarrinhoAberto(true) }}
         />
@@ -252,8 +278,10 @@ async function confirmarPedido(itens, comanda) {
           produto={produtoSelecionado}
           onFechar={() => setProdutoSelecionado(null)}
           onAdicionar={adicionarItem}
+          onPedirAgora={() => setCarrinhoAberto(true)}
         />
       )}
+
     </div>
   )
 }

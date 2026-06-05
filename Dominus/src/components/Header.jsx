@@ -17,7 +17,7 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
 
   function mostrarErro(msg) {
     setErro(msg)
-    setTimeout(() => setErro(''), 2500)
+    setTimeout(() => setErro(''), 5000)
   }
 
   async function hashSenha(senha) {

@@ -1,15 +1,9 @@
 import { useState } from 'react'
 import { categoriasPrincipais, subcategorias } from '../data/cardapio'
 import './Sidebar.css'
-import { UtensilsCrossed, Package, Star, BookOpen } from 'lucide-react'
+import { Package, Star, BookOpen } from 'lucide-react'
 import ModalAvaliacao from './ModalAvaliacao'
 import ModalTermos from './ModalTermos'
-
-const idiomas = [
-  { codigo: 'pt', bandeira: '🇧🇷' },
-  { codigo: 'en', bandeira: '🇺🇸' },
-  { codigo: 'es', bandeira: '🇪🇸' },
-]
 
 const iconesPrincipais = {
   destaques: <Star size={22} />,
@@ -71,13 +65,6 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar, mesa }) 
             >
               Termos de uso
             </button>
-            <div className="sidebar-idiomas">
-              {idiomas.map((i) => (
-                <button key={i.codigo} className="sidebar-idioma">
-                  <span>{i.bandeira}</span>
-                </button>
-              ))}
-            </div>
           </div>
         </aside>
 

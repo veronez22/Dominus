@@ -121,20 +121,32 @@ export default function AdminProdutos() {
 /* ── Modal de criação/edição ── */
 function ModalProduto({ produto, categorias, salvando, onSalvar, onFechar }) {
   const [form, setForm] = useState({
-    nome:         produto.nome         ?? '',
-    descricao:    produto.descricao    ?? '',
-    preco:        produto.preco        ?? '',
-    imagem_url:   produto.imagem_url   ?? '',
-    categoria_id: produto.categoria_id ?? categorias[0]?.id ?? '',
-    badge:        produto.badge        ?? '',
-    disponivel:   produto.disponivel   ?? true,
-    destaque:     produto.destaque     ?? false,
+    nome:               produto.nome               ?? '',
+    descricao:          produto.descricao          ?? '',
+    preco:              produto.preco              ?? '',
+    preco_promocional:  produto.preco_promocional  ?? '',
+    imagem_url:         produto.imagem_url         ?? '',
+    categoria_id:       produto.categoria_id       ?? categorias[0]?.id ?? '',
+    badge:              produto.badge              ?? '',
+    disponivel:         produto.disponivel         ?? true,
+    destaque:           produto.destaque           ?? false,
   })
   const [preview,    setPreview]    = useState(produto.imagem_url ?? '')
   const [uploading,  setUploading]  = useState(false)
   const inputFileRef = useRef()
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const set = (k, v) => setForm(f => {
+    const novo = { ...f, [k]: v }
+    // Badge automático ao definir/limpar preço promocional
+    if (k === 'preco_promocional') {
+      if (v !== '' && v !== null) {
+        novo.badge = 'Oferta'
+      } else if (f.badge === 'Oferta') {
+        novo.badge = ''
+      }
+    }
+    return novo
+  })
 
   async function handleArquivo(e) {
     const arquivo = e.target.files[0]
@@ -170,7 +182,12 @@ function ModalProduto({ produto, categorias, salvando, onSalvar, onFechar }) {
 
   function submit(e) {
     e.preventDefault()
-    onSalvar({ ...form, preco: parseFloat(form.preco), id: produto.id })
+    onSalvar({
+      ...form,
+      preco: parseFloat(form.preco),
+      preco_promocional: form.preco_promocional !== '' ? parseFloat(form.preco_promocional) : null,
+      id: produto.id,
+    })
   }
 
   return (
@@ -191,6 +208,16 @@ function ModalProduto({ produto, categorias, salvando, onSalvar, onFechar }) {
               <label>Preço *</label>
               <input type="number" step="0.01" min="0" value={form.preco} onChange={e=>set('preco',e.target.value)} required placeholder="0,00"/>
             </div>
+          </div>
+
+          <div className="mf-campo">
+            <label>Preço Promocional <span style={{color:'#666', fontWeight:400}}>(deixe vazio para remover)</span></label>
+            <input
+              type="number" step="0.01" min="0"
+              value={form.preco_promocional}
+              onChange={e=>set('preco_promocional', e.target.value)}
+              placeholder="Ex: 2,00 — risca o preço original e destaca em amarelo"
+            />
           </div>
 
           <div className="mf-campo">
