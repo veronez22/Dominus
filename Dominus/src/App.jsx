@@ -231,7 +231,10 @@ async function confirmarPedido(itens, comanda) {
           mesa={mesa}
         />
 
-        <main className="app-conteudo">
+        <main
+          className="app-conteudo"
+          style={secaoAtiva === 'destaques' ? { overflowY: 'hidden' } : {}}
+        >
           {buscaAtiva ? (
             <div className="busca-resultado">
               <p className="busca-info">
