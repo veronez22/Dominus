@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup - Minha Conta</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 24px;
+    min-height: 100vh;
+  }
+
+  .label {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .label span { color: #fff; display: block; font-size: 11px; margin-top: 4px; }
+
+  /* ── MODAL BASE ── */
+  .modal {
+    width: 360px;
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  }
+
+  /* ════════════════════════════════
+     ATUAL
+  ════════════════════════════════ */
+  .atual .header {
+    padding: 18px 20px;
+    border-bottom: 1px solid #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .atual .header h2 { font-size: 20px; font-weight: 800; color: #fff; }
+  .atual .header span { font-size: 13px; color: #FFB84D; font-weight: 600; }
+  .atual .header .x { background: rgba(255,255,255,0.07); border: none; border-radius: 50%; width: 32px; height: 32px; color: #888; cursor: pointer; font-size: 16px; }
+
+  .atual .grupo {
+    border-bottom: 1px solid #2a2a2a;
+    padding: 14px 20px;
+  }
+  .atual .grupo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .atual .grupo-num {
+    font-size: 11px; font-weight: 700; color: #FFB84D;
+    background: rgba(255,184,77,0.1); padding: 3px 10px; border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .atual .grupo-hora { font-size: 11px; color: #666; }
+  .atual .grupo-status { font-size: 10px; font-weight: 700; color: #4caf50; text-transform: uppercase; }
+
+  .atual .item {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.05);
+    font-size: 13px;
+  }
+  .atual .item:last-of-type { border-bottom: none; }
+  .atual .item .qtd { color: #FFB84D; font-weight: 700; min-width: 22px; }
+  .atual .item .nome { color: #e0e0e0; flex: 1; }
+  .atual .item .preco { color: #999; white-space: nowrap; }
+
+  .atual .subtotal {
+    display: flex; justify-content: space-between;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #2a2a2a;
+    font-size: 11px; color: #666; font-weight: 600;
+  }
+
+  .atual .rodape {
+    padding: 16px 20px;
+    background: rgba(255,184,77,0.04);
+    border-top: 2px solid #2a2a2a;
+  }
+  .atual .rodape-info { font-size: 11px; color: #666; margin-bottom: 8px; }
+  .atual .rodape-total { display: flex; justify-content: space-between; align-items: center; }
+  .atual .rodape-total span { font-size: 13px; color: #888; }
+  .atual .rodape-total strong { font-size: 26px; font-weight: 800; color: #FFB84D; }
+
+  /* ════════════════════════════════
+     NOVO
+  ════════════════════════════════ */
+  .novo .header {
+    padding: 20px 20px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .novo .header-left h2 { font-size: 20px; font-weight: 800; color: #fff; }
+  .novo .header-left .comanda {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 6px;
+    background: rgba(255,184,77,0.12);
+    border: 1px solid rgba(255,184,77,0.25);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 12px; font-weight: 700; color: #FFB84D;
+  }
+  .novo .header .x { background: rgba(255,255,255,0.07); border: none; border-radius: 50%; width: 32px; height: 32px; color: #888; cursor: pointer; font-size: 16px; }
+
+  /* Barra de status geral */
+  .novo .status-bar {
+    margin: 0 20px 16px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.25);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .novo .status-bar .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4caf50;
+    box-shadow: 0 0 6px #4caf50;
+    flex-shrink: 0;
+  }
+  .novo .status-bar span { font-size: 13px; color: #4caf50; font-weight: 600; }
+
+  /* Lista de itens — todos agrupados */
+  .novo .itens-titulo {
+    padding: 0 20px 10px;
+    font-size: 11px; color: #555; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+
+  .novo .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .novo .item:last-of-type { border-bottom: none; }
+
+  .novo .item .qtd-badge {
+    background: rgba(255,184,77,0.15);
+    border: 1px solid rgba(255,184,77,0.3);
+    border-radius: 8px;
+    color: #FFB84D;
+    font-size: 13px; font-weight: 800;
+    min-width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .novo .item .info { flex: 1; }
+  .novo .item .info .nome { font-size: 14px; color: #e8e8e8; font-weight: 600; }
+  .novo .item .info .obs { font-size: 11px; color: #666; font-style: italic; margin-top: 2px; }
+
+  .novo .item .preco { font-size: 14px; font-weight: 700; color: #ccc; white-space: nowrap; }
+
+  /* Divisor de pedido */
+  .novo .divisor-pedido {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.02);
+  }
+  .novo .divisor-pedido .pill {
+    font-size: 10px; font-weight: 700; color: #555;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.05);
+    padding: 3px 10px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .novo .divisor-pedido .linha { flex: 1; height: 1px; background: #2a2a2a; }
+
+  /* Rodapé */
+  .novo .rodape {
+    border-top: 1px solid #2a2a2a;
+    padding: 16px 20px;
+    background: rgba(255,184,77,0.03);
+  }
+  .novo .rodape-linha {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .novo .rodape-linha span { font-size: 12px; color: #666; }
+  .novo .rodape-linha .val { font-size: 12px; color: #888; }
+
+  .novo .rodape-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid #2a2a2a;
+  }
+  .novo .rodape-total span { font-size: 14px; color: #aaa; font-weight: 600; }
+  .novo .rodape-total strong { font-size: 30px; font-weight: 800; color: #FFB84D; letter-spacing: -1px; }
+</style>
+</head>
+<body>
+
+<!-- ATUAL -->
+<div>
+  <div class="label">ATUAL <span>Como está hoje</span></div>
+  <div class="modal atual">
+    <div class="header">
+      <div>
+        <h2>Minha Conta</h2>
+        <span>CMD-0001 · Mesa 3</span>
+      </div>
+      <button class="x">✕</button>
+    </div>
+
+    <div class="grupo">
+      <div class="grupo-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="grupo-num">Pedido #1</span>
+          <span class="grupo-hora">🕐 19:32</span>
+        </div>
+        <span class="grupo-status">Entregue ✓</span>
+      </div>
+      <div class="item"><span class="qtd">2x</span><span class="nome">Esfiha de Carne</span><span class="preco">R$ 18,00</span></div>
+      <div class="item"><span class="qtd">1x</span><span class="nome">Coca-Cola Lata</span><span class="preco">R$ 7,00</span></div>
+      <div class="subtotal"><span>Subtotal</span><span>R$ 25,00</span></div>
+    </div>
+
+    <div class="grupo">
+      <div class="grupo-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="grupo-num">Pedido #2</span>
+          <span class="grupo-hora">🕐 19:51</span>
+        </div>
+        <span class="grupo-status" style="color:#6fa3ef">Em Preparo</span>
+      </div>
+      <div class="item"><span class="qtd">1x</span><span class="nome">Combo Família</span><span class="preco">R$ 45,00</span></div>
+      <div class="item"><span class="qtd">2x</span><span class="nome">Suco de Laranja</span><span class="preco">R$ 16,00</span></div>
+      <div class="subtotal"><span>Subtotal</span><span>R$ 61,00</span></div>
+    </div>
+
+    <div class="rodape">
+      <div class="rodape-info">2 pedidos · 6 itens · Mesa 3</div>
+      <div class="rodape-total">
+        <span>Total da comanda</span>
+        <strong>R$ 86,00</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOVO -->
+<div>
+  <div class="label">PROPOSTA <span>Mais limpo e direto</span></div>
+  <div class="modal novo">
+    <div class="header">
+      <div class="header-left">
+        <h2>Minha Conta</h2>
+        <div class="comanda">🎫 CMD-0001 · Mesa 3</div>
+      </div>
+      <button class="x">✕</button>
+    </div>
+
+    <!-- Status geral -->
+    <div class="status-bar">
+      <div class="dot"></div>
+      <span>1 pedido em preparo</span>
+    </div>
+
+    <!-- Itens -->
+    <div class="itens-titulo">O que você pediu</div>
+
+    <!-- Pedido 1 -->
+    <div class="divisor-pedido">
+      <span class="pill">Pedido 1 · 19:32 · Entregue ✓</span>
+      <div class="linha"></div>
+    </div>
+    <div class="item">
+      <div class="qtd-badge">2x</div>
+      <div class="info"><div class="nome">Esfiha de Carne</div></div>
+      <div class="preco">R$ 18,00</div>
+    </div>
+    <div class="item">
+      <div class="qtd-badge">1x</div>
+      <div class="info"><div class="nome">Coca-Cola Lata</div></div>
+      <div class="preco">R$ 7,00</div>
+    </div>
+
+    <!-- Pedido 2 -->
+    <div class="divisor-pedido">
+      <span class="pill" style="color:#6fa3ef">Pedido 2 · 19:51 · Em Preparo</span>
+      <div class="linha"></div>
+    </div>
+    <div class="item">
+      <div class="qtd-badge">1x</div>
+      <div class="info">
+        <div class="nome">Combo Família</div>
+        <div class="obs">sem cebola</div>
+      </div>
+      <div class="preco">R$ 45,00</div>
+    </div>
+    <div class="item">
+      <div class="qtd-badge">2x</div>
+      <div class="info"><div class="nome">Suco de Laranja</div></div>
+      <div class="preco">R$ 16,00</div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="rodape">
+      <div class="rodape-linha">
+        <span>2 pedidos · 6 itens</span>
+      </div>
+      <div class="rodape-total">
+        <span>Total da comanda</span>
+        <strong>R$ 86,00</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

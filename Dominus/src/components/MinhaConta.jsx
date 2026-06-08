@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Clock, Camera, ShoppingBag } from 'lucide-react'
+import { X, Camera, ShoppingBag } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import { supabase } from '../lib/supabase'
 import './MinhaConta.css'
@@ -82,11 +82,7 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
     buscar()
   }, [comanda])
 
-  const fmtHora  = (iso) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-  const fmtPreco = (v)   => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
-  const STATUS_LABEL = { recebido: 'Recebido', preparo: 'Em Preparo', pronto: 'Pronto ✓', entregue: 'Entregue ✓' }
-  const STATUS_COR   = { recebido: '#FFB84D', preparo: '#6fa3ef', pronto: '#4caf50', entregue: '#4caf50' }
+  const fmtPreco = (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
   return (
     <div className="modal-overlay conta-overlay" onClick={onFechar}>
@@ -148,46 +144,18 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
 
               ) : (
                 <div className="conta-recibo">
-                  {pedidos.map((pedido, idx) => (
-                    <div key={pedido.id} className="conta-grupo">
-
-                      {/* ── Separador de pedido ── */}
-                      <div className="conta-grupo-header">
-                        <div className="conta-grupo-linha">
-                          <span className="conta-grupo-num">Pedido #{idx + 1}</span>
-                          <span className="conta-grupo-hora">
-                            <Clock size={11} /> {fmtHora(pedido.criado_em)}
-                          </span>
-                        </div>
-                        <span className="conta-grupo-status" style={{ color: STATUS_COR[pedido.status] }}>
-                          {STATUS_LABEL[pedido.status]}
-                        </span>
+                  {pedidos.flatMap(p => p.itens_pedido || []).map(item => (
+                    <div key={item.id} className="conta-item">
+                      <span className="conta-item-qtd">{item.quantidade}x</span>
+                      <div className="conta-item-info">
+                        <span className="conta-item-nome">{item.nome_snapshot}</span>
+                        {item.observacao && (
+                          <span className="conta-item-obs">{item.observacao}</span>
+                        )}
                       </div>
-
-                      {/* ── Itens ── */}
-                      {(pedido.itens_pedido || []).length === 0 ? (
-                        <p className="conta-sem-itens">Itens não disponíveis</p>
-                      ) : (
-                        (pedido.itens_pedido || []).map(item => (
-                          <div key={item.id} className="conta-item">
-                            <span className="conta-item-qtd">{item.quantidade}x</span>
-                            <span className="conta-item-nome">{item.nome_snapshot}</span>
-                            {item.observacao && (
-                              <span className="conta-item-obs">{item.observacao}</span>
-                            )}
-                            <span className="conta-item-preco">
-                              {fmtPreco(Number(item.preco_snapshot) * item.quantidade)}
-                            </span>
-                          </div>
-                        ))
-                      )}
-
-                      {/* ── Subtotal do pedido ── */}
-                      <div className="conta-subtotal">
-                        <span>Subtotal</span>
-                        <span>{fmtPreco(Number(pedido.total))}</span>
-                      </div>
-
+                      <span className="conta-item-preco">
+                        {fmtPreco(Number(item.preco_snapshot) * item.quantidade)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -197,13 +165,8 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
             {/* Total fixo no rodapé */}
             {pedidos.length > 0 && (
               <div className="conta-rodape">
-                <div className="conta-rodape-info">
-                  <span>{pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}</span>
-                  <span>{totalItens} {totalItens !== 1 ? 'itens' : 'item'}</span>
-                  {mesa && <span>Mesa {mesa}</span>}
-                </div>
                 <div className="conta-rodape-total">
-                  <span>Total da comanda</span>
+                  <span>Total</span>
                   <strong>{fmtPreco(totalGasto)}</strong>
                 </div>
               </div>

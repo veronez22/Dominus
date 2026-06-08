@@ -21,9 +21,12 @@
 
 .header-logo-img {
   height: 65px;
-  width: 130px;
-  padding: 0px 0px 0px 25px;
-  border-radius: 8px;
+  width: auto;
+  min-width: 180px;
+  padding: 0 20px;
+  background: var(--cor-primaria);
+  border-radius: 0;
+  object-fit: contain;
 }
 
 /* Botões */

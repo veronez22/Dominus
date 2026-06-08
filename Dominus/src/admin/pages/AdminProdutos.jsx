@@ -8,8 +8,9 @@ export default function AdminProdutos() {
   const [filtro,     setFiltro]     = useState('todos')
   const [busca,      setBusca]      = useState('')
   const [loading,    setLoading]    = useState(true)
-  const [modal,      setModal]      = useState(null)  // null | 'novo' | produto
-  const [salvando,   setSalvando]   = useState(false)
+  const [modal,        setModal]        = useState(null)  // null | 'novo' | produto
+  const [salvando,     setSalvando]     = useState(false)
+  const [modalBanner,  setModalBanner]  = useState(null)  // null | produto
 
   useEffect(() => { carregar() }, [])
 
@@ -96,6 +97,7 @@ export default function AdminProdutos() {
                 <div className="pc-preco">R$ {Number(p.preco).toFixed(2).replace('.',',')}</div>
                 {!p.disponivel && <span className="pc-indisp-tag">⚠️ Indisponível</span>}
                 <div className="pc-actions">
+                  <button className="pc-btn banner" onClick={() => setModalBanner(p)}>📌 Banner</button>
                   <button className="pc-btn edit" onClick={() => setModal(p)}>✏️ Editar</button>
                   <button className="pc-btn del"  onClick={() => excluir(p.id)}>🗑 Excluir</button>
                 </div>
@@ -114,6 +116,93 @@ export default function AdminProdutos() {
           onFechar={() => setModal(null)}
         />
       )}
+
+      {modalBanner && (
+        <ModalAdicionarAoBanner
+          produto={modalBanner}
+          onFechar={() => setModalBanner(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+/* ── Modal Adicionar ao Banner ── */
+function ModalAdicionarAoBanner({ produto, onFechar }) {
+  const [descricao, setDescricao] = useState('')
+  const [salvando,  setSalvando]  = useState(false)
+  const [sucesso,   setSucesso]   = useState(false)
+
+  async function salvar() {
+    setSalvando(true)
+
+    const { data: rest } = await supabase.from('restaurantes').select('id').single()
+    const { data: ultimos } = await supabase.from('banners').select('ordem').order('ordem', { ascending: false }).limit(1)
+    const proximaOrdem = (ultimos?.[0]?.ordem ?? -1) + 1
+
+    await supabase.from('banners').insert({
+      restaurante_id: rest.id,
+      imagem_url:     produto.imagem_url,
+      titulo:         produto.nome,
+      subtitulo:      descricao || null,
+      btn_texto:      'Pedir agora',
+      btn_destino:    'produto',
+      produto_id:     produto.id,
+      ordem:          proximaOrdem,
+      ativo:          true,
+    })
+
+    setSalvando(false)
+    setSucesso(true)
+    setTimeout(() => { onFechar() }, 1500)
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onFechar}>
+      <div className="modal-card" style={{maxWidth: 420}} onClick={e => e.stopPropagation()}>
+        <div className="modal-hdr">
+          <h2>📌 Adicionar ao Banner</h2>
+          <button className="modal-fechar" onClick={onFechar}>✕</button>
+        </div>
+
+        {sucesso ? (
+          <div style={{padding:'32px', textAlign:'center', color:'#4caf50', fontSize:'15px', fontWeight:700}}>
+            ✅ Banner criado com sucesso!
+          </div>
+        ) : (
+          <div className="modal-form">
+            {/* Preview do produto */}
+            <div style={{display:'flex', alignItems:'center', gap:12, padding:'0 0 16px', borderBottom:'1px solid var(--border)'}}>
+              {produto.imagem_url && <img src={produto.imagem_url} alt={produto.nome} style={{width:60, height:60, borderRadius:10, objectFit:'cover'}}/>}
+              <div>
+                <div style={{fontWeight:700, color:'var(--texto-principal)', fontSize:15}}>{produto.nome}</div>
+                <div style={{fontSize:13, color:'var(--cor-primaria)', fontWeight:600}}>R$ {Number(produto.preco).toFixed(2).replace('.',',')}</div>
+              </div>
+            </div>
+
+            <div className="mf-campo" style={{marginTop:16}}>
+              <label>Descrição no Banner <span className="opcional">(opcional)</span></label>
+              <textarea
+                value={descricao}
+                onChange={e => setDescricao(e.target.value)}
+                rows={2}
+                placeholder="Ex: Massa artesanal com recheio generoso..."
+              />
+            </div>
+
+            <div style={{fontSize:12, color:'var(--texto-terciario)', background:'rgba(255,184,77,0.07)', border:'1px solid rgba(255,184,77,0.15)', borderRadius:10, padding:'10px 14px', marginTop:4}}>
+              🛍 O botão <strong>"Pedir agora"</strong> vai abrir este produto direto no tablet.
+            </div>
+
+            <div className="modal-footer">
+              <button type="button" className="btn-cancelar" onClick={onFechar}>Cancelar</button>
+              <button className="btn-salvar" onClick={salvar} disabled={salvando || !produto.imagem_url}>
+                {salvando ? 'Criando...' : 'Criar Banner'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

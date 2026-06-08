@@ -78,131 +78,55 @@
   flex-direction: column;
 }
 
-/* ── Grupo de pedido ── */
-.conta-grupo {
-  border-bottom: 1px solid var(--border);
-  padding: 16px 24px;
-}
-.conta-grupo:last-child { border-bottom: none; }
-
-.conta-grupo-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.conta-grupo-linha {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.conta-grupo-num {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(255,184,77,0.1);
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
-.conta-grupo-hora {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--texto-terciario);
-}
-
-.conta-grupo-status {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 /* ── Item ── */
 .conta-item {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  padding: 7px 0;
-  border-bottom: 1px dashed rgba(255,255,255,0.05);
+  gap: 12px;
+  padding: 15px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.conta-item:last-of-type { border-bottom: none; }
+.conta-item:last-child { border-bottom: none; }
 
 .conta-item-qtd {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: var(--cor-primaria);
   min-width: 26px;
 }
 
+.conta-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .conta-item-nome {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--texto-principal);
-  flex: 1;
 }
 
 .conta-item-obs {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--texto-terciario);
   font-style: italic;
 }
 
 .conta-item-preco {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--texto-secundario);
   white-space: nowrap;
 }
 
-.conta-sem-itens {
-  font-size: 12px;
-  color: var(--texto-terciario);
-  font-style: italic;
-  padding: 4px 0;
-}
-
-/* ── Subtotal ── */
-.conta-subtotal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--texto-terciario);
-  font-weight: 600;
-}
-
-/* ── Rodapé fixo com total ── */
+/* ── Rodapé ── */
 .conta-rodape {
   flex-shrink: 0;
-  border-top: 2px solid var(--border);
+  border-top: 1px dashed var(--border);
   padding: 16px 24px;
-  background: rgba(255,184,77,0.05);
 }
-
-.conta-rodape-info {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--texto-terciario);
-  margin-bottom: 8px;
-}
-
-.conta-rodape-info span::after {
-  content: '·';
-  margin-left: 12px;
-  opacity: 0.4;
-}
-.conta-rodape-info span:last-child::after { content: ''; }
 
 .conta-rodape-total {
   display: flex;

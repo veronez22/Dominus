@@ -233,6 +233,10 @@ async function confirmarPedido(itens, comanda) {
                   {cat.id === 'destaques' ? (
                     <Destaques
                     onAdicionar={setProdutoSelecionado}
+                    onAbrirProduto={(produtoId) => {
+                      const p = produtos.find(x => x.id === produtoId)
+                      if (p) setProdutoSelecionado(p)
+                    }}
                     produtos={produtos}
                     onNavegar={(destino) => {
                       if (!destino || destino === 'destaques') {

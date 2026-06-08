@@ -70,8 +70,9 @@
   flex:1; padding:7px; border-radius:7px; font-size:12px; font-weight:600;
   cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s;
 }
-.pc-btn.edit { border:1px solid rgba(255,184,77,.35); background:rgba(255,184,77,.1); color:#FFB84D; }
-.pc-btn.del  { border:1px solid rgba(244,67,54,.35); background:rgba(244,67,54,.1); color:#ef9a9a; }
+.pc-btn.banner { border:1px solid rgba(99,179,237,.35); background:rgba(99,179,237,.1); color:#63b3ed; }
+.pc-btn.edit   { border:1px solid rgba(255,184,77,.35); background:rgba(255,184,77,.1); color:#FFB84D; }
+.pc-btn.del    { border:1px solid rgba(244,67,54,.35); background:rgba(244,67,54,.1); color:#ef9a9a; }
 
 /* ── Modal ── */
 .modal-overlay {

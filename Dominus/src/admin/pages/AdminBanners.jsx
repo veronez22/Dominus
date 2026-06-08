@@ -10,9 +10,10 @@ const MAX_H      = 720
 const FORMATOS   = ['image/jpeg', 'image/png', 'image/webp']
 
 export default function AdminBanners() {
-  const [banners,  setBanners]  = useState([])
-  const [loading,  setLoading]  = useState(true)
-  const [modal,    setModal]    = useState(false)
+  const [banners,        setBanners]        = useState([])
+  const [loading,        setLoading]        = useState(true)
+  const [modal,          setModal]          = useState(false)
+  const [bannerEditando, setBannerEditando] = useState(null)
 
   useEffect(() => { carregar() }, [])
 
@@ -47,11 +48,15 @@ export default function AdminBanners() {
     const nova = [...banners]
     ;[nova[idx], nova[idxAlvo]] = [nova[idxAlvo], nova[idx]]
 
-    // Atualiza ordens no banco
     await Promise.all(nova.map((b, i) =>
       supabase.from('banners').update({ ordem: i }).eq('id', b.id)
     ))
     setBanners(nova)
+  }
+
+  function fecharModal() {
+    setModal(false)
+    setBannerEditando(null)
   }
 
   return (
@@ -102,6 +107,13 @@ export default function AdminBanners() {
                     <button onClick={() => moverOrdem(b, 1)} disabled={idx === banners.length - 1} title="Mover para baixo">↓</button>
                   </div>
                   <button
+                    className="ban-btn edit"
+                    onClick={() => setBannerEditando(b)}
+                    title="Editar"
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
                     className={`ban-btn toggle ${b.ativo ? 'ativo' : 'inativo'}`}
                     onClick={() => toggleAtivo(b)}
                     title={b.ativo ? 'Desativar' : 'Ativar'}
@@ -116,23 +128,36 @@ export default function AdminBanners() {
         </div>
       )}
 
-      {modal && (
-        <ModalNovoBanner
-          onSalvar={async (dados) => {
-            await carregar()
-            setModal(false)
-          }}
-          onFechar={() => setModal(false)}
+      {(modal || bannerEditando) && (
+        <ModalBanner
+          banner={bannerEditando}
+          onSalvar={async () => { await carregar(); fecharModal() }}
+          onFechar={fecharModal}
         />
       )}
     </div>
   )
 }
 
-/* ── Modal de novo banner ── */
-function ModalNovoBanner({ onSalvar, onFechar }) {
-  const [form,      setForm]      = useState({ titulo: '', subtitulo: '', imagem_url: '', btn_texto: '', btn_destino: 'cardapio' })
-  const [preview,   setPreview]   = useState(null)
+/* ── Modal de novo / editar banner ── */
+function ModalBanner({ banner, onSalvar, onFechar }) {
+  const editando = !!banner
+
+  const [form,      setForm]      = useState({
+    titulo:      banner?.titulo      ?? '',
+    subtitulo:   banner?.subtitulo   ?? '',
+    imagem_url:  banner?.imagem_url  ?? '',
+    btn_texto:   banner?.btn_texto   ?? '',
+    btn_destino: banner?.btn_destino ?? 'cardapio',
+    produto_id:  banner?.produto_id  ?? '',
+  })
+  const [produtos, setProdutos] = useState([])
+
+  useEffect(() => {
+    supabase.from('produtos').select('id, nome').eq('disponivel', true).order('nome')
+      .then(({ data }) => setProdutos(data ?? []))
+  }, [])
+  const [preview,   setPreview]   = useState(banner?.imagem_url ?? null)
   const [uploading, setUploading] = useState(false)
   const [erro,      setErro]      = useState('')
   const [salvando,  setSalvando]  = useState(false)
@@ -174,7 +199,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
     setPreview(url)
     setUploading(true)
 
-    const ext    = arquivo.name.split('.').pop()
+    const ext     = arquivo.name.split('.').pop()
     const caminho = `banner-${Date.now()}.${ext}`
 
     const { data, error } = await supabase.storage
@@ -197,20 +222,24 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
     if (!form.imagem_url) { setErro('Adicione uma imagem antes de salvar.'); return }
     setSalvando(true)
 
-    const { data: rest } = await supabase.from('restaurantes').select('id').single()
-    const { data: ultimos } = await supabase.from('banners').select('ordem').order('ordem', { ascending: false }).limit(1)
-    const proximaOrdem = (ultimos?.[0]?.ordem ?? -1) + 1
+    const temProduto = form.btn_texto && form.btn_destino === 'produto' && form.produto_id
+    const payload = {
+      imagem_url:  form.imagem_url,
+      titulo:      form.titulo    || null,
+      subtitulo:   form.subtitulo || null,
+      btn_texto:   form.btn_texto    || null,
+      btn_destino: form.btn_texto ? (form.btn_destino || 'cardapio') : null,
+      produto_id:  temProduto ? form.produto_id : null,
+    }
 
-    await supabase.from('banners').insert({
-      restaurante_id: rest.id,
-      imagem_url:     form.imagem_url,
-      titulo:         form.titulo    || null,
-      subtitulo:      form.subtitulo || null,
-      btn_texto:      form.btn_texto    || null,
-      btn_destino:    form.btn_texto ? (form.btn_destino || 'cardapio') : null,
-      ordem:          proximaOrdem,
-      ativo:          true,
-    })
+    if (editando) {
+      await supabase.from('banners').update(payload).eq('id', banner.id)
+    } else {
+      const { data: rest } = await supabase.from('restaurantes').select('id').single()
+      const { data: ultimos } = await supabase.from('banners').select('ordem').order('ordem', { ascending: false }).limit(1)
+      const proximaOrdem = (ultimos?.[0]?.ordem ?? -1) + 1
+      await supabase.from('banners').insert({ ...payload, restaurante_id: rest.id, ordem: proximaOrdem, ativo: true })
+    }
 
     await onSalvar()
     setSalvando(false)
@@ -220,7 +249,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
     <div className="modal-overlay" onClick={onFechar}>
       <div className="modal-card" onClick={e => e.stopPropagation()}>
         <div className="modal-hdr">
-          <h2>Novo Banner</h2>
+          <h2>{editando ? 'Editar Banner' : 'Novo Banner'}</h2>
           <button className="modal-fechar" onClick={onFechar}>✕</button>
         </div>
 
@@ -228,9 +257,8 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
 
           {/* Área de upload */}
           <div className="mf-campo">
-            <label>Imagem do Banner *</label>
+            <label>Imagem do Banner {!editando && '*'}</label>
 
-            {/* Guia visual de proporção */}
             <div className="ban-proporcao-guia">
               <div className="ban-proporcao-box">
                 {preview
@@ -246,7 +274,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
                 <p>✅ Até 2MB — JPG, PNG, WEBP</p>
                 <p>❌ Vertical ou quadrada</p>
                 <button type="button" className="ban-btn-escolher" onClick={() => inputRef.current.click()}>
-                  📁 Escolher imagem
+                  📁 {editando ? 'Trocar imagem' : 'Escolher imagem'}
                 </button>
               </div>
             </div>
@@ -255,7 +283,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
             {erro && <div className="ban-erro">⚠️ {erro}</div>}
           </div>
 
-          {/* Título e subtítulo opcionais */}
+          {/* Título e subtítulo */}
           <div className="mf-campo">
             <label>Título <span className="opcional">(opcional)</span></label>
             <input
@@ -283,7 +311,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
           {form.btn_texto && (
             <div className="mf-campo">
               <label>Destino do Botão</label>
-              <select value={form.btn_destino} onChange={e => setForm(f => ({...f, btn_destino: e.target.value}))}>
+              <select value={form.btn_destino} onChange={e => setForm(f => ({...f, btn_destino: e.target.value, produto_id: ''}))}>
                 <option value="destaques">Destaques</option>
                 <option value="cardapio">Cardápio (Esfihas)</option>
                 <option value="combos">Combos</option>
@@ -294,6 +322,18 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
                 <option value="cigarretes">Cigarretes</option>
                 <option value="kibes">Kibes</option>
                 <option value="diversos">Diversos</option>
+                <option value="produto">🛍 Produto específico</option>
+              </select>
+            </div>
+          )}
+          {form.btn_texto && form.btn_destino === 'produto' && (
+            <div className="mf-campo">
+              <label>Selecionar Produto</label>
+              <select value={form.produto_id} onChange={e => setForm(f => ({...f, produto_id: e.target.value}))}>
+                <option value="">-- Escolha um produto --</option>
+                {produtos.map(p => (
+                  <option key={p.id} value={p.id}>{p.nome}</option>
+                ))}
               </select>
             </div>
           )}
@@ -301,7 +341,7 @@ function ModalNovoBanner({ onSalvar, onFechar }) {
           <div className="modal-footer">
             <button type="button" className="btn-cancelar" onClick={onFechar}>Cancelar</button>
             <button type="submit" className="btn-salvar" disabled={salvando || uploading}>
-              {salvando ? 'Salvando...' : 'Adicionar banner'}
+              {salvando ? 'Salvando...' : editando ? 'Salvar alterações' : 'Adicionar banner'}
             </button>
           </div>
         </form>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import './Destaques.css'
 
-function Destaques({ onAdicionar, produtos = [], onNavegar }) {
+function Destaques({ onAdicionar, onAbrirProduto, produtos = [], onNavegar }) {
   const [bannersDB,  setBannersDB]  = useState([])
   const [slideAtivo, setSlideAtivo] = useState(0)
 
@@ -35,23 +35,19 @@ function Destaques({ onAdicionar, produtos = [], onNavegar }) {
     setSlideAtivo(0)
   }, [bannersDB.length])
 
-  const itemPrincipal = produtos.find(p => p.badge === 'Mais Pedido') || produtos.find(p => p.badge)
   const itensDestaque = produtos.filter(p => p.badge)
 
-  // Slides: produto destaque (se existir) + banners do banco
-  const slidesPromo = bannersDB.map(b => ({
+  // Slides: apenas banners cadastrados no admin
+  const slides = bannersDB.map(b => ({
     id:          b.id,
     imagem:      b.imagem_url,
     titulo:      b.titulo,
     subtitulo:   b.subtitulo,
     btn_texto:   b.btn_texto,
     btn_destino: b.btn_destino,
+    produto_id:  b.produto_id,
     tipo:        'promo',
   }))
-
-  const slides = itemPrincipal
-    ? [{ ...itemPrincipal, tipo: 'produto' }, ...slidesPromo]
-    : slidesPromo
 
   useEffect(() => {
     if (slides.length === 0) return
@@ -74,28 +70,21 @@ function Destaques({ onAdicionar, produtos = [], onNavegar }) {
         <div className="destaques-banner-overlay" />
 
         <div className="destaques-banner-conteudo" key={slideAtivo}>
-          {slide.tipo === 'produto' ? (
-            <>
-              <span className="destaques-banner-badge">{slide.badge}</span>
-              <h1 className="destaques-banner-titulo">{slide.nome}</h1>
-              <p className="destaques-banner-descricao">{slide.descricao}</p>
-              <button
-                className="destaques-banner-btn"
-                onClick={() => onAdicionar(slide)}
-              >
-                Adicionar · R$ {slide.preco.toFixed(2).replace('.', ',')}
-              </button>
-            </>
-          ) : (
-            <>
-              {slide.titulo    && <h1 className="destaques-banner-titulo">{slide.titulo}</h1>}
-              {slide.subtitulo && <p className="destaques-banner-descricao">{slide.subtitulo}</p>}
-              {slide.btn_texto && (
-                <button className="destaques-banner-btn" onClick={() => onNavegar?.(slide.btn_destino)}>
-                  {slide.btn_texto}
-                </button>
-              )}
-            </>
+          {slide.titulo    && <h1 className="destaques-banner-titulo">{slide.titulo}</h1>}
+          {slide.subtitulo && <p className="destaques-banner-descricao">{slide.subtitulo}</p>}
+          {slide.btn_texto && (
+            <button
+              className="destaques-banner-btn"
+              onClick={() => {
+                if (slide.produto_id) {
+                  onAbrirProduto?.(slide.produto_id)
+                } else {
+                  onNavegar?.(slide.btn_destino)
+                }
+              }}
+            >
+              {slide.btn_texto}
+            </button>
           )}
         </div>
 
