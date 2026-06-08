@@ -141,15 +141,49 @@ async function confirmarPedido(itens, comanda) {
       .is('fechado_em', null)
       .single()
 
-    // 3. Insere o pedido
+    // 3. Busca sessão aberta para esta comanda (ou cria uma nova)
+    const { data: sessaoExistente } = await supabase
+      .from('sessoes_comanda')
+      .select('id')
+      .eq('restaurante_id', rest.id)
+      .eq('codigo', comanda)
+      .is('encerrada_em', null)
+      .maybeSingle()
+
+    let sessaoId = sessaoExistente?.id
+
+    if (!sessaoId) {
+      const { data: novaSessao, error: sessaoErr } = await supabase
+        .from('sessoes_comanda')
+        .insert({
+          restaurante_id: rest.id,
+          codigo:         comanda,
+          mesa:           mesa || null,
+          caixa_id:       caixa?.id || null,
+        })
+        .select('id')
+        .single()
+      if (sessaoErr) throw sessaoErr
+      sessaoId = novaSessao.id
+    }
+
+    // 4. Insere o pedido vinculado à sessão
     const { data: pedido, error: pedErr } = await supabase
       .from('pedidos')
-      .insert({ restaurante_id: rest.id, comanda, total, status: 'recebido', caixa_id: caixa?.id || null, mesa })
+      .insert({
+        restaurante_id: rest.id,
+        comanda,
+        sessao_id: sessaoId,
+        total,
+        status:   'recebido',
+        caixa_id: caixa?.id || null,
+        mesa,
+      })
       .select()
       .single()
     if (pedErr) throw pedErr
 
-    // 4. Insere os itens do pedido
+    // 5. Insere os itens do pedido
     const itensSup = itens.map(i => ({
       pedido_id:      pedido.id,
       produto_id:     i.id,
@@ -161,7 +195,7 @@ async function confirmarPedido(itens, comanda) {
     const { error: itensErr } = await supabase.from('itens_pedido').insert(itensSup)
     if (itensErr) throw itensErr
 
-    // 5. Atualiza histórico local
+    // 6. Atualiza histórico local
     setHistorico(prev => [...prev, {
       id:      pedido.id,
       comanda,
@@ -185,6 +219,7 @@ async function confirmarPedido(itens, comanda) {
         onBusca={setBusca}
         mesa={mesa}
         onMesaMudou={setMesa}
+        onLogoClick={() => scrollParaCategoria('destaques', 'destaques')}
       />
 
       <div className="app-body">

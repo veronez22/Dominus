@@ -6,7 +6,7 @@ import './Header.css'
 const HASH_SENHA_GARCOM = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'
 const LIMITE_MESAS = 20
 
-function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mesa, onMesaMudou }) {
+function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mesa, onMesaMudou, onLogoClick }) {
   const [modalAberto, setModalAberto] = useState(false)
   const [modalGarcom, setModalGarcom] = useState(false)
   const [erroGarcom, setErroGarcom] = useState(false)
@@ -72,8 +72,8 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
   return (
     <>
       <header className="header">
-        <div className="header-logo">
-          <img src={logo} alt="Sua logo" className="header-logo-img" />
+        <div className="header-logo" onClick={onLogoClick} style={{ cursor: 'pointer' }}>
+          <img src={logo} alt="Logo" className="header-logo-img" />
         </div>
 
         <div className="header-busca">
