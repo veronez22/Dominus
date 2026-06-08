@@ -219,3 +219,74 @@
   font-weight: 700;
   color: #FFB84D;
 }
+
+/* ── Mapa de comandas ── */
+.mapa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.mapa-card {
+  border-radius: 12px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.mapa-card.em-uso {
+  background: rgba(255, 184, 77, 0.08);
+  border-color: rgba(255, 184, 77, 0.3);
+  cursor: pointer;
+}
+.mapa-card.em-uso:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 184, 77, 0.15);
+}
+
+.mapa-card.disponivel {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.mapa-codigo {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.mapa-status {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.em-uso-label {
+  color: #FFB84D;
+  background: rgba(255, 184, 77, 0.12);
+}
+
+.disp-label {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.mapa-mesa {
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 600;
+}
+
+.mapa-hora {
+  font-size: 10px;
+  color: #666;
+}

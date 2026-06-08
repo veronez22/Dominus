@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import './AdminPedidos.css'
+
+const TOTAL_COMANDAS = 20
+const TODAS_COMANDAS = Array.from({ length: TOTAL_COMANDAS }, (_, i) =>
+  `CMD-${String(i + 1).padStart(4, '0')}`
+)
 
 const STATUS_LABEL = { recebido: 'Recebido', preparo: 'Em Preparo', pronto: 'Pronto ✓', entregue: 'Entregue' }
 const STATUS_COR   = { recebido: '#FFB84D',  preparo: '#6fa3ef',    pronto: '#4caf50',   entregue: '#4caf50' }
@@ -9,21 +14,9 @@ const fmt     = (v)   => Number(v).toLocaleString('pt-BR', { style: 'currency', 
 const fmtHora = (iso) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 const fmtData = (iso) => new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
-function agruparPorComanda(pedidos) {
-  const mapa = {}
-  ;(pedidos || []).forEach(p => {
-    if (!mapa[p.comanda]) {
-      mapa[p.comanda] = { comanda: p.comanda, mesa: p.mesa, pedidos: [], total: 0 }
-    }
-    mapa[p.comanda].pedidos.push(p)
-    mapa[p.comanda].total += Number(p.total)
-  })
-  return Object.values(mapa)
-}
-
-function imprimir(comanda) {
+function imprimir(sessao) {
   const win = window.open('', '_blank', 'width=400,height=600')
-  const { comanda: cod, mesa, pedidos, total } = comanda
+  const { codigo, mesa, pedidos, total } = sessao
 
   const itensHtml = pedidos.map((pedido, idx) => `
     <div class="pedido">
@@ -39,7 +32,7 @@ function imprimir(comanda) {
   `).join('<hr/>')
 
   win.document.write(`
-    <html><head><title>Comanda ${cod}</title>
+    <html><head><title>Comanda ${codigo}</title>
     <style>
       body { font-family: monospace; font-size: 13px; padding: 20px; max-width: 320px; margin: 0 auto; }
       h2 { text-align: center; margin-bottom: 4px; }
@@ -54,7 +47,7 @@ function imprimir(comanda) {
     <body>
       <h2>Dominus</h2>
       <div class="sub">
-        ${cod}${mesa ? ` · Mesa ${mesa}` : ''}<br/>
+        ${codigo}${mesa ? ` · Mesa ${mesa}` : ''}<br/>
         ${fmtData(pedidos[0]?.criado_em)} · ${fmtHora(pedidos[0]?.criado_em)}
       </div>
       <hr/>
@@ -68,20 +61,22 @@ function imprimir(comanda) {
 }
 
 export default function AdminPedidos() {
-  const [aba,         setAba]         = useState('ativas')
-  const [ativas,      setAtivas]      = useState([])
-  const [encerradas,  setEncerradas]  = useState([])
+  const [aba,         setAba]         = useState('mapa')
+  const [sessoes,     setSessoes]     = useState([])
   const [caixaAberto, setCaixaAberto] = useState(null)
   const [caixaId,     setCaixaId]     = useState(null)
   const [loading,     setLoading]     = useState(true)
   const [baixando,    setBaixando]    = useState(null)
+  const caixaIdRef = useRef(null)
 
   useEffect(() => {
     init()
     const channel = supabase
       .channel('admin-pedidos')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, () => carregarTodos())
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' }, () => carregarTodos())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' },         () => carregarSessoes(caixaIdRef.current))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' },         () => carregarSessoes(caixaIdRef.current))
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sessoes_comanda' }, () => carregarSessoes(caixaIdRef.current))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'sessoes_comanda' }, () => carregarSessoes(caixaIdRef.current))
       .subscribe()
     return () => supabase.removeChannel(channel)
   }, [])
@@ -93,11 +88,12 @@ export default function AdminPedidos() {
       .from('caixas').select('*').eq('restaurante_id', rest.id).is('fechado_em', null).single()
     setCaixaAberto(caixa || null)
     setCaixaId(caixa?.id || null)
-    await carregarTodos(caixa?.id)
+    caixaIdRef.current = caixa?.id || null
+    await carregarSessoes(caixa?.id)
     setLoading(false)
   }
 
-  async function carregarTodos(id) {
+  async function carregarSessoes(id) {
     let cxId = id ?? caixaId
     if (!cxId) {
       const { data: rest } = await supabase
@@ -106,30 +102,46 @@ export default function AdminPedidos() {
         .from('caixas').select('id').eq('restaurante_id', rest.id).is('fechado_em', null).single()
       cxId = caixa?.id
     }
-    if (!cxId) { setAtivas([]); setEncerradas([]); return }
+    if (!cxId) { setSessoes([]); return }
 
-    const [{ data: pedAtivas }, { data: pedEnc }] = await Promise.all([
-      supabase.from('pedidos').select('*, itens_pedido(*)')
-        .eq('caixa_id', cxId).neq('status', 'baixa').order('criado_em', { ascending: true }),
-      supabase.from('pedidos').select('*, itens_pedido(*)')
-        .eq('caixa_id', cxId).eq('status', 'baixa').order('criado_em', { ascending: false }),
+    const { data: sessoesData } = await supabase
+      .from('sessoes_comanda')
+      .select('*, pedidos(*, itens_pedido(*))')
+      .eq('caixa_id', cxId)
+      .order('aberta_em', { ascending: false })
+
+    const com_total = (sessoesData || []).map(s => ({
+      ...s,
+      pedidos: (s.pedidos || []).sort((a, b) => new Date(a.criado_em) - new Date(b.criado_em)),
+      total: (s.pedidos || []).reduce((acc, p) => acc + Number(p.total), 0),
+    }))
+
+    setSessoes(com_total)
+  }
+
+  async function darBaixa(sessao) {
+    if (!confirm(`Confirmar pagamento e dar baixa na comanda ${sessao.codigo}?`)) return
+    setBaixando(sessao.id)
+
+    const ids = sessao.pedidos.map(p => p.id)
+    await Promise.all([
+      supabase.from('pedidos').update({ status: 'baixa' }).in('id', ids),
+      supabase.from('sessoes_comanda').update({ encerrada_em: new Date().toISOString() }).eq('id', sessao.id),
     ])
 
-    setAtivas(agruparPorComanda(pedAtivas))
-    setEncerradas(agruparPorComanda(pedEnc))
-  }
-
-  async function darBaixa(comanda) {
-    if (!confirm(`Confirmar pagamento e dar baixa na comanda ${comanda}?`)) return
-    setBaixando(comanda)
-    const ids = ativas.find(c => c.comanda === comanda)?.pedidos.map(p => p.id) || []
-    await supabase.from('pedidos').update({ status: 'baixa' }).in('id', ids)
-    await carregarTodos()
+    await carregarSessoes()
     setBaixando(null)
-    setAba('ativas')
+    setAba('mapa')
   }
 
-  const lista = aba === 'ativas' ? ativas : encerradas
+  const sessoesAtivas     = sessoes.filter(s => !s.encerrada_em)
+  const sessoesEncerradas = sessoes.filter(s =>  s.encerrada_em)
+
+  // Mapa: quais comandas estão em uso, quais disponíveis
+  const mapaComandas = TODAS_COMANDAS.map(cod => {
+    const sessaoAberta = sessoesAtivas.find(s => s.codigo === cod)
+    return { codigo: cod, sessao: sessaoAberta || null }
+  })
 
   return (
     <div className="ped-wrap">
@@ -138,7 +150,7 @@ export default function AdminPedidos() {
           <h1>🪙 Comandas</h1>
           <p>
             {caixaAberto
-              ? `Caixa aberto desde ${fmtHora(caixaAberto.aberto_em)} · ${ativas.length} ativa${ativas.length !== 1 ? 's' : ''} · ${encerradas.length} encerrada${encerradas.length !== 1 ? 's' : ''}`
+              ? `Caixa aberto desde ${fmtHora(caixaAberto.aberto_em)} · ${sessoesAtivas.length} em uso · ${TOTAL_COMANDAS - sessoesAtivas.length} disponíveis`
               : 'Nenhum caixa aberto'
             }
           </p>
@@ -153,90 +165,134 @@ export default function AdminPedidos() {
         <>
           {/* ── Abas ── */}
           <div className="ped-abas">
-            <button className={`ped-aba ${aba === 'ativas' ? 'active' : ''}`} onClick={() => setAba('ativas')}>
-              Ativas
-              {ativas.length > 0 && <span className="ped-aba-badge">{ativas.length}</span>}
+            <button className={`ped-aba ${aba === 'mapa' ? 'active' : ''}`} onClick={() => setAba('mapa')}>
+              Mapa
             </button>
-            <button className={`ped-aba ${aba === 'encerradas' ? 'active' : ''}`} onClick={() => setAba('encerradas')}>
-              Encerradas
-              {encerradas.length > 0 && <span className="ped-aba-badge ped-aba-badge--enc">{encerradas.length}</span>}
+            <button className={`ped-aba ${aba === 'ativas' ? 'active' : ''}`} onClick={() => setAba('ativas')}>
+              Em Uso
+              {sessoesAtivas.length > 0 && <span className="ped-aba-badge">{sessoesAtivas.length}</span>}
             </button>
           </div>
 
-          {lista.length === 0 ? (
-            <div className="ped-vazio">
-              <span>{aba === 'ativas' ? '🍽️' : '✅'}</span>
-              <p>{aba === 'ativas' ? 'Nenhuma comanda ativa no momento.' : 'Nenhuma comanda encerrada neste caixa.'}</p>
+          {/* ── Mapa de Comandas ── */}
+          {aba === 'mapa' && (
+            <div className="mapa-grid">
+              {mapaComandas.map(({ codigo, sessao }) => (
+                <div
+                  key={codigo}
+                  className={`mapa-card ${sessao ? 'em-uso' : 'disponivel'}`}
+                  onClick={() => sessao && setAba('ativas')}
+                  title={sessao ? `Clique para ver detalhes` : 'Disponível'}
+                >
+                  <span className="mapa-codigo">{codigo}</span>
+                  {sessao ? (
+                    <>
+                      <span className="mapa-status em-uso-label">Em uso</span>
+                      {sessao.mesa && <span className="mapa-mesa">Mesa {sessao.mesa}</span>}
+                      <span className="mapa-hora">{fmtHora(sessao.aberta_em)}</span>
+                    </>
+                  ) : (
+                    <span className="mapa-status disp-label">Disponível</span>
+                  )}
+                </div>
+              ))}
             </div>
-          ) : (
-            <div className="ped-grid">
-              {lista.map((cmd) => {
-                const { comanda, mesa, pedidos, total } = cmd
-                return (
-                  <div key={comanda} className={`ped-card ${aba === 'encerradas' ? 'ped-card--enc' : ''}`}>
+          )}
 
-                    {/* ── Header ── */}
-                    <div className="ped-card-header">
-                      <div className="ped-card-titulo">
-                        <strong className="ped-comanda">{comanda}</strong>
-                        {mesa && <span className="ped-mesa">Mesa {mesa}</span>}
-                      </div>
-                      <div className="ped-card-acoes">
-                        <button className="ped-btn-imprimir" onClick={() => imprimir(cmd)} title="Imprimir notinha">
-                          🖨️ Imprimir
-                        </button>
-                        {aba === 'ativas' ? (
-                          <button
-                            className="ped-btn-baixa"
-                            onClick={() => darBaixa(comanda)}
-                            disabled={baixando === comanda}
-                          >
-                            {baixando === comanda ? 'Encerrando...' : '✅ Dar Baixa'}
-                          </button>
-                        ) : (
-                          <span className="ped-enc-tag">Encerrada</span>
-                        )}
-                      </div>
-                    </div>
+          {/* ── Em Uso ── */}
+          {aba === 'ativas' && (
+            sessoesAtivas.length === 0 ? (
+              <div className="ped-vazio"><span>🍽️</span><p>Nenhuma comanda em uso no momento.</p></div>
+            ) : (
+              <div className="ped-grid">
+                {sessoesAtivas.map(sessao => (
+                  <CardSessao
+                    key={sessao.id}
+                    sessao={sessao}
+                    encerrada={false}
+                    baixando={baixando}
+                    onBaixa={() => darBaixa(sessao)}
+                    onImprimir={() => imprimir(sessao)}
+                  />
+                ))}
+              </div>
+            )
+          )}
 
-                    {/* ── Pedidos ── */}
-                    <div className="ped-pedidos">
-                      {pedidos.map((pedido, idx) => (
-                        <div key={pedido.id} className="ped-pedido">
-                          <div className="ped-pedido-header">
-                            <span className="ped-pedido-num">Pedido #{idx + 1}</span>
-                            <span className="ped-pedido-hora">{fmtHora(pedido.criado_em)}</span>
-                            <span className="ped-status" style={{ color: STATUS_COR[pedido.status] }}>
-                              {STATUS_LABEL[pedido.status]}
-                            </span>
-                          </div>
-                          <div className="ped-itens">
-                            {(pedido.itens_pedido || []).map(item => (
-                              <div key={item.id} className="ped-item">
-                                <span className="ped-item-qtd">{item.quantidade}x</span>
-                                <span className="ped-item-nome">{item.nome_snapshot}</span>
-                                {item.observacao && <span className="ped-item-obs">— {item.observacao}</span>}
-                                <span className="ped-item-preco">{fmt(Number(item.preco_snapshot) * item.quantidade)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* ── Total ── */}
-                    <div className="ped-card-footer">
-                      <span>{pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}</span>
-                      <strong className="ped-total">{fmt(total)}</strong>
-                    </div>
-
-                  </div>
-                )
-              })}
-            </div>
+          {/* ── Encerradas ── */}
+          {aba === 'encerradas' && (
+            sessoesEncerradas.length === 0 ? (
+              <div className="ped-vazio"><span>✅</span><p>Nenhuma comanda no histórico deste caixa.</p></div>
+            ) : (
+              <div className="ped-grid">
+                {sessoesEncerradas.map(sessao => (
+                  <CardSessao
+                    key={sessao.id}
+                    sessao={sessao}
+                    encerrada={true}
+                    baixando={baixando}
+                    onBaixa={() => {}}
+                    onImprimir={() => imprimir(sessao)}
+                  />
+                ))}
+              </div>
+            )
           )}
         </>
       )}
+    </div>
+  )
+}
+
+function CardSessao({ sessao, encerrada, baixando, onBaixa, onImprimir }) {
+  const { id, codigo, mesa, pedidos, total } = sessao
+  return (
+    <div className={`ped-card ${encerrada ? 'ped-card--enc' : ''}`}>
+      <div className="ped-card-header">
+        <div className="ped-card-titulo">
+          <strong className="ped-comanda">{codigo}</strong>
+          {mesa && <span className="ped-mesa">Mesa {mesa}</span>}
+        </div>
+        <div className="ped-card-acoes">
+          <button className="ped-btn-imprimir" onClick={onImprimir}>🖨️ Imprimir</button>
+          {!encerrada ? (
+            <button className="ped-btn-baixa" onClick={onBaixa} disabled={baixando === id}>
+              {baixando === id ? 'Encerrando...' : '✅ Dar Baixa'}
+            </button>
+          ) : (
+            <span className="ped-enc-tag">Encerrada</span>
+          )}
+        </div>
+      </div>
+
+      <div className="ped-pedidos">
+        {pedidos.map((pedido, idx) => (
+          <div key={pedido.id} className="ped-pedido">
+            <div className="ped-pedido-header">
+              <span className="ped-pedido-num">Pedido #{idx + 1}</span>
+              <span className="ped-pedido-hora">{fmtHora(pedido.criado_em)}</span>
+              <span className="ped-status" style={{ color: STATUS_COR[pedido.status] }}>
+                {STATUS_LABEL[pedido.status]}
+              </span>
+            </div>
+            <div className="ped-itens">
+              {(pedido.itens_pedido || []).map(item => (
+                <div key={item.id} className="ped-item">
+                  <span className="ped-item-qtd">{item.quantidade}x</span>
+                  <span className="ped-item-nome">{item.nome_snapshot}</span>
+                  {item.observacao && <span className="ped-item-obs">— {item.observacao}</span>}
+                  <span className="ped-item-preco">{fmt(Number(item.preco_snapshot) * item.quantidade)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ped-card-footer">
+        <span>{pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}</span>
+        <strong className="ped-total">{fmt(total)}</strong>
+      </div>
     </div>
   )
 }

@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { X, ShoppingCart, CheckCircle, Minus, Plus } from 'lucide-react'
 import ModalComanda from './ModalComanda'
+import ModalAvaliacao from './ModalAvaliacao'
 import './Carrinho.css'
 
 function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar, mesa }) {
-  const [etapa,        setEtapa]        = useState('carrinho')
-  const [mensagemErro, setMensagemErro] = useState('')
-  const [comanda,      setComanda]      = useState(null)
-  const [finalizando,  setFinalizando]  = useState(false)
+  const [etapa,          setEtapa]          = useState('carrinho')
+  const [mensagemErro,   setMensagemErro]   = useState('')
+  const [comanda,        setComanda]        = useState(null)
+  const [finalizando,    setFinalizando]    = useState(false)
+  const [mostrarAvaliar, setMostrarAvaliar] = useState(false)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
 
   function handleConfirmar() {
@@ -32,7 +34,14 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
       onLimpar()                         // limpa o carrinho
       setComanda(codigo)
       setEtapa('sucesso')
-      setTimeout(() => onFechar(), 3000) // fecha após 3s mostrando o sucesso
+
+      // Mostra avaliação apenas na primeira vez desta comanda
+      const jaAvaliou = sessionStorage.getItem(`avaliou_${codigo}`)
+      if (!jaAvaliou) {
+        setTimeout(() => setMostrarAvaliar(true), 1500)
+      } else {
+        setTimeout(() => onFechar(), 3000)
+      }
     } catch {
       setMensagemErro('Erro ao salvar pedido. Tente novamente.')
       setTimeout(() => setMensagemErro(''), 5000)
@@ -40,6 +49,12 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
     } finally {
       setFinalizando(false)
     }
+  }
+
+  function handleFecharAvaliacao() {
+    if (comanda) sessionStorage.setItem(`avaliou_${comanda}`, '1')
+    setMostrarAvaliar(false)
+    onFechar()
   }
 
   return (
@@ -160,6 +175,15 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
         <ModalComanda
           onFechar={() => setEtapa('carrinho')}
           onComandaLida={handleComandaLida}
+        />
+      )}
+
+      {/* Modal de avaliação — aparece após o primeiro pedido da comanda */}
+      {mostrarAvaliar && (
+        <ModalAvaliacao
+          comanda={comanda}
+          mesa={mesa}
+          onFechar={handleFecharAvaliacao}
         />
       )}
     </>
