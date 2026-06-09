@@ -9,7 +9,7 @@
 .destaques-banner {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 400px;
   flex: none;
   border-radius: 20px;
   background-size: cover;
@@ -169,8 +169,8 @@
 
 /* ── Card individual ── */
 .destaques-card {
-  min-width: 175px;
-  max-width: 175px;
+  min-width: 150px;
+  max-width: 150px;
   background: var(--bg-secundario);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -189,7 +189,7 @@
 .destaques-card-imagem-wrapper {
   position: relative;
   width: 100%;
-  height: 110px;
+  height: 90px;
 }
 
 .destaques-card-imagem {
