@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preview — Modal Esfiha</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* ── Overlay ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Modal principal ── */
+  .modal {
+    background: #fff;
+    border-radius: 20px;
+    width: 860px;
+    max-width: 98vw;
+    height: 520px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  /* ── Painel esquerdo ── */
+  .painel-esq {
+    width: 300px;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    background: #1a1a1a;
+    position: relative;
+  }
+
+  .produto-foto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .produto-foto-placeholder {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+
+  .produto-info {
+    padding: 16px 18px 12px;
+    flex: 1;
+  }
+
+  .produto-categoria {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FFB84D;
+    margin-bottom: 6px;
+  }
+
+  .produto-nome {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .produto-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+
+  /* Etapas */
+  .etapas {
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .etapa {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+
+  .etapa--ativa {
+    background: #FFB84D;
+  }
+
+  .etapa--feita {
+    opacity: 0.5;
+  }
+
+  .etapa--pendente {
+    opacity: 0.3;
+  }
+
+  .etapa-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .etapa--ativa .etapa-num {
+    background: #1a1a1a;
+    color: #FFB84D;
+  }
+
+  .etapa--feita .etapa-num {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+  }
+
+  .etapa--pendente .etapa-num {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+  }
+
+  .etapa-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .etapa--feita .etapa-label,
+  .etapa--pendente .etapa-label {
+    color: rgba(255,255,255,0.7);
+  }
+
+  .etapa-sub {
+    font-size: 10px;
+    color: rgba(26,26,26,0.6);
+    font-weight: 500;
+  }
+
+  .etapa--feita .etapa-sub,
+  .etapa--pendente .etapa-sub {
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* Subtotal */
+  .subtotal {
+    padding: 12px 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .subtotal-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .subtotal-valor {
+    font-size: 18px;
+    font-weight: 800;
+    color: #FFB84D;
+  }
+
+  /* ── Painel direito ── */
+  .painel-dir {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .passo-header {
+    padding: 28px 32px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .passo-titulo {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .passo-sub {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .passo-opcoes {
+    flex: 1;
+    padding: 20px 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Opção checkbox/radio */
+  .opcao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .opcao:hover {
+    border-color: #FFB84D;
+    background: #fffbf2;
+  }
+
+  .opcao--selecionada {
+    border-color: #FFB84D;
+    background: #fffbf2;
+  }
+
+  .opcao-esq {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .opcao-circulo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .opcao--selecionada .opcao-circulo {
+    border-color: #FFB84D;
+    background: #FFB84D;
+  }
+
+  .opcao-circulo::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    display: none;
+  }
+
+  .opcao--selecionada .opcao-circulo::after {
+    display: block;
+  }
+
+  .opcao-quadrado {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: transparent;
+  }
+
+  .opcao--selecionada .opcao-quadrado {
+    border-color: #FFB84D;
+    background: #FFB84D;
+    color: #fff;
+  }
+
+  .opcao-texto {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .opcao-extra {
+    font-size: 12px;
+    color: #aaa;
+    font-weight: 500;
+  }
+
+  .opcao-preco {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2ecc71;
+  }
+
+  /* Quantidade */
+  .qtd-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+  }
+
+  .qtd-contador {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #f5f5f5;
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .qtd-btn {
+    width: 52px;
+    height: 52px;
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+    color: #1a1a1a;
+    font-weight: 300;
+    transition: background 0.15s;
+  }
+
+  .qtd-btn:hover { background: #eee; }
+
+  .qtd-num {
+    width: 52px;
+    height: 52px;
+    background: #FFB84D;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+  }
+
+  .obs-input {
+    width: 100%;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #555;
+    outline: none;
+    resize: none;
+    height: 60px;
+  }
+
+  .obs-input:focus { border-color: #FFB84D; }
+
+  /* ── Botões do rodapé ── */
+  .passo-footer {
+    padding: 16px 32px 20px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .btn-avancar {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-avancar--cinza {
+    background: #e0e0e0;
+    color: #888;
+  }
+
+  .btn-avancar--verde {
+    background: #2ecc71;
+    color: #fff;
+  }
+
+  .btn-avancar--verde:hover { background: #27ae60; }
+
+  .btn-avancar--amarelo {
+    background: #FFB84D;
+    color: #1a1a1a;
+  }
+
+  .btn-avancar--amarelo:hover { background: #f0a830; }
+
+  /* ── Botão fechar ── */
+  .btn-fechar {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e74c3c;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    font-weight: 700;
+  }
+
+  /* ── Modal Upsell ── */
+  .upsell-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+
+  .upsell-modal {
+    background: #fff;
+    border-radius: 20px;
+    width: 420px;
+    max-width: 92vw;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    animation: popIn 0.25s ease;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  .upsell-foto {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #2a2a2a, #444);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+  }
+
+  .upsell-corpo {
+    padding: 22px 24px 20px;
+  }
+
+  .upsell-titulo {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .upsell-desc {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .upsell-preco {
+    font-size: 20px;
+    font-weight: 800;
+    color: #FFB84D;
+    margin-bottom: 18px;
+  }
+
+  .upsell-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .upsell-btn {
+    flex: 1;
+    height: 46px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .upsell-btn--nao {
+    background: #eee;
+    color: #888;
+  }
+
+  .upsell-btn--sim {
+    background: #2ecc71;
+    color: #fff;
+  }
+
+  .upsell-btn--sim:hover { background: #27ae60; }
+
+  /* ── Nav de telas ── */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    background: rgba(0,0,0,0.7);
+    padding: 10px 16px;
+    border-radius: 50px;
+    z-index: 300;
+  }
+
+  .nav-btn {
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover, .nav-btn--ativo {
+    background: #FFB84D;
+    color: #1a1a1a;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     TELA 1 — Retirar ingredientes
+══════════════════════════════════════════ -->
+<div class="overlay" id="tela1">
+  <div class="modal">
+    <button class="btn-fechar" onclick="fechar()">✕</button>
+
+    <!-- Esquerda -->
+    <div class="painel-esq">
+      <div class="produto-foto-placeholder">🫓</div>
+      <div class="produto-info">
+        <div class="produto-categoria">Esfihas</div>
+        <div class="produto-nome">Esfiha de Carne</div>
+        <div class="produto-desc">Massa artesanal com recheio de carne moída temperada, cebola e tomate.</div>
+      </div>
+      <div class="etapas">
+        <div class="etapa etapa--ativa">
+          <div class="etapa-num">1</div>
+          <div>
+            <div class="etapa-label">Retirar ingredientes</div>
+            <div class="etapa-sub">Opcional</div>
+          </div>
+        </div>
+        <div class="etapa etapa--pendente">
+          <div class="etapa-num">2</div>
+          <div>
+            <div class="etapa-label">Transformar em Combo</div>
+            <div class="etapa-sub">Opcional</div>
+          </div>
+        </div>
+        <div class="etapa etapa--pendente">
+          <div class="etapa-num">3</div>
+          <div>
+            <div class="etapa-label">Quantidade</div>
+            <div class="etapa-sub">Selecione</div>
+          </div>
+        </div>
+      </div>
+      <div class="subtotal">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-valor">R$ 7,00</span>
+      </div>
+    </div>
+
+    <!-- Direita -->
+    <div class="painel-dir">
+      <div class="passo-header">
+        <div class="passo-titulo">Deseja retirar algo?</div>
+        <div class="passo-sub">Você pode escolher até 4 itens · Opcional</div>
+      </div>
+      <div class="passo-opcoes">
+        <div class="opcao" onclick="toggleCheck(this)">
+          <div class="opcao-esq">
+            <div class="opcao-quadrado">✓</div>
+            <span class="opcao-texto">Sem cebola</span>
+          </div>
+        </div>
+        <div class="opcao" onclick="toggleCheck(this)">
+          <div class="opcao-esq">
+            <div class="opcao-quadrado">✓</div>
+            <span class="opcao-texto">Sem tomate</span>
+          </div>
+        </div>
+        <div class="opcao" onclick="toggleCheck(this)">
+          <div class="opcao-esq">
+            <div class="opcao-quadrado">✓</div>
+            <span class="opcao-texto">Sem pimenta</span>
+          </div>
+        </div>
+        <div class="opcao" onclick="toggleCheck(this)">
+          <div class="opcao-esq">
+            <div class="opcao-quadrado">✓</div>
+            <span class="opcao-texto">Sem salsa</span>
+          </div>
+        </div>
+      </div>
+      <div class="passo-footer">
+        <button class="btn-avancar btn-avancar--verde" onclick="ir(2)">PULAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TELA 2 — Transformar em Combo
+══════════════════════════════════════════ -->
+<div class="overlay hidden" id="tela2">
+  <div class="modal">
+    <button class="btn-fechar" onclick="fechar()">✕</button>
+    <div class="painel-esq">
+      <div class="produto-foto-placeholder">🫓</div>
+      <div class="produto-info">
+        <div class="produto-categoria">Esfihas</div>
+        <div class="produto-nome">Esfiha de Carne</div>
+        <div class="produto-desc">Massa artesanal com recheio de carne moída temperada, cebola e tomate.</div>
+      </div>
+      <div class="etapas">
+        <div class="etapa etapa--feita">
+          <div class="etapa-num">✓</div>
+          <div>
+            <div class="etapa-label">Retirar ingredientes</div>
+            <div class="etapa-sub">Pulado</div>
+          </div>
+        </div>
+        <div class="etapa etapa--ativa">
+          <div class="etapa-num">2</div>
+          <div>
+            <div class="etapa-label">Transformar em Combo</div>
+            <div class="etapa-sub">Opcional</div>
+          </div>
+        </div>
+        <div class="etapa etapa--pendente">
+          <div class="etapa-num">3</div>
+          <div>
+            <div class="etapa-label">Quantidade</div>
+            <div class="etapa-sub">Selecione</div>
+          </div>
+        </div>
+      </div>
+      <div class="subtotal">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-valor" id="sub2">R$ 7,00</span>
+      </div>
+    </div>
+    <div class="painel-dir">
+      <div class="passo-header">
+        <div class="passo-titulo">Transforme em Combo! 🔥</div>
+        <div class="passo-sub">Adicione uma bebida e leve mais por menos</div>
+      </div>
+      <div class="passo-opcoes">
+        <div class="opcao" id="combo-op" onclick="selecionarCombo(this)">
+          <div class="opcao-esq">
+            <div class="opcao-circulo"></div>
+            <div>
+              <div class="opcao-texto">Combo — Esfiha + Bebida</div>
+              <div class="opcao-extra">Refrigerante lata 350ml à sua escolha</div>
+            </div>
+          </div>
+          <span class="opcao-preco">+ R$ 5,00</span>
+        </div>
+      </div>
+      <div class="passo-footer">
+        <button class="btn-avancar btn-avancar--verde" onclick="ir(3)">PULAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TELA 3 — Quantidade + Obs
+══════════════════════════════════════════ -->
+<div class="overlay hidden" id="tela3">
+  <div class="modal">
+    <button class="btn-fechar" onclick="fechar()">✕</button>
+    <div class="painel-esq">
+      <div class="produto-foto-placeholder">🫓</div>
+      <div class="produto-info">
+        <div class="produto-categoria">Esfihas</div>
+        <div class="produto-nome">Esfiha de Carne</div>
+        <div class="produto-desc">Massa artesanal com recheio de carne moída temperada, cebola e tomate.</div>
+      </div>
+      <div class="etapas">
+        <div class="etapa etapa--feita">
+          <div class="etapa-num">✓</div>
+          <div>
+            <div class="etapa-label">Retirar ingredientes</div>
+            <div class="etapa-sub">Pulado</div>
+          </div>
+        </div>
+        <div class="etapa etapa--feita">
+          <div class="etapa-num">✓</div>
+          <div>
+            <div class="etapa-label">Transformar em Combo</div>
+            <div class="etapa-sub">Pulado</div>
+          </div>
+        </div>
+        <div class="etapa etapa--ativa">
+          <div class="etapa-num">3</div>
+          <div>
+            <div class="etapa-label">Quantidade</div>
+            <div class="etapa-sub">Selecione</div>
+          </div>
+        </div>
+      </div>
+      <div class="subtotal">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-valor" id="sub3">R$ 7,00</span>
+      </div>
+    </div>
+    <div class="painel-dir">
+      <div class="passo-header">
+        <div class="passo-titulo">Quantidade</div>
+        <div class="passo-sub">Quantas unidades você quer?</div>
+      </div>
+      <div class="passo-opcoes">
+        <div class="qtd-wrap">
+          <div class="qtd-contador">
+            <button class="qtd-btn" onclick="mudarQtd(-1)">−</button>
+            <div class="qtd-num" id="qtd-display">1</div>
+            <button class="qtd-btn" onclick="mudarQtd(1)">+</button>
+          </div>
+          <textarea class="obs-input" placeholder="Alguma observação? Ex: sem molho, bem assada..."></textarea>
+        </div>
+      </div>
+      <div class="passo-footer">
+        <button class="btn-avancar btn-avancar--amarelo" onclick="ir(4)">
+          ADICIONAR AO CARRINHO · R$ <span id="preco-final">7,00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TELA 4 — Upsell pós-adição
+══════════════════════════════════════════ -->
+<div class="overlay hidden" id="tela4" style="background:rgba(0,0,0,0.4)">
+  <div class="upsell-modal">
+    <div class="upsell-foto">🥤</div>
+    <div class="upsell-corpo">
+      <div class="upsell-titulo">Que tal um refrigerante gelado?</div>
+      <div class="upsell-desc">Coca-Cola, Guaraná ou Suco Natural. O acompanhamento perfeito pra sua esfiha!</div>
+      <div class="upsell-preco">A partir de R$ 4,00</div>
+      <div class="upsell-btns">
+        <button class="upsell-btn upsell-btn--nao" onclick="ir(5)">Não, obrigado</button>
+        <button class="upsell-btn upsell-btn--sim" onclick="ir(5)">SIM, quero!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TELA 5 — Confirmação
+══════════════════════════════════════════ -->
+<div class="overlay hidden" id="tela5">
+  <div style="text-align:center; color:#fff;">
+    <div style="font-size:72px; margin-bottom:16px;">✅</div>
+    <div style="font-size:24px; font-weight:800; margin-bottom:8px;">Adicionado ao carrinho!</div>
+    <div style="font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:24px;">Esfiha de Carne foi adicionada com sucesso.</div>
+    <button onclick="ir(1)" style="padding:12px 32px; background:#FFB84D; border:none; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer;">
+      ↺ Ver de novo
+    </button>
+  </div>
+</div>
+
+<!-- ── Navegação de debug ── -->
+<div class="nav">
+  <span style="color:rgba(255,255,255,0.5); font-size:11px; margin-right:4px;">Tela:</span>
+  <button class="nav-btn nav-btn--ativo" id="nav1" onclick="ir(1)">1 · Retirar</button>
+  <button class="nav-btn" id="nav2" onclick="ir(2)">2 · Combo</button>
+  <button class="nav-btn" id="nav3" onclick="ir(3)">3 · Qtd</button>
+  <button class="nav-btn" id="nav4" onclick="ir(4)">4 · Upsell</button>
+</div>
+
+<script>
+  let qtd = 1
+  const precoBase = 7.00
+
+  function ir(n) {
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById('tela' + i)?.classList.add('hidden')
+      const nb = document.getElementById('nav' + i)
+      if (nb) nb.classList.remove('nav-btn--ativo')
+    }
+    document.getElementById('tela' + n)?.classList.remove('hidden')
+    const nb = document.getElementById('nav' + n)
+    if (nb) nb.classList.add('nav-btn--ativo')
+  }
+
+  function fechar() {
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'))
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('opcao--selecionada')
+    const q = el.querySelector('.opcao-quadrado')
+    // botão avançar muda pra "Avançar" se algo selecionado
+    const footer = el.closest('.painel-dir').querySelector('.btn-avancar')
+    const algum = el.closest('.passo-opcoes').querySelectorAll('.opcao--selecionada').length > 0
+    footer.textContent = algum ? 'AVANÇAR' : 'PULAR'
+    footer.className = 'btn-avancar ' + (algum ? 'btn-avancar--amarelo' : 'btn-avancar--verde')
+    footer.onclick = () => ir(2)
+  }
+
+  function selecionarCombo(el) {
+    el.classList.toggle('opcao--selecionada')
+    const ativo = el.classList.contains('opcao--selecionada')
+    const footer = el.closest('.painel-dir').querySelector('.btn-avancar')
+    footer.textContent = ativo ? 'AVANÇAR' : 'PULAR'
+    footer.className = 'btn-avancar ' + (ativo ? 'btn-avancar--amarelo' : 'btn-avancar--verde')
+    footer.onclick = () => ir(3)
+    // atualiza subtotal
+    document.getElementById('sub2').textContent = ativo ? 'R$ 12,00' : 'R$ 7,00'
+  }
+
+  function mudarQtd(delta) {
+    qtd = Math.max(1, qtd + delta)
+    document.getElementById('qtd-display').textContent = qtd
+    const total = (precoBase * qtd).toFixed(2).replace('.', ',')
+    document.getElementById('preco-final').textContent = total
+    document.getElementById('sub3').textContent = 'R$ ' + total
+  }
+</script>
+</body>
+</html>

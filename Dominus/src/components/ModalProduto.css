@@ -725,3 +725,44 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* ── Botão confirmar bebida (sub-passo combo) ── */
+.mp-btn-confirmar-bebida {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: var(--cor-primaria);
+  color: #111;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-btn-confirmar-bebida:hover  { background: #ffc55a; }
+.mp-btn-confirmar-bebida:active { transform: scale(0.98); }
+
+/* Nome da bebida selecionada no sub-passo */
+.mp-bebida-opts-nome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Opts resumidas no card do combo família */
+.mp-combo-card-opts {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: var(--texto-terciario);
+  font-style: italic;
+  line-height: 1.3;
+}
