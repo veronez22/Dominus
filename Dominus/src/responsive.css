@@ -97,6 +97,69 @@
 }
 
 /* ─────────────────────────────────────────
+   10" tablet  (1200px – 1439px)
+───────────────────────────────────────── */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  body .app-conteudo { padding: 26px 32px; }
+
+  /* ── Header ── */
+  body .header          { height: 70px; gap: 14px; }
+  body .header-logo-img { height: 70px; min-width: 190px; padding: 0 22px; }
+  body .header-busca    { max-width: 320px; height: 44px; }
+
+  body .header-btn, body .header-btn-carrinho {
+    width: 148px;
+    height: 70px;
+    font-size: 13px;
+    gap: 6px;
+    padding: 0 10px;
+  }
+  body .header-btn svg,
+  body .header-btn-carrinho svg { width: 22px; height: 22px; }
+
+  /* ── Sidebar ── */
+  body .sidebar        { width: 130px; min-width: 130px; }
+  body .sidebar-btn    { width: 106px; padding: 11px 6px; }
+  body .sidebar-label  { font-size: 15px; }
+  body .sidebar-categorias { gap: 24px; }
+
+  /* ── Sub-sidebar ── */
+  body .sidebar-sub     { width: 130px; min-width: 130px; gap: 20px; }
+  body .sidebar-sub-btn { width: 112px; font-size: 15px; padding: 10px 6px; }
+
+  /* ── Cards produto ── */
+  body .card-item           { height: 148px; margin-bottom: 13px; }
+  body .card-item-img-wrap  { width: 148px; min-width: 148px; height: 148px; }
+  body .card-item-body      { padding: 16px 20px; }
+  body .card-item-nome      { font-size: 17px; }
+  body .card-item-desc      { font-size: 13px; }
+  body .card-item-preco     { font-size: 22px; }
+  body .card-item-btn       { font-size: 14px; padding: 10px 18px; }
+
+  /* ── Banner ── */
+  body .destaques-banner          { height: 460px; border-radius: 22px; }
+  body .destaques-banner-conteudo { padding: 44px 48px; max-width: 560px; }
+  body .destaques-banner-titulo   { font-size: 52px; }
+  body .destaques-banner-descricao { font-size: 16px; }
+  body .destaques-banner-btn      { font-size: 14px; padding: 12px 26px; }
+
+  /* ── Destaques cards ── */
+  body .destaques-card            { min-width: 260px; max-width: 260px; border-radius: 18px; }
+  body .destaques-card-imagem-wrapper { height: 165px; }
+  body .destaques-card-nome       { font-size: 14px; }
+  body .destaques-card-preco      { font-size: 16px; }
+  body .destaques-cards           { gap: 22px; }
+
+  /* ── Modais ── */
+  body .mp-sheet  { max-width: 740px; }
+  body .mp-hero   { height: 240px; }
+  body .mp-nome   { font-size: 24px; }
+  body .mp-preco  { font-size: 26px; }
+  body .carrinho  { width: 500px; height: 620px; }
+  body .conta-modal { width: 580px; }
+}
+
+/* ─────────────────────────────────────────
    10–12" compacto  (até 1180px)
 ───────────────────────────────────────── */
 @media (max-width: 1180px) {
@@ -118,69 +181,70 @@
    8–9"  (até 960px)
 ───────────────────────────────────────── */
 @media (max-width: 960px) {
-  .app-conteudo { padding: 16px; }
+  body .app-conteudo { padding: 16px; }
 
   /* ── Header ── */
-  .header          { height: 56px; gap: 10px; }
-  .header-logo-img { height: 56px; min-width: 140px; padding: 0 14px; }
-  .header-busca    { max-width: 200px; height: 36px; }
+  body .header          { height: 56px; gap: 6px; }
+  body .header-logo-img { height: 56px; min-width: 120px; padding: 0 12px; }
+  body .header-busca    { max-width: 180px; height: 36px; }
 
-  .header-btn, .header-btn-carrinho {
-    width: 100px;
+  body .header-btn, body .header-btn-carrinho {
+    width: 88px;
     height: 56px;
-    font-size: 12px;
-    gap: 5px;
-    padding: 0 10px;
+    font-size: 11px;
+    gap: 4px;
+    padding: 0 6px;
   }
+  body .header-acoes { gap: 2px; }
 
   /* ── Sidebar principal ── */
-  .sidebar        { width: 90px; min-width: 90px; }
-  .sidebar-btn    { width: 74px; padding: 8px 4px; }
-  .sidebar-label  { font-size: 13px; }
-  .sidebar-categorias { gap: 20px; margin-bottom: 120px; }
+  body .sidebar        { width: 90px; min-width: 90px; }
+  body .sidebar-btn    { width: 74px; padding: 8px 4px; }
+  body .sidebar-label  { font-size: 13px; }
+  body .sidebar-categorias { gap: 20px; margin-bottom: 120px; }
 
   /* ── Sub-sidebar ── */
-  .sidebar-sub     { width: 108px; min-width: 108px; gap: 18px; }
-  .sidebar-sub-btn { width: 88px; font-size: 14px; padding: 9px 6px; }
+  body .sidebar-sub     { width: 108px; min-width: 108px; gap: 18px; }
+  body .sidebar-sub-btn { width: 88px; font-size: 14px; padding: 9px 6px; }
 
   /* ── Cards de produto ── */
-  .card-item           { height: 118px; }
-  .card-item-img-wrap  { width: 108px; min-width: 108px; height: 118px; }
-  .card-item-body      { padding: 14px 16px; }
-  .card-item-nome      { font-size: 15px; }
-  .card-item-desc      { font-size: 12px; }
-  .card-item-preco     { font-size: 18px; }
-  .card-item-btn       { font-size: 13px; padding: 9px 16px; }
-  .card-item-rodape    { margin-top: 10px; }
+  body .card-item           { height: 118px; }
+  body .card-item-img-wrap  { width: 108px; min-width: 108px; height: 118px; }
+  body .card-item-body      { padding: 14px 16px; }
+  body .card-item-nome      { font-size: 15px; }
+  body .card-item-desc      { font-size: 12px; }
+  body .card-item-preco     { font-size: 18px; }
+  body .card-item-btn       { font-size: 13px; padding: 9px 16px; }
+  body .card-item-rodape    { margin-top: 10px; }
 
   /* ── Seção título ── */
-  .secao-titulo-texto { font-size: 12px; }
+  body .secao-titulo-texto { font-size: 12px; }
 
   /* ── Modal produto (sheet) ── */
-  .mp-sheet  { max-width: 640px; }
-  .mp-hero   { height: 200px; }
-  .mp-nome   { font-size: 20px; }
-  .mp-preco  { font-size: 22px; }
-  .mp-btn    { height: 50px; font-size: 14px; }
+  body .mp-sheet  { max-width: 640px; }
+  body .mp-hero   { height: 200px; }
+  body .mp-nome   { font-size: 20px; }
+  body .mp-preco  { font-size: 22px; }
+  body .mp-btn    { height: 50px; font-size: 14px; }
 
   /* ── Carrinho ── */
-  .carrinho { width: 420px; height: 560px; }
+  body .carrinho { width: 420px; height: 560px; }
 
   /* ── Minha Conta ── */
-  .conta-modal { width: 480px; }
-  .conta-rodape-total strong { font-size: 24px; }
+  body .conta-modal { width: 480px; }
+  body .conta-rodape-total strong { font-size: 24px; }
 
   /* ── Avaliação ── */
-  .aval-modal { width: 310px; }
+  body .aval-modal { width: 310px; }
 
   /* ── Modal mesa ── */
-  .mesa-modal  { padding: 32px 28px; }
-  .mesa-titulo { font-size: 20px; }
-  .mesa-input  { font-size: 24px; }
+  body .mesa-modal  { padding: 32px 28px; }
+  body .mesa-titulo { font-size: 20px; }
+  body .mesa-input  { font-size: 24px; }
 
   /* ── Banner ── */
-  .destaques-banner-titulo    { font-size: 26px; }
-  .destaques-banner-subtitulo { font-size: 13px; }
+  body .destaques-banner-titulo    { font-size: 26px; }
+  body .destaques-banner-subtitulo { font-size: 13px; }
 }
 
 
@@ -188,122 +252,122 @@
    7"  (até 768px)
 ───────────────────────────────────────── */
 @media (max-width: 768px) {
-  .app-conteudo { padding: 12px; }
+  body .app-conteudo { padding: 12px; }
 
   /* ── Header ── */
-  .header          { height: 50px; gap: 6px; }
-  .header-logo-img { height: 50px; min-width: 110px; padding: 0 10px; }
-  .header-busca    { max-width: 140px; height: 32px; padding: 0 10px; }
-  .header-busca-input { font-size: 12px; }
+  body .header          { height: 50px; gap: 6px; }
+  body .header-logo-img { height: 50px; min-width: 110px; padding: 0 10px; }
+  body .header-busca    { max-width: 140px; height: 32px; padding: 0 10px; }
+  body .header-busca-input { font-size: 12px; }
 
-  .header-btn, .header-btn-carrinho {
+  body .header-btn, body .header-btn-carrinho {
     width: 76px;
     height: 50px;
     font-size: 11px;
     gap: 3px;
     padding: 0 6px;
   }
-  .header-acoes { gap: 0; }
+  body .header-acoes { gap: 0; }
 
   /* Ícones do header menores */
-  .header-btn svg,
-  .header-btn-carrinho svg { width: 18px; height: 18px; }
+  body .header-btn svg,
+  body .header-btn-carrinho svg { width: 18px; height: 18px; }
 
   /* ── Sidebar principal ── */
-  .sidebar        { width: 72px; min-width: 72px; padding: 10px 0; }
-  .sidebar-btn    { width: 60px; padding: 7px 3px; }
-  .sidebar-label  { font-size: 11px; }
-  .sidebar-categorias { gap: 14px; margin-bottom: 100px; }
-  .sidebar-link   { font-size: 10px; }
+  body .sidebar        { width: 72px; min-width: 72px; padding: 10px 0; }
+  body .sidebar-btn    { width: 60px; padding: 7px 3px; }
+  body .sidebar-label  { font-size: 11px; }
+  body .sidebar-categorias { gap: 14px; margin-bottom: 100px; }
+  body .sidebar-link   { font-size: 10px; }
 
   /* Ícones sidebar */
-  .sidebar-btn svg { width: 20px; height: 20px; }
+  body .sidebar-btn svg { width: 20px; height: 20px; }
 
   /* ── Sub-sidebar ── */
-  .sidebar-sub     { width: 86px; min-width: 86px; padding: 10px 4px; gap: 12px; }
-  .sidebar-sub-btn { width: 74px; font-size: 12px; padding: 7px 4px; border-radius: 10px; }
+  body .sidebar-sub     { width: 86px; min-width: 86px; padding: 10px 4px; gap: 12px; }
+  body .sidebar-sub-btn { width: 74px; font-size: 12px; padding: 7px 4px; border-radius: 10px; }
 
   /* ── Cards de produto ── */
-  .card-item           { height: 98px; border-radius: 14px; margin-bottom: 9px; }
-  .card-item-img-wrap  { width: 88px; min-width: 88px; height: 98px; }
-  .card-item-body      { padding: 11px 12px; }
-  .card-item-nome      { font-size: 13px; }
-  .card-item-desc      { font-size: 11px; margin-top: 3px; -webkit-line-clamp: 1; }
-  .card-item-preco     { font-size: 15px; }
-  .card-item-preco-original { font-size: 11px; }
-  .card-item-btn       { font-size: 11px; padding: 7px 11px; border-radius: 9px; }
-  .card-item-rodape    { margin-top: 7px; }
+  body .card-item           { height: 98px; border-radius: 14px; margin-bottom: 9px; }
+  body .card-item-img-wrap  { width: 88px; min-width: 88px; height: 98px; }
+  body .card-item-body      { padding: 11px 12px; }
+  body .card-item-nome      { font-size: 13px; }
+  body .card-item-desc      { font-size: 11px; margin-top: 3px; -webkit-line-clamp: 1; }
+  body .card-item-preco     { font-size: 15px; }
+  body .card-item-preco-original { font-size: 11px; }
+  body .card-item-btn       { font-size: 11px; padding: 7px 11px; border-radius: 9px; }
+  body .card-item-rodape    { margin-top: 7px; }
 
   /* ── Seção título ── */
-  .secao-titulo      { padding: 16px 0 10px; }
-  .secao-titulo-texto { font-size: 11px; letter-spacing: 1.5px; }
+  body .secao-titulo      { padding: 16px 0 10px; }
+  body .secao-titulo-texto { font-size: 11px; letter-spacing: 1.5px; }
 
   /* ── Modal produto (sheet de baixo) ── */
-  .mp-overlay  { align-items: flex-end; }
-  .mp-sheet    { max-width: 100%; border-radius: 22px 22px 0 0; max-height: 96vh; }
-  .mp-hero     { height: 160px; }
-  .mp-nome     { font-size: 17px; }
-  .mp-preco    { font-size: 19px; }
-  .mp-desc     { font-size: 13px; }
-  .mp-corpo    { padding: 0 16px 12px; }
-  .mp-rodape   { padding: 12px 16px 20px; gap: 10px; }
-  .mp-btn      { height: 46px; font-size: 14px; border-radius: 12px; }
-  .mp-pill     { padding: 10px 14px; font-size: 13px; }
-  .mp-secao-titulo { font-size: 11px; }
+  body .mp-overlay  { align-items: flex-end; }
+  body .mp-sheet    { max-width: 100%; border-radius: 22px 22px 0 0; max-height: 96vh; }
+  body .mp-hero     { height: 160px; }
+  body .mp-nome     { font-size: 17px; }
+  body .mp-preco    { font-size: 19px; }
+  body .mp-desc     { font-size: 13px; }
+  body .mp-corpo    { padding: 0 16px 12px; }
+  body .mp-rodape   { padding: 12px 16px 20px; gap: 10px; }
+  body .mp-btn      { height: 46px; font-size: 14px; border-radius: 12px; }
+  body .mp-pill     { padding: 10px 14px; font-size: 13px; }
+  body .mp-secao-titulo { font-size: 11px; }
 
   /* Contador modal produto */
-  .mp-contador-btn { width: 44px; height: 48px; }
-  .mp-contador-num { min-width: 34px; height: 48px; font-size: 16px; }
+  body .mp-contador-btn { width: 44px; height: 48px; }
+  body .mp-contador-num { min-width: 34px; height: 48px; font-size: 16px; }
 
   /* ── Carrinho — tela cheia no 7" ── */
-  .carrinho-overlay { align-items: flex-end; }
-  .carrinho {
+  body .carrinho-overlay { align-items: flex-end; }
+  body .carrinho {
     width: 100%;
     max-width: 100%;
     height: 94vh;
     max-height: 94vh;
     border-radius: 22px 22px 0 0;
   }
-  .carrinho-confirmado h2  { font-size: 20px; }
-  .carrinho-total strong   { font-size: 20px; }
-  .carrinho-btn-confirmar  { font-size: 15px; padding: 12px; }
-  .carrinho-btn-pedir-mais { font-size: 14px; padding: 12px 14px; }
-  .carrinho-header         { padding: 16px 20px; }
-  .carrinho-itens          { padding: 6px 20px; }
-  .carrinho-footer         { padding: 16px 20px; }
+  body .carrinho-confirmado h2  { font-size: 20px; }
+  body .carrinho-total strong   { font-size: 20px; }
+  body .carrinho-btn-confirmar  { font-size: 15px; padding: 12px; }
+  body .carrinho-btn-pedir-mais { font-size: 14px; padding: 12px 14px; }
+  body .carrinho-header         { padding: 16px 20px; }
+  body .carrinho-itens          { padding: 6px 20px; }
+  body .carrinho-footer         { padding: 16px 20px; }
 
   /* ── Minha Conta — sobe de baixo ── */
-  .conta-overlay { align-items: flex-end; }
-  .conta-modal {
+  body .conta-overlay { align-items: flex-end; }
+  body .conta-modal {
     width: 100%;
     max-width: 100%;
     max-height: 94vh;
     border-radius: 22px 22px 0 0;
   }
-  .conta-header           { padding: 16px 20px; }
-  .conta-header-info h2   { font-size: 18px; }
-  .conta-item             { padding: 12px 20px; }
-  .conta-item-nome        { font-size: 14px; }
-  .conta-rodape           { padding: 14px 20px; }
-  .conta-rodape-total strong { font-size: 20px; }
+  body .conta-header           { padding: 16px 20px; }
+  body .conta-header-info h2   { font-size: 18px; }
+  body .conta-item             { padding: 12px 20px; }
+  body .conta-item-nome        { font-size: 14px; }
+  body .conta-rodape           { padding: 14px 20px; }
+  body .conta-rodape-total strong { font-size: 20px; }
 
   /* ── Avaliação ── */
-  .aval-modal  { width: 290px; padding: 26px 20px; gap: 12px; }
-  .aval-titulo { font-size: 17px; }
-  .aval-sub    { font-size: 12px; }
-  .aval-estrela svg { width: 32px; height: 32px; }
-  .aval-estrelas { gap: 6px; }
-  .aval-btn-pular, .aval-btn-avaliar { font-size: 12px; padding: 10px; }
+  body .aval-modal  { width: 290px; padding: 26px 20px; gap: 12px; }
+  body .aval-titulo { font-size: 17px; }
+  body .aval-sub    { font-size: 12px; }
+  body .aval-estrela svg { width: 32px; height: 32px; }
+  body .aval-estrelas { gap: 6px; }
+  body .aval-btn-pular, body .aval-btn-avaliar { font-size: 12px; padding: 10px; }
 
   /* ── Modal mesa ── */
-  .mesa-modal  { width: 88vw; padding: 26px 20px; }
-  .mesa-titulo { font-size: 18px; }
-  .mesa-subtitulo { font-size: 13px; }
-  .mesa-input  { font-size: 22px; padding: 12px; }
-  .mesa-btn-cancelar, .mesa-btn-confirmar { font-size: 14px; padding: 11px; }
+  body .mesa-modal  { width: 88vw; padding: 26px 20px; }
+  body .mesa-titulo { font-size: 18px; }
+  body .mesa-subtitulo { font-size: 13px; }
+  body .mesa-input  { font-size: 22px; padding: 12px; }
+  body .mesa-btn-cancelar, body .mesa-btn-confirmar { font-size: 14px; padding: 11px; }
 
   /* ── Banner Destaques ── */
-  .destaques-banner-titulo    { font-size: 20px; }
-  .destaques-banner-subtitulo { font-size: 12px; }
-  .destaques-banner-btn       { font-size: 12px; padding: 9px 18px; }
+  body .destaques-banner-titulo    { font-size: 20px; }
+  body .destaques-banner-subtitulo { font-size: 12px; }
+  body .destaques-banner-btn       { font-size: 12px; padding: 9px 18px; }
 }
