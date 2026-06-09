@@ -89,26 +89,21 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                   <p className="carrinho-vazio">Seu carrinho está vazio</p>
                 ) : (
                   itens.map((item) => {
-                    const adicionais = item.extras?.adicionais || []
-                    const observacao = item.extras?.observacao || ''
-                    const gelo = item.extras?.gelo
-                    const limao = item.extras?.limao
-
-                    const tagExtras = [
-                      ...adicionais,
-                      gelo ? 'Gelo' : null,
-                      limao ? 'Limão' : null,
-                    ].filter(Boolean)
+                    const ext       = item.extras || {}
+                    const retirados = ext.retirados || []
+                    const observacao = ext.observacao || ''
+                    const gelo      = ext.gelo
+                    const limao     = ext.limao
+                    const copos     = ext.copos
+                    const tipoCombo = ext.tipoCombo
+                    const itensCombo = ext.itensCombo || []
 
                     return (
                       <div key={item._key || item.id} className="carrinho-item">
                         <div className="carrinho-item-info">
                           <div className="carrinho-item-topo">
                             <p>{item.nome}</p>
-                            <button
-                              className="carrinho-item-remover"
-                              onClick={() => onRemover(item._key)}
-                            >
+                            <button className="carrinho-item-remover" onClick={() => onRemover(item._key)}>
                               <X size={13} />
                             </button>
                           </div>
@@ -126,15 +121,48 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                               R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
                             </span>
                           </div>
-                          {tagExtras.length > 0 && (
-                            <div className="carrinho-item-tags">
-                              {tagExtras.map((tag) => (
-                                <span key={tag} className="carrinho-item-tag">+ {tag}</span>
+
+                          {/* Retirados */}
+                          {retirados.length > 0 && (
+                            <div className="carrinho-item-extras">
+                              {retirados.map(r => (
+                                <span key={r} className="carrinho-item-tag carrinho-item-tag--rem">− Sem {r.toLowerCase()}</span>
                               ))}
                             </div>
                           )}
+
+                          {/* Bebida: gelo / limão / copos */}
+                          {(gelo || limao || (copos && copos > 1)) && (
+                            <div className="carrinho-item-extras">
+                              {copos > 1 && <span className="carrinho-item-tag">{copos} copos</span>}
+                              {gelo  && <span className="carrinho-item-tag">🧊 Gelo</span>}
+                              {limao && <span className="carrinho-item-tag">🍋 Limão</span>}
+                            </div>
+                          )}
+
+                          {/* Combo */}
+                          {tipoCombo && itensCombo.length > 0 && (
+                            <div className="carrinho-item-combo">
+                              <span className="carrinho-combo-label">
+                                {tipoCombo === 'familia' ? '👨‍👩‍👧‍👦 Combo Família' : '🔥 Combo'}
+                              </span>
+                              {itensCombo.map((ci, idx) => (
+                                <div key={idx} className="carrinho-combo-item">
+                                  <span className="carrinho-combo-nome">+ {ci.nome}</span>
+                                  {(ci.gelo || ci.limao || (ci.copos && ci.copos > 1)) && (
+                                    <span className="carrinho-combo-opts">
+                                      {ci.copos > 1 ? `${ci.copos} copos` : ''}
+                                      {ci.gelo  ? ' · gelo'  : ''}
+                                      {ci.limao ? ' · limão' : ''}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
                           {observacao && (
-                            <p className="carrinho-item-obs">Obs: {observacao}</p>
+                            <p className="carrinho-item-obs">📝 {observacao}</p>
                           )}
                         </div>
                       </div>

@@ -168,8 +168,9 @@
   color: var(--cor-primaria);
 }
 
-/* Tags de adicionais */
-.carrinho-item-tags {
+/* Tags de extras */
+.carrinho-item-tags,
+.carrinho-item-extras {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -185,6 +186,53 @@
   font-weight: 600;
   padding: 3px 10px;
   text-transform: capitalize;
+}
+
+.carrinho-item-tag--rem {
+  background: rgba(255, 80, 80, 0.08);
+  border-color: rgba(255, 80, 80, 0.2);
+  color: #ff6b6b;
+}
+
+/* Combo no carrinho */
+.carrinho-item-combo {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 184, 77, 0.05);
+  border: 1px solid rgba(255, 184, 77, 0.15);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.carrinho-combo-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cor-primaria);
+  margin-bottom: 2px;
+}
+
+.carrinho-combo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.carrinho-combo-nome {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+.carrinho-combo-opts {
+  font-size: 11px;
+  color: var(--texto-terciario);
+  font-style: italic;
 }
 
 /* Observação */
