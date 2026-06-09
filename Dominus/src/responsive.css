@@ -24,7 +24,9 @@
     width: 160px;
     height: 76px;
     font-size: 15px;
-    gap: 8px;
+    gap: 6px;
+    flex-direction: column;
+    justify-content: center;
   }
   body .header-btn svg,
   body .header-btn-carrinho svg { width: 26px; height: 26px; }
@@ -111,8 +113,10 @@
     width: 148px;
     height: 70px;
     font-size: 13px;
-    gap: 6px;
-    padding: 0 10px;
+    gap: 4px;
+    padding: 0 8px;
+    flex-direction: column;
+    justify-content: center;
   }
   body .header-btn svg,
   body .header-btn-carrinho svg { width: 22px; height: 22px; }
@@ -137,7 +141,7 @@
   body .card-item-btn       { font-size: 14px; padding: 10px 18px; }
 
   /* ── Banner ── */
-  body .destaques-banner          { height: 310px; border-radius: 22px; }
+  body .destaques-banner          { height: 360px; border-radius: 22px; }
   body .destaques-banner-conteudo { padding: 44px 48px; max-width: 560px; }
   body .destaques-banner-titulo   { font-size: 52px; }
   body .destaques-banner-descricao { font-size: 16px; }
@@ -192,8 +196,10 @@
     width: 88px;
     height: 56px;
     font-size: 11px;
-    gap: 4px;
+    gap: 3px;
     padding: 0 6px;
+    flex-direction: column;
+    justify-content: center;
   }
   body .header-acoes { gap: 2px; }
 
@@ -264,8 +270,10 @@
     width: 76px;
     height: 50px;
     font-size: 11px;
-    gap: 3px;
+    gap: 2px;
     padding: 0 6px;
+    flex-direction: column;
+    justify-content: center;
   }
   body .header-acoes { gap: 0; }
 

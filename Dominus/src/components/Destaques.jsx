@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import './Destaques.css'
 
 function Destaques({ onAdicionar, onAbrirProduto, produtos = [], onNavegar }) {
   const [bannersDB,  setBannersDB]  = useState([])
   const [slideAtivo, setSlideAtivo] = useState(0)
+  const touchStartX = useRef(null)
 
   // Busca banners do banco + Realtime
   useEffect(() => {
@@ -61,11 +62,31 @@ function Destaques({ onAdicionar, onAbrirProduto, produtos = [], onNavegar }) {
 
   const slide = slides[slideAtivo] ?? slides[0]
 
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e) {
+    if (touchStartX.current === null) return
+    const delta = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(delta) < 50) return // swipe muito curto, ignora
+    if (delta < 0) {
+      // swipe para esquerda → próximo slide
+      setSlideAtivo(prev => (prev + 1) % slides.length)
+    } else {
+      // swipe para direita → slide anterior
+      setSlideAtivo(prev => (prev - 1 + slides.length) % slides.length)
+    }
+  }
+
   return (
     <div className="destaques">
       <div
         className="destaques-banner"
         style={{ backgroundImage: `url(${slide.imagem})` }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         <div className="destaques-banner-overlay" />
 
