@@ -25,7 +25,7 @@
     height: 76px;
     font-size: 15px;
     gap: 6px;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
   }
   body .header-btn svg,
@@ -115,7 +115,7 @@
     font-size: 13px;
     gap: 4px;
     padding: 0 8px;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
   }
   body .header-btn svg,
@@ -198,7 +198,7 @@
     font-size: 11px;
     gap: 3px;
     padding: 0 6px;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
   }
   body .header-acoes { gap: 2px; }
@@ -272,7 +272,7 @@
     font-size: 11px;
     gap: 2px;
     padding: 0 6px;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
   }
   body .header-acoes { gap: 0; }
