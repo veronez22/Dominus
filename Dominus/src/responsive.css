@@ -2,10 +2,99 @@
    RESPONSIVO — Tablets 7" a 12"
    ============================================================
    Breakpoints:
-   • max-width: 1180px  →  10-12" pequenos   (ajustes leves)
-   • max-width: 960px   →  8-9"              (ajustes médios)
-   • max-width: 768px   →  7"               (modo compacto)
+   • min-width: 1440px  →  12" grandes        (escala pra cima)
+   • max-width: 1180px  →  10-12" pequenos    (ajustes leves)
+   • max-width: 960px   →  8-9"               (ajustes médios)
+   • max-width: 768px   →  7"                 (modo compacto)
    ============================================================ */
+
+/* ─────────────────────────────────────────
+   12" grande  (1440px+)
+───────────────────────────────────────── */
+@media (min-width: 1440px) {
+  body .app-conteudo { padding: 32px 40px; }
+
+  /* ── Header ── */
+  body .header          { height: 76px; gap: 24px; }
+  body .header-logo-img { height: 76px; min-width: 220px; padding: 0 28px; }
+  body .header-busca    { max-width: 460px; height: 50px; }
+  body .header-busca-input { font-size: 16px; }
+
+  body .header-btn, body .header-btn-carrinho {
+    width: 160px;
+    height: 76px;
+    font-size: 15px;
+    gap: 8px;
+  }
+  body .header-btn svg,
+  body .header-btn-carrinho svg { width: 26px; height: 26px; }
+
+  /* ── Sidebar principal ── */
+  body .sidebar        { width: 150px; min-width: 150px; padding: 24px 0; }
+  body .sidebar-btn    { width: 120px; padding: 14px 8px; }
+  body .sidebar-label  { font-size: 16px; }
+  body .sidebar-categorias { gap: 28px; }
+  body .sidebar-btn svg { width: 28px; height: 28px; }
+
+  /* ── Sub-sidebar ── */
+  body .sidebar-sub     { width: 150px; min-width: 150px; gap: 22px; padding: 20px 8px; }
+  body .sidebar-sub-btn { width: 128px; font-size: 16px; padding: 12px 8px; }
+
+  /* ── Cards de produto ── */
+  body .card-item           { height: 160px; border-radius: 20px; margin-bottom: 16px; }
+  body .card-item-img-wrap  { width: 170px; min-width: 170px; height: 160px; }
+  body .card-item-body      { padding: 20px 24px; }
+  body .card-item-nome      { font-size: 20px; }
+  body .card-item-desc      { font-size: 15px; }
+  body .card-item-preco     { font-size: 26px; }
+  body .card-item-btn       { font-size: 16px; padding: 13px 22px; border-radius: 12px; }
+  body .card-item-rodape    { margin-top: 16px; }
+
+  /* ── Seção título ── */
+  body .secao-titulo      { padding: 36px 0 20px; }
+  body .secao-titulo-texto { font-size: 15px; letter-spacing: 2.5px; }
+
+  /* ── Banner destaques ── */
+  body .destaques-banner          { height: 520px; border-radius: 24px; }
+  body .destaques-banner-conteudo { padding: 52px 56px; max-width: 600px; }
+  body .destaques-banner-titulo   { font-size: 58px; }
+  body .destaques-banner-descricao { font-size: 17px; }
+  body .destaques-banner-btn      { font-size: 15px; padding: 14px 30px; }
+
+  /* ── Destaques cards ── */
+  body .destaques-card            { min-width: 290px; max-width: 290px; border-radius: 20px; }
+  body .destaques-card-imagem-wrapper { height: 185px; }
+  body .destaques-card-nome       { font-size: 15px; }
+  body .destaques-card-preco      { font-size: 17px; }
+  body .destaques-cards           { gap: 24px; padding-bottom: 32px; }
+
+  /* ── Modal produto ── */
+  body .mp-sheet  { max-width: 820px; }
+  body .mp-hero   { height: 280px; }
+  body .mp-nome   { font-size: 28px; }
+  body .mp-preco  { font-size: 30px; }
+  body .mp-desc   { font-size: 16px; }
+  body .mp-btn    { height: 60px; font-size: 17px; }
+
+  /* ── Carrinho ── */
+  body .carrinho { width: 540px; height: 680px; }
+
+  /* ── Minha Conta ── */
+  body .conta-modal { width: 640px; }
+  body .conta-rodape-total strong { font-size: 30px; }
+
+  /* ── Avaliação ── */
+  body .aval-modal  { width: 400px; padding: 44px 36px; }
+  body .aval-titulo { font-size: 22px; }
+  body .aval-sub    { font-size: 15px; }
+  body .aval-estrela svg { width: 48px; height: 48px; }
+  body .aval-estrelas { gap: 10px; }
+
+  /* ── Modal mesa ── */
+  body .mesa-modal  { padding: 52px 44px; }
+  body .mesa-titulo { font-size: 26px; }
+  body .mesa-input  { font-size: 32px; padding: 18px; }
+}
 
 /* ─────────────────────────────────────────
    10–12" compacto  (até 1180px)
