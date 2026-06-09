@@ -57,7 +57,7 @@
   body .secao-titulo-texto { font-size: 15px; letter-spacing: 2.5px; }
 
   /* ── Banner destaques ── */
-  body .destaques-banner          { height: 380px; border-radius: 24px; }
+  body .destaques-banner          { height: 330px; border-radius: 24px; }
   body .destaques-banner-conteudo { padding: 52px 56px; max-width: 600px; }
   body .destaques-banner-titulo   { font-size: 58px; }
   body .destaques-banner-descricao { font-size: 17px; }
@@ -141,7 +141,7 @@
   body .card-item-btn       { font-size: 14px; padding: 10px 18px; }
 
   /* ── Banner ── */
-  body .destaques-banner          { height: 360px; border-radius: 22px; }
+  body .destaques-banner          { height: 310px; border-radius: 22px; }
   body .destaques-banner-conteudo { padding: 44px 48px; max-width: 560px; }
   body .destaques-banner-titulo   { font-size: 52px; }
   body .destaques-banner-descricao { font-size: 16px; }
