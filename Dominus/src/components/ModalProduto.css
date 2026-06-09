@@ -720,6 +720,69 @@
   gap: 8px;
 }
 
+/* ── Combo-produto: bebidas selecionadas ── */
+.mp-cp-beb-selecionadas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mp-cp-beb-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,184,77,0.06);
+  border: 1px solid rgba(255,184,77,0.2);
+  border-radius: 12px;
+  gap: 10px;
+}
+
+.mp-cp-beb-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mp-cp-beb-nome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-principal);
+}
+
+.mp-cp-beb-opts {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--texto-terciario);
+  font-style: italic;
+}
+
+.mp-cp-beb-acoes {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.mp-cp-beb-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-terciario);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.mp-cp-beb-btn:hover { border-color: var(--cor-primaria); color: var(--cor-primaria); }
+.mp-cp-beb-btn--rem:hover { border-color: #ff5555; color: #ff5555; }
+
 /* ── Combo card bloqueado ── */
 .mp-combo-card--bloqueado {
   opacity: 0.35;
