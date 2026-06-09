@@ -330,6 +330,7 @@ async function confirmarPedido(itens, comanda) {
       {produtoSelecionado && (
         <ModalProduto
           produto={produtoSelecionado}
+          produtos={produtos}
           onFechar={() => setProdutoSelecionado(null)}
           onAdicionar={adicionarItem}
           onPedirAgora={() => setCarrinhoAberto(true)}
