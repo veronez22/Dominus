@@ -1,0 +1,131 @@
+.mi-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(14px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mi-sheet {
+  width: 100%;
+  max-width: 1300px;
+  background: var(--bg-secundario);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+  position: relative;
+  animation: popIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.mi-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  background: #e74c3c;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s, transform 0.15s;
+}
+.mi-fechar:hover  { background: #c0392b; transform: scale(1.1); }
+.mi-fechar:active { transform: scale(0.95); }
+
+.mi-imagem-wrap {
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  background: #111;
+}
+
+.mi-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mi-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+}
+
+.mi-info {
+  padding: 24px 32px 28px;
+  background: var(--bg-secundario);
+}
+
+.mi-categoria {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--cor-primaria);
+  margin-bottom: 6px;
+}
+
+.mi-nome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.mi-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--texto-terciario);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.mi-precos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mi-preco-original {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--texto-terciario);
+  text-decoration: line-through;
+}
+
+.mi-preco {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cor-primaria);
+}

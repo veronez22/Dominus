@@ -194,6 +194,18 @@
   color: #ff6b6b;
 }
 
+.carrinho-item-tag--add {
+  background: rgba(46, 204, 113, 0.08);
+  border-color: rgba(46, 204, 113, 0.25);
+  color: #2ecc71;
+}
+
+.carrinho-item-tag--tam {
+  background: rgba(100, 180, 255, 0.08);
+  border-color: rgba(100, 180, 255, 0.25);
+  color: #64b4ff;
+}
+
 /* Combo no carrinho */
 .carrinho-item-combo {
   margin-top: 6px;

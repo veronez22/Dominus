@@ -1,10 +1,11 @@
 import './CardItem.css'
 
-function CardItem({ nome, preco, precoPromo, descricao, imagem, onAdicionar, disponivel = true, badge }) {
+function CardItem({ nome, preco, precoPromo, descricao, imagem, onAdicionar, onVerImagem, disponivel = true, badge }) {
   return (
     <div className={`card-item${!disponivel ? ' card-item--indisp' : ''}`} onClick={disponivel ? onAdicionar : undefined}>
 
-      <div className="card-item-img-wrap">
+      <div className="card-item-img-wrap" onClick={imagem && onVerImagem ? e => { e.stopPropagation(); onVerImagem() } : undefined}
+        style={imagem && onVerImagem ? { cursor: 'zoom-in' } : {}}>
         <img className="card-item-img" src={imagem} alt={nome} />
         {!disponivel && <span className="card-item-indisp-tag">Indisponível</span>}
         {badge && disponivel && <span className="card-item-badge">{badge}</span>}

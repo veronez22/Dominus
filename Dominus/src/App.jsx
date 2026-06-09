@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import CardItem from './components/CardItem'
 import Carrinho from './components/Carrinho'
 import ModalProduto from './components/ModalProduto'
+import ModalImagem from './components/ModalImagem'
 import Destaques from './components/Destaques'
 import MinhaConta from './components/MinhaConta'
 import { useCardapio } from './lib/useCardapio'
@@ -22,6 +23,7 @@ function App() {
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
   const [secaoAtiva, setSecaoAtiva] = useState('destaques') // 'destaques' | 'cardapio' | 'combos'
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
+  const [produtoImagem,     setProdutoImagem]     = useState(null)
   const [busca, setBusca] = useState('')
   const [historico, setHistorico] = useState([])
   const [mesa, setMesa] = useState('')
@@ -254,6 +256,7 @@ async function confirmarPedido(itens, comanda) {
                   disponivel={item.disponivel !== false}
                   badge={item.badge}
                   onAdicionar={() => setProdutoSelecionado(item)}
+                  onVerImagem={() => setProdutoImagem(item)}
                 />
               ))}
             </div>
@@ -269,6 +272,7 @@ async function confirmarPedido(itens, comanda) {
                     </div>
                   )}
                   {cat.id === 'destaques' ? (
+
                     <Destaques
                     onAdicionar={setProdutoSelecionado}
                     onAbrirProduto={(produtoId) => {
@@ -296,7 +300,9 @@ async function confirmarPedido(itens, comanda) {
                         descricao={item.descricao}
                         imagem={item.imagem}
                         disponivel={item.disponivel !== false}
+                        badge={item.badge}
                         onAdicionar={() => setProdutoSelecionado(item)}
+                        onVerImagem={() => setProdutoImagem(item)}
                       />
                     ))
                   )}
@@ -324,6 +330,13 @@ async function confirmarPedido(itens, comanda) {
           mesa={mesa}
           onFechar={() => setContaAberta(false)}
           onAbrirCarrinho={() => { setContaAberta(false); setCarrinhoAberto(true) }}
+        />
+      )}
+
+      {produtoImagem && (
+        <ModalImagem
+          produto={produtoImagem}
+          onFechar={() => setProdutoImagem(null)}
         />
       )}
 

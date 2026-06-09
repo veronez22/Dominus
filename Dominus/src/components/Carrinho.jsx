@@ -89,14 +89,18 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                   <p className="carrinho-vazio">Seu carrinho está vazio</p>
                 ) : (
                   itens.map((item) => {
-                    const ext       = item.extras || {}
-                    const retirados = ext.retirados || []
+                    const ext        = item.extras || {}
+                    const adicionais = ext.adicionais || []
+                    const retirados  = ext.retirados  || []
                     const observacao = ext.observacao || ''
-                    const gelo      = ext.gelo
-                    const limao     = ext.limao
-                    const copos     = ext.copos
-                    const tipoCombo = ext.tipoCombo
+                    const tamanho    = ext.tamanho
+                    const gelo       = ext.gelo
+                    const limao      = ext.limao
+                    const copos      = ext.copos
+                    const tipoCombo  = ext.tipoCombo
                     const itensCombo = ext.itensCombo || []
+
+                    const TAMANHO_LABEL = { lata: 'Lata 350ml', ks: 'KS 473ml', '600ml': 'Garrafa Pet 600ml' }
 
                     return (
                       <div key={item._key || item.id} className="carrinho-item">
@@ -122,6 +126,15 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                             </span>
                           </div>
 
+                          {/* Adicionais */}
+                          {adicionais.length > 0 && (
+                            <div className="carrinho-item-extras">
+                              {adicionais.map(a => (
+                                <span key={a.id} className="carrinho-item-tag carrinho-item-tag--add">+ {a.label}</span>
+                              ))}
+                            </div>
+                          )}
+
                           {/* Retirados */}
                           {retirados.length > 0 && (
                             <div className="carrinho-item-extras">
@@ -131,9 +144,10 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                             </div>
                           )}
 
-                          {/* Bebida: gelo / limão / copos */}
-                          {(gelo || limao || (copos && copos > 1)) && (
+                          {/* Bebida: tamanho / copos / gelo / limão */}
+                          {(tamanho || gelo || limao || (copos && copos > 1)) && (
                             <div className="carrinho-item-extras">
+                              {tamanho && <span className="carrinho-item-tag carrinho-item-tag--tam">📦 {TAMANHO_LABEL[tamanho] ?? tamanho}</span>}
                               {copos > 1 && <span className="carrinho-item-tag">{copos} copos</span>}
                               {gelo  && <span className="carrinho-item-tag">🧊 Gelo</span>}
                               {limao && <span className="carrinho-item-tag">🍋 Limão</span>}
@@ -149,9 +163,10 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                               {itensCombo.map((ci, idx) => (
                                 <div key={idx} className="carrinho-combo-item">
                                   <span className="carrinho-combo-nome">+ {ci.nome}</span>
-                                  {(ci.gelo || ci.limao || (ci.copos && ci.copos > 1)) && (
+                                  {(ci.tamanho || ci.gelo || ci.limao || (ci.copos && ci.copos > 1)) && (
                                     <span className="carrinho-combo-opts">
-                                      {ci.copos > 1 ? `${ci.copos} copos` : ''}
+                                      {ci.tamanho ? (TAMANHO_LABEL[ci.tamanho] ?? ci.tamanho) : ''}
+                                      {ci.copos > 1 ? ` · ${ci.copos} copos` : ''}
                                       {ci.gelo  ? ' · gelo'  : ''}
                                       {ci.limao ? ' · limão' : ''}
                                     </span>

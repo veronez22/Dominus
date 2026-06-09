@@ -8,9 +8,17 @@ const QTD_REFRI_FAMILIA      = 2
 
 const TAMANHOS_REFRI = [
   { id: 'lata',  label: 'Lata',  desc: '350 ml' },
-  { id: 'ks',    label: 'KS',    desc: '600 ml' },
-  { id: '600ml', label: '600 ml',desc: 'Garrafa' },
+  { id: 'ks',    label: 'KS',    desc: '473 ml' },
+  { id: '600ml', label: '600 ml',desc: 'Garrafa Pet' },
 ]
+
+const TURBINAR_LABEL = {
+  'esfihas':    'Turbine sua Esfiha',
+  'fogazzas':   'Turbine sua Fogazza',
+  'kibes':      'Turbine seu Kibe',
+  'cigarretes': 'Turbine seu Cigarrete',
+  'coxinhas':   'Turbine sua Coxinha',
+}
 
 const ADICIONAIS_POOL = [
   { id: 'catupiry', label: 'Catupiry',     preco: 1.50 },
@@ -122,7 +130,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   /* passos dinâmicos */
   const passos = [
     ...(temTurbinar && adicionaisDisponiveis.length > 0
-      ? [{ id: 'turbinar',      label: 'Turbine seu lanche',    sub: 'Opcional' }] : []),
+      ? [{ id: 'turbinar', label: TURBINAR_LABEL[produto.categoria] ?? 'Turbine seu lanche', sub: 'Opcional' }] : []),
     ...(temRetirar
       ? [{ id: 'retirar',       label: 'Retirar ingredientes',  sub: 'Opcional' }] : []),
     ...(temCombo
@@ -210,9 +218,11 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
         ]
       : []
 
+    const adicionaisObjs = adicionais.map(id => ADICIONAIS_POOL.find(a => a.id === id)).filter(Boolean)
+
     onAdicionar({
       ...produto, quantidade, preco: precoUnit,
-      extras: { adicionais, retirados, tipoCombo, itensCombo,
+      extras: { adicionais: adicionaisObjs, retirados, tipoCombo, itensCombo,
         tamanho: ehBebida ? tamanho : undefined,
         copos:   ehBebida ? copos   : undefined,
         gelo:    ehBebida ? gelo    : undefined,
@@ -323,7 +333,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
           <div className="mp-passo-header">
             {passoAtual?.id === 'turbinar' && <>
-              <h3 className="mp-passo-titulo"><Flame size={20} style={{display:'inline',marginRight:8,color:'var(--cor-primaria)'}}/>Turbine seu lanche!</h3>
+              <h3 className="mp-passo-titulo"><Flame size={20} style={{display:'inline',marginRight:8,color:'var(--cor-primaria)'}}/>{TURBINAR_LABEL[produto.categoria] ?? 'Turbine seu lanche'}!</h3>
               <p className="mp-passo-sub">Opcional · adicione ingredientes extras</p>
             </>}
             {passoAtual?.id === 'retirar' && <>
