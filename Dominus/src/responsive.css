@@ -64,8 +64,8 @@
   body .destaques-banner-btn      { font-size: 15px; padding: 14px 30px; }
 
   /* ── Destaques cards ── */
-  body .destaques-card            { min-width: 290px; max-width: 290px; border-radius: 20px; }
-  body .destaques-card-imagem-wrapper { height: 185px; }
+  body .destaques-card            { min-width: 215px; max-width: 215px; border-radius: 20px; }
+  body .destaques-card-imagem-wrapper { height: 135px; }
   body .destaques-card-nome       { font-size: 15px; }
   body .destaques-card-preco      { font-size: 17px; }
   body .destaques-cards           { gap: 24px; padding-bottom: 32px; }
@@ -148,8 +148,8 @@
   body .destaques-banner-btn      { font-size: 14px; padding: 12px 26px; }
 
   /* ── Destaques cards ── */
-  body .destaques-card            { min-width: 260px; max-width: 260px; border-radius: 18px; }
-  body .destaques-card-imagem-wrapper { height: 165px; }
+  body .destaques-card            { min-width: 195px; max-width: 195px; border-radius: 18px; }
+  body .destaques-card-imagem-wrapper { height: 120px; }
   body .destaques-card-nome       { font-size: 14px; }
   body .destaques-card-preco      { font-size: 16px; }
   body .destaques-cards           { gap: 22px; }

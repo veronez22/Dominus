@@ -169,8 +169,8 @@
 
 /* ── Card individual ── */
 .destaques-card {
-  min-width: 230px;
-  max-width: 230px;
+  min-width: 175px;
+  max-width: 175px;
   background: var(--bg-secundario);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -189,7 +189,7 @@
 .destaques-card-imagem-wrapper {
   position: relative;
   width: 100%;
-  height: 145px;
+  height: 110px;
 }
 
 .destaques-card-imagem {
