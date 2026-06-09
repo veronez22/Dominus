@@ -162,7 +162,7 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                               </span>
                               {itensCombo.map((ci, idx) => (
                                 <div key={idx} className="carrinho-combo-item">
-                                  <span className="carrinho-combo-nome">+ {ci.nome}</span>
+                                  <span className="carrinho-combo-nome">{ci.quantidade > 1 ? `${ci.quantidade}× ${ci.nome}` : `+ ${ci.nome}`}</span>
                                   {(ci.tamanho || ci.gelo || ci.limao || (ci.copos && ci.copos > 1)) && (
                                     <span className="carrinho-combo-opts">
                                       {ci.tamanho ? (TAMANHO_LABEL[ci.tamanho] ?? ci.tamanho) : ''}

@@ -1,6 +1,6 @@
 import './ModalProduto.css'
-import { X, Check, Plus, Minus, ShoppingCart, ChevronRight, Droplets, Citrus, Flame, Settings } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { X, Check, Plus, Minus, ShoppingCart, ChevronRight, ChevronLeft, Droplets, Citrus, Flame, Settings } from 'lucide-react'
+import { useState } from 'react'
 
 const DESCONTO_COMBO         = 4.00
 const DESCONTO_COMBO_FAMILIA = 8.00
@@ -77,7 +77,6 @@ function temLimaoNatural(nome = '') {
   return n.includes('limonada') || n.includes('limão') || n.includes('suco')
 }
 
-/* Detecta limites do combo pelo nome/descrição */
 function parseComboCfg(produto) {
   const txt = nomeLow((produto.descricao ?? '') + ' ' + (produto.nome ?? ''))
   const mE = txt.match(/(\d+)\s+esfihas?/)
@@ -88,46 +87,38 @@ function parseComboCfg(produto) {
   }
 }
 
-let bebUidCounter = 0
-function newBebUid() { return `b${++bebUidCounter}` }
+let bebUid = 0
+function newUid() { return `b${++bebUid}` }
 
-/* ═══════════════════════════════════════════ */
+/* ══════════════════════════════════════ */
 function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
-  const ehBebida      = produto.categoria === 'bebidas'
-  const ehDoce        = produto.categoria === 'esfihas-doces'
-  const ehSalgada     = produto.categoria === 'esfihas'
-  const temCombo      = ehSalgada || ehDoce
-  const ehComboProd   = produto.categoria === 'combos'
+  const ehBebida    = produto.categoria === 'bebidas'
+  const ehDoce      = produto.categoria === 'esfihas-doces'
+  const ehSalgada   = produto.categoria === 'esfihas'
+  const temCombo    = ehSalgada || ehDoce
+  const ehComboProd = produto.categoria === 'combos'
+  const temTurbinar = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
+  const temRetirar  = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
+  const isRefri     = ehBebida && ehRefrigerante(produto.nome)
 
-  const temTurbinar   = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
-  const temRetirar    = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
-  const isRefri       = ehBebida && ehRefrigerante(produto.nome)
-
-  const ingredientesRetirar   = temRetirar  ? getIngredientesRetirar(produto)   : []
-  const adicionaisDisponiveis = temTurbinar ? getAdicionaisDisponiveis(produto)  : []
-
-  /* configuração dinâmica do combo-produto */
+  const ingredientesRetirar   = temRetirar  ? getIngredientesRetirar(produto)  : []
+  const adicionaisDisponiveis = temTurbinar ? getAdicionaisDisponiveis(produto) : []
   const comboCfg = ehComboProd ? parseComboCfg(produto) : { maxEsfihas: 0, maxBebidas: 0 }
 
-  /* listas de produtos */
-  const esfihasCombo     = produtos.filter(p => p.disponivel !== false && p.id !== produto.id &&
+  /* listas */
+  const esfihasCombo    = produtos.filter(p => p.disponivel !== false && p.id !== produto.id &&
     (ehDoce ? p.categoria === 'esfihas' : p.categoria === 'esfihas-doces'))
-  const esfihasSalgadas  = produtos.filter(p => p.disponivel !== false && p.id !== produto.id && p.categoria === 'esfihas')
-  const bebidas          = produtos.filter(p => p.disponivel !== false && p.categoria === 'bebidas')
-
-  /* esfihas limitadas para combos-produto: salgadas SEM catupiry */
+  const esfihasSalgadas = produtos.filter(p => p.disponivel !== false && p.id !== produto.id && p.categoria === 'esfihas')
+  const bebidas         = produtos.filter(p => p.disponivel !== false && p.categoria === 'bebidas')
   const esfihasLimitadas = produtos.filter(p =>
-    p.disponivel !== false &&
-    p.categoria === 'esfihas' &&
-    !nomeLow(p.nome).includes('catupiry')
-  )
+    p.disponivel !== false && p.categoria === 'esfihas' && !nomeLow(p.nome).includes('catupiry'))
 
-  /* ── estado geral ── */
-  const [passo,       setPasso]       = useState(0)
-  const [adicionais,  setAdicionais]  = useState([])
-  const [retirados,   setRetirados]   = useState([])
-  const [quantidade,  setQuantidade]  = useState(1)
-  const [observacao,  setObservacao]  = useState('')
+  /* estado geral */
+  const [passo,      setPasso]      = useState(0)
+  const [adicionais, setAdicionais] = useState([])
+  const [retirados,  setRetirados]  = useState([])
+  const [quantidade, setQuantidade] = useState(1)
+  const [observacao, setObservacao] = useState('')
 
   /* bebida principal */
   const [tamanho, setTamanho] = useState(null)
@@ -135,7 +126,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   const [gelo,    setGelo]    = useState(false)
   const [limao,   setLimao]   = useState(false)
 
-  /* combo normal (transformar em combo) */
+  /* combo normal */
   const [tipoCombo,     setTipoCombo]     = useState(null)
   const [comboEsfihas,  setComboEsfihas]  = useState([])
   const [comboBebida,   setComboBebida]   = useState(null)
@@ -147,31 +138,34 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
   /* combo família */
   const [familiaEsfihas,   setFamiliaEsfihas]   = useState([])
-  const [familiaRefris,    setFamiliaRefris]     = useState([])
-  const [familiaRefriOpts, setFamiliaRefriOpts]  = useState({})
-  const [familiaSubPasso,  setFamiliaSubPasso]   = useState(null)
+  const [familiaRefris,    setFamiliaRefris]     = useState([])  // [{ uid, id }]
+  const [familiaRefriOpts, setFamiliaRefriOpts]  = useState({})  // { uid: {...} }
+  const [familiaSubPasso,  setFamiliaSubPasso]   = useState(null) // uid
 
-  /* ── combo-produto (categoria === 'combos') ── */
-  const [cpEsfihas,   setCpEsfihas]   = useState([])  // IDs esfihas selecionadas
-  const [cpBebidas,   setCpBebidas]   = useState([])  // [{ uid, id }]
-  const [cpBebOpts,   setCpBebOpts]   = useState({})  // { uid: { tamanho, copos, gelo, limao } }
-  const [cpBebSub,    setCpBebSub]    = useState(null) // uid sendo configurado
-  const [cpEtapa,     setCpEtapa]     = useState('esfihas') // 'esfihas' | 'bebidas'
+  /* combo-produto  — esfihas como { id: quantidade } */
+  const [cpEsfihas,  setCpEsfihas]  = useState({})   // { [id]: qty }
+  const [cpBebidas,  setCpBebidas]  = useState([])   // [{ uid, id }]
+  const [cpBebOpts,  setCpBebOpts]  = useState({})   // { uid: { tamanho, copos, gelo, limao } }
+  const [cpBebSub,   setCpBebSub]   = useState(null)
 
-  /* passos dinâmicos */
+  const cpEsfihasTotal = Object.values(cpEsfihas).reduce((s, v) => s + v, 0)
+  const cpEsfihasOk    = cpEsfihasTotal > 0
+  const cpBebidasOk    = cpBebidas.length > 0 && cpBebSub === null
+
+  /* passos */
   const passos = ehComboProd ? [
-    { id: 'combo-esfihas', label: 'Escolha as Esfihas', sub: `${cpEsfihas.length}/${comboCfg.maxEsfihas}` },
+    { id: 'combo-esfihas', label: 'Escolha as Esfihas', sub: `${cpEsfihasTotal}/${comboCfg.maxEsfihas}` },
     { id: 'combo-bebidas', label: 'Escolha as Bebidas', sub: `${cpBebidas.length}/${comboCfg.maxBebidas}` },
     { id: 'quantidade',    label: 'Quantidade',         sub: 'Selecione' },
   ] : [
     ...(temTurbinar && adicionaisDisponiveis.length > 0
       ? [{ id: 'turbinar', label: TURBINAR_LABEL[produto.categoria] ?? 'Turbine seu lanche', sub: 'Opcional' }] : []),
     ...(temRetirar
-      ? [{ id: 'retirar',       label: 'Retirar ingredientes',  sub: 'Opcional' }] : []),
+      ? [{ id: 'retirar',       label: 'Retirar ingredientes', sub: 'Opcional' }] : []),
     ...(temCombo
-      ? [{ id: 'combo',         label: 'Transformar em Combo',  sub: 'Opcional' }] : []),
+      ? [{ id: 'combo',         label: 'Transformar em Combo', sub: 'Opcional' }] : []),
     ...(ehBebida
-      ? [{ id: 'bebida-opcoes', label: 'Personalizar bebida',   sub: 'Opcional' }] : []),
+      ? [{ id: 'bebida-opcoes', label: 'Personalizar bebida',  sub: 'Opcional' }] : []),
     { id: 'quantidade', label: 'Quantidade', sub: 'Selecione' },
   ]
   const passoAtual = passos[passo]
@@ -181,7 +175,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   const totalAdicionais = adicionais.reduce((s, id) => {
     const a = ADICIONAIS_POOL.find(x => x.id === id); return s + (a?.preco ?? 0)
   }, 0)
-
   function calcPrecoCombo() {
     if (tipoCombo === 'normal') {
       const pE = comboEsfihas.reduce((s, id) => { const p = produtos.find(x => x.id === id); return s + (p?.precoPromo ?? p?.preco ?? 0) }, 0)
@@ -190,12 +183,11 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
     }
     if (tipoCombo === 'familia') {
       const pE = familiaEsfihas.reduce((s, id) => { const p = produtos.find(x => x.id === id); return s + (p?.precoPromo ?? p?.preco ?? 0) }, 0)
-      const pB = familiaRefris.reduce((s, id) => { const b = produtos.find(x => x.id === id); return s + (b?.precoPromo ?? b?.preco ?? 0) }, 0)
+      const pB = familiaRefris.reduce((s, b) => { const p = produtos.find(x => x.id === b.id); return s + (p?.precoPromo ?? p?.preco ?? 0) }, 0)
       return pE + pB - ((familiaEsfihas.length > 0 || familiaRefris.length > 0) ? DESCONTO_COMBO_FAMILIA : 0)
     }
     return 0
   }
-
   const precoUnit  = precoBase + totalAdicionais + calcPrecoCombo()
   const precoTotal = precoUnit * quantidade
 
@@ -204,83 +196,86 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   function toggleRetirar(ing)    { setRetirados(p  => p.includes(ing) ? p.filter(i => i !== ing) : [...p, ing]) }
   function toggleComboEsfiha(id) { setComboEsfihas(p => p.includes(id) ? p.filter(i => i !== id) : [...p, id]) }
   function toggleFamEsfiha(id)   { setFamiliaEsfihas(p => p.includes(id) ? p.filter(i => i !== id) : [...p, id]) }
-
-  function toggleFamRefri(id) {
-    setFamiliaRefris(prev => {
-      if (prev.includes(id)) return prev.filter(i => i !== id)
-      if (prev.length >= QTD_REFRI_FAMILIA) return prev
-      return [...prev, id]
-    })
-    setFamiliaRefriOpts(prev => ({ ...prev, [id]: prev[id] ?? { tamanho: null, copos: 1, gelo: false, limao: false } }))
+  function addFamRefri(id) {
+    if (familiaRefris.length >= QTD_REFRI_FAMILIA) return
+    const uid = newUid()
+    setFamiliaRefris(prev => [...prev, { uid, id }])
+    setFamiliaRefriOpts(prev => ({ ...prev, [uid]: { tamanho: null, copos: 1, gelo: false, limao: false } }))
   }
-  function updateFamOpt(id, k, v) {
-    setFamiliaRefriOpts(prev => ({ ...prev, [id]: { ...prev[id], [k]: v } }))
+  function removeFamRefri(uid) {
+    setFamiliaRefris(prev => prev.filter(b => b.uid !== uid))
+    setFamiliaRefriOpts(prev => { const c = { ...prev }; delete c[uid]; return c })
+    if (familiaSubPasso === uid) setFamiliaSubPasso(null)
   }
-
+  function updateFamOpt(uid, k, v) { setFamiliaRefriOpts(prev => ({ ...prev, [uid]: { ...prev[uid], [k]: v } })) }
   function selecionarComboBebida(id) {
     if (comboBebida === id) { setComboBebida(null); setComboSubPasso(null); setComboTamanho(null); return }
-    setComboBebida(id); setComboSubPasso('bebida-opts'); setComboTamanho(null)
-  }
-  function selecionarFamRefri(id) {
-    const jaEsta = familiaRefris.includes(id)
-    toggleFamRefri(id)
-    if (!jaEsta) setFamiliaSubPasso(id)
+    setComboBebida(id); setComboSubPasso(null); setComboTamanho(null); setComboCopos(1); setComboGelo(false); setComboLimao(false)
   }
 
-  /* helpers combo-produto */
-  function toggleCpEsfiha(id) {
+  /* helpers combo-produto esfihas */
+  function incCpEsfiha(id) {
+    if (cpEsfihasTotal >= comboCfg.maxEsfihas) return
+    setCpEsfihas(prev => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }))
+  }
+  function decCpEsfiha(id) {
     setCpEsfihas(prev => {
-      if (prev.includes(id)) return prev.filter(i => i !== id)
-      if (prev.length >= comboCfg.maxEsfihas) return prev
-      return [...prev, id]
+      const qty = (prev[id] ?? 0) - 1
+      if (qty <= 0) { const c = { ...prev }; delete c[id]; return c }
+      return { ...prev, [id]: qty }
     })
   }
 
+  /* helpers combo-produto bebidas */
   function addCpBebida(id) {
     if (cpBebidas.length >= comboCfg.maxBebidas) return
-    const uid = newBebUid()
+    const uid = newUid()
     setCpBebidas(prev => [...prev, { uid, id }])
     setCpBebOpts(prev => ({ ...prev, [uid]: { tamanho: null, copos: 1, gelo: false, limao: false } }))
     setCpBebSub(uid)
   }
-
   function removeCpBebida(uid) {
     setCpBebidas(prev => prev.filter(b => b.uid !== uid))
     setCpBebOpts(prev => { const c = { ...prev }; delete c[uid]; return c })
     if (cpBebSub === uid) setCpBebSub(null)
   }
+  function updateCpBebOpt(uid, k, v) { setCpBebOpts(prev => ({ ...prev, [uid]: { ...prev[uid], [k]: v } })) }
 
-  function updateCpBebOpt(uid, k, v) {
-    setCpBebOpts(prev => ({ ...prev, [uid]: { ...prev[uid], [k]: v } }))
-  }
-
-  /* validações */
+  /* navegação */
   const comboPronto = (() => {
     if (!tipoCombo) return true
     if (tipoCombo === 'normal')  return comboEsfihas.length > 0 && !!comboBebida && comboSubPasso !== 'bebida-opts'
-    if (tipoCombo === 'familia') return familiaEsfihas.length > 0 && familiaRefris.length === QTD_REFRI_FAMILIA && !familiaSubPasso
+    if (tipoCombo === 'familia') return familiaEsfihas.length > 0 && familiaRefris.length === QTD_REFRI_FAMILIA && familiaSubPasso === null
     return false
   })()
 
-  const cpEsfihasOk = cpEsfihas.length > 0
-  const cpBebidasOk = cpBebidas.length > 0 && cpBebSub === null
+  const emSubPasso = !!cpBebSub || comboSubPasso === 'bebida-opts' || !!familiaSubPasso
+  const podeVoltar = passo > 0 || emSubPasso
+
+  function handleVoltar() {
+    if (cpBebSub)                       { setCpBebSub(null); return }
+    if (comboSubPasso === 'bebida-opts') { setComboSubPasso(null); return }
+    if (familiaSubPasso)                { setFamiliaSubPasso(null); return }
+    if (passo > 0) setPasso(p => p - 1)
+  }
 
   function avancar() { passo < passos.length - 1 ? setPasso(p => p + 1) : confirmar() }
 
   function confirmar() {
     const adicionaisObjs = adicionais.map(id => ADICIONAIS_POOL.find(a => a.id === id)).filter(Boolean)
-
     let itensCombo = []
 
     if (ehComboProd) {
-      itensCombo = [
-        ...cpEsfihas.map(id => produtos.find(p => p.id === id)).filter(Boolean),
-        ...cpBebidas.map(b => {
-          const prod = produtos.find(p => p.id === b.id)
-          const opt  = cpBebOpts[b.uid] ?? {}
-          return prod ? { ...prod, _uid: b.uid, tamanho: opt.tamanho, copos: opt.copos ?? 1, gelo: opt.gelo ?? false, limao: opt.limao ?? false } : null
-        }).filter(Boolean),
-      ]
+      const esfihasItens = Object.entries(cpEsfihas).map(([id, qty]) => {
+        const p = produtos.find(x => x.id === id)
+        return p ? { ...p, quantidade: qty } : null
+      }).filter(Boolean)
+      const bebidasItens = cpBebidas.map(b => {
+        const p = produtos.find(x => x.id === b.id)
+        const opt = cpBebOpts[b.uid] ?? {}
+        return p ? { ...p, _uid: b.uid, tamanho: opt.tamanho, copos: opt.copos ?? 1, gelo: opt.gelo ?? false, limao: opt.limao ?? false } : null
+      }).filter(Boolean)
+      itensCombo = [...esfihasItens, ...bebidasItens]
     } else if (tipoCombo === 'normal') {
       itensCombo = [
         ...comboEsfihas.map(id => produtos.find(p => p.id === id)).filter(Boolean),
@@ -289,10 +284,10 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
     } else if (tipoCombo === 'familia') {
       itensCombo = [
         ...familiaEsfihas.map(id => produtos.find(p => p.id === id)).filter(Boolean),
-        ...familiaRefris.map(id => {
-          const b = produtos.find(p => p.id === id)
-          const opt = familiaRefriOpts[id] ?? {}
-          return b ? { ...b, tamanho: opt.tamanho, copos: opt.copos ?? 1, gelo: opt.gelo ?? false, limao: opt.limao ?? false } : null
+        ...familiaRefris.map(b => {
+          const bObj = produtos.find(p => p.id === b.id)
+          const opt = familiaRefriOpts[b.uid] ?? {}
+          return bObj ? { ...bObj, _uid: b.uid, tamanho: opt.tamanho, copos: opt.copos ?? 1, gelo: opt.gelo ?? false, limao: opt.limao ?? false } : null
         }).filter(Boolean),
       ]
     }
@@ -315,12 +310,11 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
   const bebidaComboObj = produtos.find(p => p.id === comboBebida)
 
-  /* ─── render bebida opts reutilizável ─── */
-  function BebidaOpts({ nomeBebida, isRefriLocal, semLimaoLocal, tamAtual, setTam, copasAtual, setCopas, geloAtual, setGeloL, limaoAtual, setLimaoL, onConfirmar, grande = false }) {
+  /* ── componente interno reutilizável de opções de bebida ── */
+  function BebidaOpts({ nomeBebida, isRefriLocal, semLimaoLocal, tamAtual, setTam, copasAtual, setCopas, geloAtual, setGeloL, limaoAtual, setLimaoL, onConfirmar, grande }) {
     return (
       <div className="mp-combo-wrap">
         {onConfirmar && nomeBebida && <p className="mp-bebida-opts-nome">{nomeBebida}</p>}
-
         {isRefriLocal && (
           <div className="mp-tamanho-grupo">
             <p className="mp-tamanho-label">Qual tamanho?</p>
@@ -336,13 +330,11 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             </div>
           </div>
         )}
-
         <div className="mp-bebida-opts">
           <div className="mp-bebida-opts-linha">
             <span className="mp-bebida-opts-label">Quantidade de copos</span>
             <div className="mp-mini-contador">
-              <button className="mp-mini-btn" onClick={() => setCopas(c => Math.max(1, (typeof c === 'function' ? c : () => c)(copasAtual) ))}
-                onClick={() => setCopas(Math.max(1, copasAtual - 1))}><Minus size={13} /></button>
+              <button className="mp-mini-btn" onClick={() => setCopas(Math.max(1, copasAtual - 1))}><Minus size={13} /></button>
               <span className="mp-mini-num">{copasAtual}</span>
               <button className="mp-mini-btn" onClick={() => setCopas(copasAtual + 1)}><Plus size={13} /></button>
             </div>
@@ -358,7 +350,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             )}
           </div>
         </div>
-
         {onConfirmar && (
           <button className="mp-btn-confirmar-bebida" onClick={onConfirmar}>
             <Check size={16} /> Confirmar bebida
@@ -368,7 +359,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
     )
   }
 
-  /* ═════════════════ RENDER ═════════════════ */
+  /* ════════════════════ RENDER ════════════════════ */
   return (
     <div className="mp-overlay" onClick={onFechar}>
       <div className="mp-sheet" onClick={e => e.stopPropagation()}>
@@ -392,7 +383,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             {passos.map((p, i) => {
               const estado = i < passo ? 'feito' : i === passo ? 'ativo' : 'pendente'
               const subLabel = ehComboProd
-                ? (i === 0 ? `${cpEsfihas.length}/${comboCfg.maxEsfihas}` : i === 1 ? `${cpBebidas.length}/${comboCfg.maxBebidas}` : p.sub)
+                ? (i === 0 ? `${cpEsfihasTotal}/${comboCfg.maxEsfihas}` : i === 1 ? `${cpBebidas.length}/${comboCfg.maxBebidas}` : p.sub)
                 : p.sub
               return (
                 <div key={p.id} className={`mp-etapa mp-etapa--${estado}`}>
@@ -418,9 +409,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
           <div className="mp-passo-header">
             {passoAtual?.id === 'combo-esfihas' && <>
               <h3 className="mp-passo-titulo">🧅 Escolha suas Esfihas Salgadas</h3>
-              <p className="mp-passo-sub">
-                Sabores disponíveis · {cpEsfihas.length}/{comboCfg.maxEsfihas} selecionadas
-              </p>
+              <p className="mp-passo-sub">Sabores disponíveis · {cpEsfihasTotal}/{comboCfg.maxEsfihas} selecionadas</p>
             </>}
             {passoAtual?.id === 'combo-bebidas' && <>
               <h3 className="mp-passo-titulo">🥤 Escolha as Bebidas</h3>
@@ -442,7 +431,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
               <h3 className="mp-passo-titulo">Monte seu Combo! 🔥</h3>
               <p className="mp-passo-sub">
                 {comboSubPasso === 'bebida-opts' ? `Personalize sua ${bebidaComboObj?.nome ?? 'bebida'}`
-                  : familiaSubPasso ? `Personalize: ${produtos.find(p => p.id === familiaSubPasso)?.nome ?? 'bebida'}`
+                  : familiaSubPasso ? `Personalize: ${produtos.find(p => p.id === familiaRefris.find(b => b.uid === familiaSubPasso)?.id)?.nome ?? 'bebida'}`
                   : 'Escolha o tipo de combo'}
               </p>
             </>}
@@ -452,48 +441,56 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             </>}
             {passoAtual?.id === 'quantidade' && <>
               <h3 className="mp-passo-titulo">Quantidade</h3>
-              <p className="mp-passo-sub">Quantas unidades deste combo?</p>
+              <p className="mp-passo-sub">Quantas unidades?</p>
             </>}
           </div>
 
+          {/* corpo */}
           <div className="mp-passo-corpo">
 
-            {/* ── Combo-Produto: Esfihas ── */}
+            {/* ── Combo-produto: Esfihas ── */}
             {passoAtual?.id === 'combo-esfihas' && (
               <div className="mp-combo-secao">
                 <div className="mp-combo-grid">
                   {esfihasLimitadas.map(p => {
-                    const sel  = cpEsfihas.includes(p.id)
-                    const bloq = !sel && cpEsfihas.length >= comboCfg.maxEsfihas
+                    const qty  = cpEsfihas[p.id] ?? 0
+                    const bloq = qty === 0 && cpEsfihasTotal >= comboCfg.maxEsfihas
                     return (
                       <div key={p.id}
-                        className={`mp-combo-card ${sel ? 'mp-combo-card--ativo' : ''} ${bloq ? 'mp-combo-card--bloqueado' : ''}`}
-                        onClick={() => !bloq && toggleCpEsfiha(p.id)}>
-                        {p.imagem ? <img src={p.imagem} alt={p.nome} className="mp-combo-card-img" /> : <div className="mp-combo-card-img mp-combo-card-img--placeholder">🫓</div>}
+                        className={`mp-combo-card mp-combo-card--contador ${qty > 0 ? 'mp-combo-card--ativo' : ''} ${bloq ? 'mp-combo-card--bloqueado' : ''}`}>
+                        {p.imagem
+                          ? <img src={p.imagem} alt={p.nome} className="mp-combo-card-img" />
+                          : <div className="mp-combo-card-img mp-combo-card-img--placeholder">🫓</div>}
                         <div className="mp-combo-card-info">
                           <span className="mp-combo-card-nome">{p.nome}</span>
                           <span className="mp-combo-card-preco">R$ {(p.precoPromo ?? p.preco).toFixed(2).replace('.', ',')}</span>
                         </div>
-                        {sel && <div className="mp-combo-card-check"><Check size={13} /></div>}
+                        <div className="mp-combo-card-qty" onClick={e => e.stopPropagation()}>
+                          <button className="mp-combo-qty-btn" onClick={() => decCpEsfiha(p.id)} disabled={qty === 0}>
+                            <Minus size={11} />
+                          </button>
+                          <span className="mp-combo-qty-num">{qty}</span>
+                          <button className="mp-combo-qty-btn" onClick={() => incCpEsfiha(p.id)} disabled={bloq || cpEsfihasTotal >= comboCfg.maxEsfihas}>
+                            <Plus size={11} />
+                          </button>
+                        </div>
                       </div>
                     )
                   })}
                 </div>
-                {cpEsfihas.length > 0 && (
+                {cpEsfihasTotal > 0 && (
                   <div className="mp-combo-resumo" style={{ marginTop: 12 }}>
-                    <span>✅ {cpEsfihas.length} de {comboCfg.maxEsfihas} esfihas escolhidas</span>
+                    <span>✅ {cpEsfihasTotal}/{comboCfg.maxEsfihas} esfihas escolhidas</span>
                     <span className="mp-combo-resumo-val" style={{ color: 'var(--cor-primaria)', fontSize: 13 }}>
-                      {cpEsfihas.length < comboCfg.maxEsfihas ? `faltam ${comboCfg.maxEsfihas - cpEsfihas.length}` : 'completo!'}
+                      {cpEsfihasTotal < comboCfg.maxEsfihas ? `faltam ${comboCfg.maxEsfihas - cpEsfihasTotal}` : 'completo! 🎉'}
                     </span>
                   </div>
                 )}
               </div>
             )}
 
-            {/* ── Combo-Produto: Bebidas ── */}
+            {/* ── Combo-produto: Bebidas ── */}
             {passoAtual?.id === 'combo-bebidas' && (() => {
-
-              /* sub-passo: personalizar uma bebida selecionada */
               if (cpBebSub) {
                 const bEntry = cpBebidas.find(b => b.uid === cpBebSub)
                 const bObj   = bEntry ? produtos.find(p => p.id === bEntry.id) : null
@@ -511,11 +508,8 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                   />
                 )
               }
-
-              /* tela principal de bebidas */
               return (
                 <div className="mp-combo-wrap">
-                  {/* bebidas já selecionadas */}
                   {cpBebidas.length > 0 && (
                     <div className="mp-cp-beb-selecionadas">
                       <p className="mp-combo-secao-titulo">Bebidas escolhidas</p>
@@ -542,8 +536,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                       })}
                     </div>
                   )}
-
-                  {/* grid para adicionar bebidas */}
                   {cpBebidas.length < comboCfg.maxBebidas && (
                     <div className="mp-combo-secao">
                       <p className="mp-combo-secao-titulo">Adicionar bebida ({cpBebidas.length}/{comboCfg.maxBebidas})</p>
@@ -602,7 +594,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             {/* ── Combo (transformar) ── */}
             {passoAtual?.id === 'combo' && (() => {
               if (comboSubPasso === 'bebida-opts') {
-                const opt = cpBebOpts[comboBebida] ?? {}
                 return (
                   <BebidaOpts
                     nomeBebida={bebidaComboObj?.nome}
@@ -617,7 +608,8 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                 )
               }
               if (familiaSubPasso) {
-                const bObj = produtos.find(p => p.id === familiaSubPasso)
+                const bEntry = familiaRefris.find(b => b.uid === familiaSubPasso)
+                const bObj = bEntry ? produtos.find(p => p.id === bEntry.id) : null
                 const opt  = familiaRefriOpts[familiaSubPasso] ?? { tamanho: null, copos: 1, gelo: false, limao: false }
                 return (
                   <BebidaOpts
@@ -656,7 +648,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                       </div>
                     </div>
                   </div>
-
                   {tipoCombo === 'normal' && <>
                     <div className="mp-combo-secao">
                       <p className="mp-combo-secao-titulo">{ehSalgada ? '🍬 Esfihas Doces' : '🧅 Esfihas Salgadas'}</p>
@@ -687,8 +678,21 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                               <div className="mp-combo-card-info">
                                 <span className="mp-combo-card-nome">{p.nome}</span>
                                 <span className="mp-combo-card-preco">R$ {(p.precoPromo ?? p.preco).toFixed(2).replace('.', ',')}</span>
+                                {sel && (comboTamanho || comboGelo || comboLimao || comboCopos > 1) && (
+                                  <span className="mp-combo-card-opts">
+                                    {comboTamanho ? comboTamanho.toUpperCase() : ''}
+                                    {comboCopos > 1 ? ` · ${comboCopos} copos` : ''}
+                                    {comboGelo  ? ' · gelo'  : ''}
+                                    {comboLimao ? ' · limão' : ''}
+                                  </span>
+                                )}
                               </div>
-                              {sel && <div className="mp-combo-card-check"><Check size={13} /></div>}
+                              {sel && (
+                                <button className="mp-combo-card-check" style={{ background: '#111', color: 'var(--cor-primaria)' }}
+                                  onClick={e => { e.stopPropagation(); setComboSubPasso('bebida-opts') }}>
+                                  <Settings size={13} />
+                                </button>
+                              )}
                             </div>
                           )
                         })}
@@ -701,7 +705,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                       </div>
                     )}
                   </>}
-
                   {tipoCombo === 'familia' && <>
                     <div className="mp-combo-secao">
                       <p className="mp-combo-secao-titulo">🧅 Esfihas Salgadas (à vontade)</p>
@@ -722,34 +725,45 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                       </div>
                     </div>
                     <div className="mp-combo-secao">
-                      <p className="mp-combo-secao-titulo">🥤 Refrigerantes Lata — escolha {QTD_REFRI_FAMILIA} ({familiaRefris.length}/{QTD_REFRI_FAMILIA})</p>
-                      <div className="mp-combo-grid">
-                        {bebidas.map(p => {
-                          const sel  = familiaRefris.includes(p.id)
-                          const bloq = !sel && familiaRefris.length >= QTD_REFRI_FAMILIA
-                          const opt  = familiaRefriOpts[p.id]
-                          return (
-                            <div key={p.id}
-                              className={`mp-combo-card ${sel ? 'mp-combo-card--ativo' : ''} ${bloq ? 'mp-combo-card--bloqueado' : ''}`}
-                              onClick={() => !bloq && selecionarFamRefri(p.id)}>
-                              {p.imagem ? <img src={p.imagem} alt={p.nome} className="mp-combo-card-img" /> : <div className="mp-combo-card-img mp-combo-card-img--placeholder">🥤</div>}
-                              <div className="mp-combo-card-info">
-                                <span className="mp-combo-card-nome">{p.nome}</span>
-                                <span className="mp-combo-card-preco">R$ {(p.precoPromo ?? p.preco).toFixed(2).replace('.', ',')}</span>
-                                {sel && opt && (
-                                  <span className="mp-combo-card-opts">
+                      <p className="mp-combo-secao-titulo">🥤 Refrigerantes — escolha {QTD_REFRI_FAMILIA} ({familiaRefris.length}/{QTD_REFRI_FAMILIA})</p>
+                      {familiaRefris.length > 0 && (
+                        <div className="mp-cp-beb-selecionadas">
+                          {familiaRefris.map(b => {
+                            const bObj = produtos.find(p => p.id === b.id)
+                            const opt  = familiaRefriOpts[b.uid] ?? {}
+                            return (
+                              <div key={b.uid} className="mp-cp-beb-item">
+                                <div className="mp-cp-beb-info">
+                                  <span className="mp-cp-beb-nome">{bObj?.nome}</span>
+                                  <span className="mp-cp-beb-opts">
                                     {opt.tamanho ? opt.tamanho.toUpperCase() : ''}
                                     {opt.copos > 1 ? ` · ${opt.copos} copos` : ''}
                                     {opt.gelo  ? ' · gelo'  : ''}
                                     {opt.limao ? ' · limão' : ''}
                                   </span>
-                                )}
+                                </div>
+                                <div className="mp-cp-beb-acoes">
+                                  <button className="mp-cp-beb-btn" onClick={() => setFamiliaSubPasso(b.uid)}><Settings size={13} /></button>
+                                  <button className="mp-cp-beb-btn mp-cp-beb-btn--rem" onClick={() => removeFamRefri(b.uid)}><X size={13} /></button>
+                                </div>
                               </div>
-                              {sel && <div className="mp-combo-card-check"><Check size={13} /></div>}
+                            )
+                          })}
+                        </div>
+                      )}
+                      {familiaRefris.length < QTD_REFRI_FAMILIA && (
+                        <div className="mp-combo-grid">
+                          {bebidas.map(p => (
+                            <div key={p.id} className="mp-combo-card" onClick={() => addFamRefri(p.id)}>
+                              {p.imagem ? <img src={p.imagem} alt={p.nome} className="mp-combo-card-img" /> : <div className="mp-combo-card-img mp-combo-card-img--placeholder">🥤</div>}
+                              <div className="mp-combo-card-info">
+                                <span className="mp-combo-card-nome">{p.nome}</span>
+                                <span className="mp-combo-card-preco">R$ {(p.precoPromo ?? p.preco).toFixed(2).replace('.', ',')}</span>
+                              </div>
                             </div>
-                          )
-                        })}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     {(familiaEsfihas.length > 0 || familiaRefris.length > 0) && (
                       <div className="mp-combo-resumo">
@@ -798,6 +812,12 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
           {/* rodapé */}
           <div className="mp-passo-footer">
+            {podeVoltar && (
+              <button className="mp-btn-voltar" onClick={handleVoltar} title="Voltar">
+                <ChevronLeft size={20} />
+              </button>
+            )}
+
             {passoAtual?.id === 'quantidade' ? (
               <button className="mp-btn-principal" onClick={confirmar}>
                 <ShoppingCart size={18} />
@@ -826,7 +846,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                   ? 'Confirme a bebida para continuar'
                   : passoAtual?.id === 'combo-esfihas'
                     ? cpEsfihasOk
-                      ? <><span>Avançar ({cpEsfihas.length}/{comboCfg.maxEsfihas})</span><ChevronRight size={16} /></>
+                      ? <><span>Avançar ({cpEsfihasTotal}/{comboCfg.maxEsfihas})</span><ChevronRight size={16} /></>
                       : 'Selecione ao menos 1 esfiha'
                   : passoAtual?.id === 'combo-bebidas'
                     ? cpBebidasOk
@@ -835,7 +855,9 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                   : passoAtual?.id === 'combo' && (comboSubPasso === 'bebida-opts' || familiaSubPasso)
                     ? 'Confirme sua bebida para continuar'
                   : passoAtual?.id === 'combo' && tipoCombo && !comboPronto
-                    ? tipoCombo === 'familia' ? `Faltam ${QTD_REFRI_FAMILIA - familiaRefris.length} refrigerante(s)` : 'Escolha esfiha e bebida'
+                    ? tipoCombo === 'familia'
+                      ? `Faltam ${QTD_REFRI_FAMILIA - familiaRefris.length} refrigerante(s)`
+                      : 'Escolha esfiha e bebida'
                   : (adicionais.length > 0 || retirados.length > 0 || (tipoCombo && comboPronto) || gelo || limao || copos > 1 || tamanho)
                     ? <><span>Avançar</span><ChevronRight size={16} /></>
                     : 'Pular'

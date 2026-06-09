@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.2s ease;
-  padding: 16px;
+  padding: 8px;
 }
 
 @keyframes fadeIn {
@@ -20,9 +20,9 @@
 /* ══ MODAL SPLIT ══ */
 .mp-sheet {
   width: 100%;
-  max-width: 1520px;
-  height: 92vh;
-  max-height: 760px;
+  max-width: 1880px;
+  height: 96vh;
+  max-height: 820px;
   background: var(--bg-secundario);
   border-radius: 24px;
   display: flex;
@@ -549,6 +549,36 @@
   padding: 14px 36px 22px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mp-btn-voltar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto-terciario);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-btn-voltar:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+  background: rgba(255,184,77,0.05);
+}
+.mp-btn-voltar:active { transform: scale(0.96); }
+
+.mp-btn-pular,
+.mp-btn-principal {
+  flex: 1;
 }
 
 .mp-btn-pular {
@@ -787,6 +817,58 @@
 .mp-combo-card--bloqueado {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+/* ── Combo card com contador de quantidade ── */
+.mp-combo-card--contador {
+  cursor: default;
+}
+.mp-combo-card--contador:hover {
+  transform: none;
+}
+.mp-combo-card--contador.mp-combo-card--ativo {
+  border-color: var(--cor-primaria);
+  background: rgba(255,184,77,0.07);
+}
+
+.mp-combo-card-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 10px 10px;
+}
+
+.mp-combo-qty-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-primaria);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-combo-qty-btn:hover:not(:disabled) {
+  border-color: var(--cor-primaria);
+  background: rgba(255,184,77,0.1);
+}
+.mp-combo-qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mp-combo-qty-num {
+  min-width: 22px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--texto-principal);
 }
 
 /* ── Seletor de tamanho (lata / KS / 600ml) ── */

@@ -71,7 +71,7 @@
   body .destaques-cards           { gap: 24px; padding-bottom: 32px; }
 
   /* ── Modal produto ── */
-  body .mp-sheet  { max-width: 820px; }
+  body .mp-sheet  { max-width: 1380px; }
   body .mp-hero   { height: 280px; }
   body .mp-nome   { font-size: 28px; }
   body .mp-preco  { font-size: 30px; }
@@ -155,7 +155,7 @@
   body .destaques-cards           { gap: 22px; }
 
   /* ── Modais ── */
-  body .mp-sheet  { max-width: 740px; }
+  body .mp-sheet  { max-width: 1180px; }
   body .mp-hero   { height: 240px; }
   body .mp-nome   { font-size: 24px; }
   body .mp-preco  { font-size: 26px; }
@@ -227,7 +227,7 @@
   body .secao-titulo-texto { font-size: 12px; }
 
   /* ── Modal produto (sheet) ── */
-  body .mp-sheet  { max-width: 640px; }
+  body .mp-sheet  { max-width: 920px; }
   body .mp-hero   { height: 200px; }
   body .mp-nome   { font-size: 20px; }
   body .mp-preco  { font-size: 22px; }
