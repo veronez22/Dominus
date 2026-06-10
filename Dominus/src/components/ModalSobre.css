@@ -1,0 +1,195 @@
+.sobre-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.sobre-modal {
+  position: relative;
+  width: 860px;
+  max-width: 94vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--bg-secundario);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  animation: slideUp 0.25s ease;
+}
+
+.sobre-fechar {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-tertiary);
+  color: var(--texto-terciario);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.sobre-fechar:hover {
+  color: var(--texto-principal);
+  background: var(--border);
+}
+
+/* ── Corpo: 2 colunas ── */
+.sobre-corpo {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 36px;
+}
+
+/* ── Esquerda ── */
+.sobre-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cor-primaria);
+}
+
+.sobre-titulo {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  margin-top: 4px;
+}
+
+.sobre-descricao {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--texto-terciario);
+  margin-top: 12px;
+}
+
+.sobre-subtitulo {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-top: 24px;
+}
+
+.sobre-lista {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sobre-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--texto-principal);
+}
+
+.sobre-item-check {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 184, 77, 0.15);
+  color: var(--cor-primaria);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Direita: card de informações ── */
+.sobre-info {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-self: start;
+}
+
+.sobre-info-titulo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--texto-principal);
+}
+
+.sobre-info-linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sobre-info-icone {
+  flex-shrink: 0;
+  color: var(--cor-primaria);
+  margin-top: 1px;
+}
+
+.sobre-info-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sobre-info-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-terciario);
+}
+
+.sobre-info-valor {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto-principal);
+  line-height: 1.4;
+}
+
+/* ── Rodapé ── */
+.sobre-btn-fechar {
+  align-self: center;
+  background: var(--cor-primaria);
+  border: none;
+  border-radius: 12px;
+  color: #1a1a1a;
+  padding: 14px 40px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s;
+}
+
+.sobre-btn-fechar:hover {
+  background: var(--cor-primaria-hover);
+}
+
+/* ── Responsivo: empilha em telas estreitas ── */
+@media (max-width: 720px) {
+  .sobre-corpo {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

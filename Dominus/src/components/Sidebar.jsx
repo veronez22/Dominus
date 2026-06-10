@@ -3,7 +3,7 @@ import { categoriasPrincipais, subcategorias } from '../data/cardapio'
 import './Sidebar.css'
 import { Package, Star, BookOpen } from 'lucide-react'
 import ModalAvaliacao from './ModalAvaliacao'
-import ModalTermos from './ModalTermos'
+import ModalSobre from './ModalSobre'
 
 const iconesPrincipais = {
   destaques: <Star size={22} />,
@@ -13,7 +13,7 @@ const iconesPrincipais = {
 
 function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar, mesa }) {
   const [modalAvaliacao, setModalAvaliacao] = useState(false)
-  const [modalTermos, setModalTermos] = useState(false)
+  const [modalSobre, setModalSobre] = useState(false)
 
   const subAtivas = subcategorias.filter(s => s.grupo === 'cardapio')
   const mostrarSub = secaoAtiva === 'cardapio'
@@ -61,9 +61,9 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar, mesa }) 
             </button>
             <button
               className="sidebar-link"
-              onClick={() => setModalTermos(true)}
+              onClick={() => setModalSobre(true)}
             >
-              Termos de uso
+              Sobre o Aguirra
             </button>
           </div>
         </aside>
@@ -89,8 +89,8 @@ function Sidebar({ onMudar, categoriaVisivel, secaoAtiva, onSecaoMudar, mesa }) 
         <ModalAvaliacao onFechar={() => setModalAvaliacao(false)} mesa={mesa} />
       )}
 
-      {modalTermos && (
-        <ModalTermos onFechar={() => setModalTermos(false)} />
+      {modalSobre && (
+        <ModalSobre onFechar={() => setModalSobre(false)} />
       )}
     </>
   )
