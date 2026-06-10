@@ -5,6 +5,7 @@ import CardItem from './components/CardItem'
 import Carrinho from './components/Carrinho'
 import ModalProduto from './components/ModalProduto'
 import ModalImagem from './components/ModalImagem'
+import PopupSugestao from './components/PopupSugestao'
 import Destaques from './components/Destaques'
 import MinhaConta from './components/MinhaConta'
 import { useCardapio } from './lib/useCardapio'
@@ -13,6 +14,19 @@ import './App.css'
 
 // Categorias que pertencem ao Cardápio (sub-aside)
 const CATS_CARDAPIO = ['esfihas', 'esfihas-doces', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas', 'bebidas', 'diversos']
+
+// Detecta se um item (ou seu combo) já contém uma bebida.
+function itemContemBebida(item) {
+  if (item.categoria === 'bebidas') return true
+  const combo = item.extras?.itensCombo || []
+  return combo.some(ci => {
+    const n = (ci.nome || '').toLowerCase()
+    return ci.tamanho || ci.gelo || ci.limao || ci.copos ||
+      n.includes('coca')    || n.includes('suco')     || n.includes('refri') ||
+      n.includes('cerveja') || n.includes('limonada') || n.includes('água')  ||
+      n.includes('agua')    || n.includes('guaraná')  || n.includes('guarana')
+  })
+}
 
 function App() {
   const { produtos, categorias, loading } = useCardapio()
@@ -23,6 +37,8 @@ function App() {
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
   const [secaoAtiva, setSecaoAtiva] = useState('destaques') // 'destaques' | 'cardapio' | 'combos'
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
+  const [produtoDireto,      setProdutoDireto]      = useState(false) // modal aberto via popup → abre no passo Quantidade
+  const [sugestaoBebida,     setSugestaoBebida]     = useState(null)  // popup pós-adição
   const [produtoImagem,     setProdutoImagem]     = useState(null)
   const [busca, setBusca] = useState('')
   const [historico, setHistorico] = useState([])
@@ -92,6 +108,29 @@ function App() {
       }
       return [...prev, { ...item, quantidade: quantidadeNova, _key: itemKey }]
     })
+  }
+
+  // Adição vinda do ModalProduto: adiciona e, se o pedido ficar sem bebida, dispara o popup pós-adição.
+  function adicionarItemComSugestao(item) {
+    adicionarItem(item)
+    if (itemContemBebida(item) || carrinho.some(itemContemBebida)) return
+    const bebidas = produtos.filter(p => p.categoria === 'bebidas' && p.disponivel !== false)
+    if (bebidas.length === 0) return
+    const sugerida = bebidas.find(b => b.nome.toLowerCase().includes('coca')) ?? bebidas[0]
+    setSugestaoBebida(sugerida)
+  }
+
+  // "Sim" no popup → abre a bebida sugerida direto no passo Quantidade.
+  function aceitarSugestaoBebida() {
+    const b = sugestaoBebida
+    setSugestaoBebida(null)
+    setProdutoDireto(true)
+    setProdutoSelecionado(b)
+  }
+
+  function fecharModalProduto() {
+    setProdutoSelecionado(null)
+    setProdutoDireto(false)
   }
 
   function limparCarrinho() {
@@ -316,11 +355,9 @@ async function confirmarPedido(itens, comanda) {
       {carrinhoAberto && (
         <Carrinho
           itens={carrinho}
-          produtos={produtos}
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
           onAlterar={alterarQuantidade}
-          onAdicionar={adicionarItem}
           onConfirmar={confirmarPedido}
           onLimpar={limparCarrinho}
           mesa={mesa}
@@ -346,9 +383,17 @@ async function confirmarPedido(itens, comanda) {
         <ModalProduto
           produto={produtoSelecionado}
           produtos={produtos}
-          onFechar={() => setProdutoSelecionado(null)}
-          onAdicionar={adicionarItem}
+          onFechar={fecharModalProduto}
+          onAdicionar={produtoDireto ? adicionarItem : adicionarItemComSugestao}
           onPedirAgora={() => setCarrinhoAberto(true)}
+        />
+      )}
+
+      {sugestaoBebida && (
+        <PopupSugestao
+          bebida={sugestaoBebida}
+          onSim={aceitarSugestaoBebida}
+          onNao={() => setSugestaoBebida(null)}
         />
       )}
 
