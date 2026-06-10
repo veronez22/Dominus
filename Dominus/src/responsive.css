@@ -86,11 +86,11 @@
   body .conta-rodape-total strong { font-size: 30px; }
 
   /* ── Avaliação ── */
-  body .aval-modal  { width: 400px; padding: 44px 36px; }
-  body .aval-titulo { font-size: 22px; }
-  body .aval-sub    { font-size: 15px; }
-  body .aval-estrela svg { width: 48px; height: 48px; }
-  body .aval-estrelas { gap: 10px; }
+  body .aval-modal     { width: 880px; padding: 48px 52px; }
+  body .aval-titulo    { font-size: 30px; }
+  body .aval-sub       { font-size: 16px; }
+  body .aval-cat-label { font-size: 17px; }
+  body .aval-estrela svg { width: 30px; height: 30px; }
 
   /* ── Modal mesa ── */
   body .mesa-modal  { padding: 52px 44px; }
@@ -241,7 +241,7 @@
   body .conta-rodape-total strong { font-size: 24px; }
 
   /* ── Avaliação ── */
-  body .aval-modal { width: 310px; }
+  body .aval-modal { width: 92vw; max-width: 780px; }
 
   /* ── Modal mesa ── */
   body .mesa-modal  { padding: 32px 28px; }
@@ -359,13 +359,13 @@
   body .conta-rodape           { padding: 14px 20px; }
   body .conta-rodape-total strong { font-size: 20px; }
 
-  /* ── Avaliação ── */
-  body .aval-modal  { width: 290px; padding: 26px 20px; gap: 12px; }
-  body .aval-titulo { font-size: 17px; }
-  body .aval-sub    { font-size: 12px; }
-  body .aval-estrela svg { width: 32px; height: 32px; }
-  body .aval-estrelas { gap: 6px; }
-  body .aval-btn-pular, body .aval-btn-avaliar { font-size: 12px; padding: 10px; }
+  /* ── Avaliação (empilha em 1 coluna) ── */
+  body .aval-modal  { width: 92vw; padding: 28px 22px; gap: 14px; }
+  body .aval-titulo { font-size: 20px; }
+  body .aval-sub    { font-size: 13px; }
+  body .aval-corpo  { grid-template-columns: 1fr; gap: 18px; }
+  body .aval-estrela svg { width: 30px; height: 30px; }
+  body .aval-btn-pular, body .aval-btn-avaliar { font-size: 13px; padding: 12px; }
 
   /* ── Modal mesa ── */
   body .mesa-modal  { width: 88vw; padding: 26px 20px; }

@@ -1,14 +1,25 @@
 import { useState } from 'react'
 import logo from '../assets/logo.png'
-import { CreditCard, BellRing, ShoppingCart, Search } from 'lucide-react'
+import { CreditCard, BellRing, ShoppingCart, Search, CupSoda, GlassWater, Utensils, Soup } from 'lucide-react'
 import './Header.css'
 
 const HASH_SENHA_GARCOM = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'
 const LIMITE_MESAS = 20
 
+// Itens que o cliente pode solicitar ao chamar o garçom (com contador)
+const ITENS_GARCOM = [
+  { id: 'copo',      Icone: CupSoda,    label: 'Copo extra' },
+  { id: 'copo-gelo', Icone: GlassWater, label: 'Copo com gelo' },
+  { id: 'talheres',  Icone: Utensils,   label: 'Talheres' },
+  { id: 'prato',     Icone: Soup,       label: 'Prato extra' },
+]
+
 function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mesa, onMesaMudou, onLogoClick }) {
   const [modalAberto, setModalAberto] = useState(false)
   const [modalGarcom, setModalGarcom] = useState(false)
+  const [modalSelecao, setModalSelecao] = useState(false)
+  const [itensGarcom, setItensGarcom] = useState({})       // { [id]: quantidade }
+  const [itensSolicitados, setItensSolicitados] = useState([]) // snapshot p/ tela "a caminho"
   const [erroGarcom, setErroGarcom] = useState(false)
   const [etapa, setEtapa] = useState('mesa')
   const [inputMesa, setInputMesa] = useState('')
@@ -65,9 +76,35 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
       setErroGarcom(true)
       return
     }
-    setModalGarcom(true)
-    setTimeout(() => setModalGarcom(false), 3000)
+    setItensGarcom({})
+    setModalSelecao(true)
   }
+
+  function incItemGarcom(id) {
+    setItensGarcom(p => ({ ...p, [id]: (p[id] ?? 0) + 1 }))
+  }
+
+  function decItemGarcom(id) {
+    setItensGarcom(p => {
+      const qty = (p[id] ?? 0) - 1
+      const c = { ...p }
+      if (qty <= 0) delete c[id]
+      else c[id] = qty
+      return c
+    })
+  }
+
+  function confirmarChamado() {
+    const solicitados = ITENS_GARCOM
+      .filter(i => itensGarcom[i.id])
+      .map(i => ({ ...i, qty: itensGarcom[i.id] }))
+    setItensSolicitados(solicitados)
+    setModalSelecao(false)
+    setModalGarcom(true)
+    setTimeout(() => setModalGarcom(false), 4000)
+  }
+
+  const totalItensGarcom = Object.values(itensGarcom).reduce((s, v) => s + v, 0)
 
   return (
     <>
@@ -182,6 +219,47 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
         </div>
       )}
 
+      {/* ── Modal seleção de itens do garçom ── */}
+      {modalSelecao && (
+        <div className="mesa-overlay" onClick={() => setModalSelecao(false)}>
+          <div className="mesa-modal garcom-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="garcom-titulo">Chamar Garçom</h2>
+            <p className="garcom-sub">
+              Mesa <strong style={{ color: 'var(--cor-primaria)' }}>{mesa}</strong> · selecione o que precisa (opcional)
+            </p>
+
+            <div className="garcom-lista">
+              <div className="garcom-lista-cab">
+                <span>Item</span>
+                <span>Qtd</span>
+              </div>
+              {ITENS_GARCOM.map(item => {
+                const qty = itensGarcom[item.id] ?? 0
+                return (
+                  <div key={item.id} className={`garcom-item ${qty > 0 ? 'garcom-item--ativo' : ''}`}>
+                    <span className="garcom-item-icone"><item.Icone size={28} strokeWidth={1.8} /></span>
+                    <span className="garcom-item-label">{item.label}</span>
+                    <div className="garcom-item-contador">
+                      <button className="garcom-cont-btn" onClick={() => decItemGarcom(item.id)} disabled={qty === 0}>−</button>
+                      <span className="garcom-cont-num">{qty}</span>
+                      <button className="garcom-cont-btn" onClick={() => incItemGarcom(item.id)}>+</button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="mesa-acoes">
+              <button className="mesa-btn-cancelar" onClick={() => setModalSelecao(false)}>Cancelar</button>
+              <button className="mesa-btn-confirmar garcom-btn-chamar" onClick={confirmarChamado}>
+                <BellRing size={20} />
+                {totalItensGarcom > 0 ? `Chamar agora (${totalItensGarcom})` : 'Chamar agora'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Modal garçom a caminho ── */}
       {modalGarcom && (
         <div className="mesa-overlay" onClick={() => setModalGarcom(false)}>
@@ -196,6 +274,18 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
               Um garçom foi notificado e está indo até a{' '}
               <strong style={{ color: 'var(--cor-primaria)' }}>Mesa {mesa}</strong>.
             </p>
+
+            {itensSolicitados.length > 0 && (
+              <div className="garcom-resumo">
+                <p className="garcom-resumo-titulo">Você solicitou:</p>
+                {itensSolicitados.map(i => (
+                  <div key={i.id} className="garcom-resumo-linha">
+                    <span className="garcom-resumo-item"><i.Icone size={17} strokeWidth={1.8} /> {i.label}</span>
+                    <strong>{i.qty}x</strong>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

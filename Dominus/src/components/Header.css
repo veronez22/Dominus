@@ -211,6 +211,188 @@
   text-align: center;
   animation: fadeIn 0.3s ease;
 }
+
+/* ── Chamar garçom: seleção de itens (estilo lista) ── */
+.garcom-modal {
+  width: 820px;
+  max-width: 94vw;
+  padding: 48px 52px;
+  gap: 22px;
+}
+
+.garcom-titulo {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.garcom-sub {
+  font-size: 17px;
+  color: var(--texto-terciario);
+  text-align: center;
+  margin-top: -10px;
+}
+
+.garcom-lista {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+
+.garcom-lista-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 24px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-terciario);
+}
+
+.garcom-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.garcom-item:last-child {
+  border-bottom: none;
+}
+
+.garcom-item--ativo {
+  background: rgba(255, 184, 77, 0.08);
+}
+
+.garcom-item-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-primaria);
+  flex-shrink: 0;
+}
+
+.garcom-item-label {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--texto-principal);
+}
+
+.garcom-item-contador {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.garcom-cont-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-secundario);
+  color: var(--texto-principal);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.garcom-cont-btn:hover:not(:disabled) {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+.garcom-cont-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.garcom-cont-num {
+  min-width: 26px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--texto-principal);
+}
+
+/* botões do rodapé maiores no modal do garçom */
+.garcom-modal .mesa-acoes {
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.garcom-modal .mesa-btn-cancelar,
+.garcom-modal .mesa-btn-confirmar {
+  padding: 17px;
+  font-size: 17px;
+  border-radius: 14px;
+}
+
+.garcom-btn-chamar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── Resumo no modal "a caminho" ── */
+.garcom-resumo {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.garcom-resumo-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-terciario);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.garcom-resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: var(--texto-principal);
+}
+
+.garcom-resumo-linha strong {
+  color: var(--cor-primaria);
+}
+
+.garcom-resumo-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.garcom-resumo-item svg {
+  color: var(--cor-primaria);
+  flex-shrink: 0;
+}
 .header-busca {
   flex: 1;
   max-width: 340px;
