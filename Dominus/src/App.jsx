@@ -316,9 +316,11 @@ async function confirmarPedido(itens, comanda) {
       {carrinhoAberto && (
         <Carrinho
           itens={carrinho}
+          produtos={produtos}
           onFechar={() => setCarrinhoAberto(false)}
           onRemover={removerItem}
           onAlterar={alterarQuantidade}
+          onAdicionar={adicionarItem}
           onConfirmar={confirmarPedido}
           onLimpar={limparCarrinho}
           mesa={mesa}

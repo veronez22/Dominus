@@ -4,13 +4,41 @@ import ModalComanda from './ModalComanda'
 import ModalAvaliacao from './ModalAvaliacao'
 import './Carrinho.css'
 
-function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar, mesa }) {
+// Detecta se um item do carrinho representa/contém uma bebida (refri, suco, cerveja, etc.)
+function itemTemBebida(item) {
+  if (item.categoria === 'bebidas') return true
+  // Combos (família / esfiha+bebida) sempre incluem bebida
+  if (item.extras?.tipoCombo && (item.extras?.itensCombo || []).length > 0) {
+    return item.extras.itensCombo.some(ci => {
+      const n = (ci.nome || '').toLowerCase()
+      return ci.tamanho || ci.gelo || ci.limao || ci.copos ||
+        n.includes('coca')   || n.includes('suco')   || n.includes('refri') ||
+        n.includes('cerveja')|| n.includes('limonada')|| n.includes('água')  ||
+        n.includes('agua')   || n.includes('guaraná')|| n.includes('guarana')
+    })
+  }
+  return false
+}
+
+function Carrinho({ itens, produtos = [], onRemover, onAlterar, onAdicionar, onFechar, onConfirmar, onLimpar, mesa }) {
   const [etapa,          setEtapa]          = useState('carrinho')
   const [mensagemErro,   setMensagemErro]   = useState('')
   const [comanda,        setComanda]        = useState(null)
   const [finalizando,    setFinalizando]    = useState(false)
   const [mostrarAvaliar, setMostrarAvaliar] = useState(false)
   const total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0)
+
+  // ── Upsell de bebida ──
+  const temBebida    = itens.some(itemTemBebida)
+  const mostrarUpsell = itens.length > 0 && !temBebida
+  const bebidasSugeridas = mostrarUpsell
+    ? produtos.filter(p => p.categoria === 'bebidas' && p.disponivel !== false).slice(0, 3)
+    : []
+
+  function adicionarBebida(bebida) {
+    if (!onAdicionar) return
+    onAdicionar({ ...bebida, quantidade: 1 })
+  }
 
   function handleConfirmar() {
     if (itens.length === 0) {
@@ -185,6 +213,39 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                   })
                 )}
               </div>
+
+              {mostrarUpsell && bebidasSugeridas.length > 0 && (
+                <div className="carrinho-upsell">
+                  <div className="carrinho-upsell-titulo">
+                    <span>🥤 Que tal uma bebida gelada?</span>
+                    <small>Seu pedido ainda está sem bebida</small>
+                  </div>
+                  <div className="carrinho-upsell-lista">
+                    {bebidasSugeridas.map(b => (
+                      <button
+                        key={b.id}
+                        className="carrinho-upsell-card"
+                        onClick={() => adicionarBebida(b)}
+                      >
+                        <div className="carrinho-upsell-card-img">
+                          {b.imagem
+                            ? <img src={b.imagem} alt={b.nome} />
+                            : <span>🥤</span>}
+                        </div>
+                        <div className="carrinho-upsell-card-info">
+                          <span className="carrinho-upsell-card-nome">{b.nome}</span>
+                          <span className="carrinho-upsell-card-preco">
+                            R$ {b.preco.toFixed(2).replace('.', ',')}
+                          </span>
+                        </div>
+                        <span className="carrinho-upsell-card-add">
+                          <Plus size={16} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="carrinho-footer">
                 <div className="carrinho-total">

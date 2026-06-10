@@ -354,6 +354,22 @@
   color: #2ecc71;
 }
 
+.mp-opcao-texto-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mp-opcao-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--texto-terciario);
+}
+.mp-opcao-dir {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ── Combo ── */
 .mp-combo-wrap {
   display: flex;
@@ -478,6 +494,133 @@
   font-weight: 800;
   color: #2ecc71;
 }
+
+/* ── Filtros de categoria do acompanhamento ── */
+.mp-combo-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mp-combo-filtro {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--texto-terciario);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.mp-combo-filtro:hover { border-color: var(--cor-primaria); color: var(--texto-principal); }
+.mp-combo-filtro--ativo {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria);
+  color: #161616;
+}
+
+/* ── Caixa de resumo do combo ── */
+.mp-combo-resumo-box {
+  margin-top: 4px;
+  padding: 14px 16px;
+  background: var(--bg-secundario, #161616);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mp-combo-resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--texto-secundario, #cfcfcf);
+}
+.mp-combo-resumo-linha small {
+  color: var(--texto-terciario);
+  font-size: 11px;
+}
+.mp-combo-resumo-linha--desc { color: #2ecc71; }
+.mp-combo-resumo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--texto-principal);
+}
+.mp-combo-resumo-total span:last-child { color: var(--cor-primaria); }
+
+/* ── Chips compactos do combo (sem foto) ── */
+.mp-combo-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mp-combo-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secundario, #161616);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mp-combo-chip:hover { border-color: var(--cor-primaria); background: rgba(255,184,77,0.05); }
+.mp-combo-chip--ativo { border-color: var(--cor-primaria); background: rgba(255,184,77,0.1); }
+.mp-combo-chip-nome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  white-space: nowrap;
+}
+.mp-combo-chip-preco {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--cor-primaria);
+}
+.mp-combo-chip-opts {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--texto-terciario);
+}
+.mp-combo-chip-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cor-primaria);
+  color: #161616;
+}
+.mp-combo-chip-cfg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-primaria);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mp-combo-chip-cfg:hover { border-color: var(--cor-primaria); background: rgba(255,184,77,0.1); }
 
 /* ── Quantidade ── */
 .mp-qtd-wrap {
