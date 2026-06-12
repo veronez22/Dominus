@@ -9,7 +9,7 @@
 .destaques-banner {
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 380px;
   flex: none;
   border-radius: 20px;
   background-size: cover;
@@ -159,7 +159,7 @@
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding-bottom: 24px;
+  padding-bottom: 32px;
   scrollbar-width: none;
 }
 
@@ -169,8 +169,8 @@
 
 /* ── Card individual ── */
 .destaques-card {
-  min-width: 150px;
-  max-width: 150px;
+  min-width: 168px;
+  max-width: 168px;
   background: var(--bg-secundario);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -189,7 +189,7 @@
 .destaques-card-imagem-wrapper {
   position: relative;
   width: 100%;
-  height: 90px;
+  height: 105px;
 }
 
 .destaques-card-imagem {
@@ -250,19 +250,22 @@
 
 .destaques-card-btn {
   margin: 8px 12px 12px;
-  background: transparent;
+  background: var(--cor-primaria);
   border: 1px solid var(--cor-primaria);
   border-radius: 8px;
-  color: var(--cor-primaria);
-  padding: 7px;
+  color: #1a1a1a;
+  padding: 8px;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .destaques-card-btn:hover {
-  background: var(--cor-primaria);
-  color: #1a1a1a;
+  filter: brightness(1.08);
+}
+
+.destaques-card-btn:active {
+  transform: scale(0.97);
 }

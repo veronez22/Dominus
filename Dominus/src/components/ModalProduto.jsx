@@ -157,8 +157,10 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   const [cpBebSub,   setCpBebSub]   = useState(null)
 
   const cpEsfihasTotal = Object.values(cpEsfihas).reduce((s, v) => s + v, 0)
-  const cpEsfihasOk    = cpEsfihasTotal > 0
-  const cpBebidasOk    = cpBebidas.length > 0 && cpBebSub === null
+  // Combo exige a quantidade EXATA configurada (ex: 10 esfihas + 2 bebidas),
+  // não basta escolher 1. incCpEsfiha/addCpBebida já impedem passar do máximo.
+  const cpEsfihasOk    = cpEsfihasTotal === comboCfg.maxEsfihas
+  const cpBebidasOk    = cpBebidas.length === comboCfg.maxBebidas && cpBebSub === null
 
   /* passos */
   const passos = ehComboProd ? [
@@ -204,8 +206,13 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
   /* helpers combo-produto esfihas */
   function incCpEsfiha(id) {
-    if (cpEsfihasTotal >= comboCfg.maxEsfihas) return
-    setCpEsfihas(prev => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }))
+    // Checa o limite dentro do updater (com o estado real anterior) para
+    // que cliques rápidos não ultrapassem o máximo do combo.
+    setCpEsfihas(prev => {
+      const total = Object.values(prev).reduce((s, v) => s + v, 0)
+      if (total >= comboCfg.maxEsfihas) return prev
+      return { ...prev, [id]: (prev[id] ?? 0) + 1 }
+    })
   }
   function decCpEsfiha(id) {
     setCpEsfihas(prev => {
@@ -756,11 +763,11 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                   : passoAtual?.id === 'combo-esfihas'
                     ? cpEsfihasOk
                       ? <><span>Avançar ({cpEsfihasTotal}/{comboCfg.maxEsfihas})</span><ChevronRight size={16} /></>
-                      : 'Selecione ao menos 1 esfiha'
+                      : `Faltam ${comboCfg.maxEsfihas - cpEsfihasTotal} de ${comboCfg.maxEsfihas} esfihas`
                   : passoAtual?.id === 'combo-bebidas'
                     ? cpBebidasOk
                       ? <><span>Avançar</span><ChevronRight size={16} /></>
-                      : 'Selecione ao menos 1 bebida'
+                      : `Faltam ${comboCfg.maxBebidas - cpBebidas.length} de ${comboCfg.maxBebidas} bebidas`
                   : passoAtual?.id === 'combo' && comboSubPasso === 'bebida-opts'
                     ? 'Confirme sua bebida para continuar'
                   : passoAtual?.id === 'bebida-combo' && bebidaOptsAberto

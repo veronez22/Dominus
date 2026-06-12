@@ -57,18 +57,18 @@
   body .secao-titulo-texto { font-size: 15px; letter-spacing: 2.5px; }
 
   /* ── Banner destaques ── */
-  body .destaques-banner          { height: 340px; border-radius: 24px; }
+  body .destaques-banner          { height: 410px; border-radius: 24px; }
   body .destaques-banner-conteudo { padding: 52px 56px; max-width: 600px; }
   body .destaques-banner-titulo   { font-size: 58px; }
   body .destaques-banner-descricao { font-size: 17px; }
   body .destaques-banner-btn      { font-size: 15px; padding: 14px 30px; }
 
   /* ── Destaques cards ── */
-  body .destaques-card            { min-width: 170px; max-width: 170px; border-radius: 20px; }
-  body .destaques-card-imagem-wrapper { height: 105px; }
+  body .destaques-card            { min-width: 190px; max-width: 190px; border-radius: 20px; }
+  body .destaques-card-imagem-wrapper { height: 120px; }
   body .destaques-card-nome       { font-size: 15px; }
   body .destaques-card-preco      { font-size: 17px; }
-  body .destaques-cards           { gap: 24px; padding-bottom: 32px; }
+  body .destaques-cards           { gap: 24px; padding-bottom: 40px; }
 
   /* ── Modal produto ── */
   body .mp-sheet  { max-width: 1380px; }
@@ -141,18 +141,18 @@
   body .card-item-btn       { font-size: 14px; padding: 10px 18px; }
 
   /* ── Banner ── */
-  body .destaques-banner          { height: 320px; border-radius: 22px; }
+  body .destaques-banner          { height: 385px; border-radius: 22px; }
   body .destaques-banner-conteudo { padding: 44px 48px; max-width: 560px; }
   body .destaques-banner-titulo   { font-size: 52px; }
   body .destaques-banner-descricao { font-size: 16px; }
   body .destaques-banner-btn      { font-size: 14px; padding: 12px 26px; }
 
   /* ── Destaques cards ── */
-  body .destaques-card            { min-width: 155px; max-width: 155px; border-radius: 18px; }
-  body .destaques-card-imagem-wrapper { height: 95px; }
+  body .destaques-card            { min-width: 175px; max-width: 175px; border-radius: 18px; }
+  body .destaques-card-imagem-wrapper { height: 110px; }
   body .destaques-card-nome       { font-size: 14px; }
   body .destaques-card-preco      { font-size: 16px; }
-  body .destaques-cards           { gap: 22px; }
+  body .destaques-cards           { gap: 22px; padding-bottom: 36px; }
 
   /* ── Modais ── */
   body .mp-sheet  { max-width: 1180px; }
