@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { X, Camera, ShoppingBag } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import { supabase } from '../lib/supabase'
+import { getExtrasLinhas } from '../lib/formatExtras'
 import './MinhaConta.css'
 
 function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
@@ -25,7 +26,7 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
     scannerRef.current = scanner
 
     scanner.start(
-      { facingMode: 'environment' },
+      { facingMode: 'user' },
       { fps: 10, qrbox: { width: 220, height: 220 } },
       (texto) => {
         if (!rodandoRef.current) return
@@ -152,6 +153,9 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
                         {item.observacao && (
                           <span className="conta-item-obs">{item.observacao}</span>
                         )}
+                        {getExtrasLinhas(item.extras).map((linha, idx) => (
+                          <span key={idx} className="conta-item-obs">{linha}</span>
+                        ))}
                       </div>
                       <span className="conta-item-preco">
                         {fmtPreco(Number(item.preco_snapshot) * item.quantidade)}

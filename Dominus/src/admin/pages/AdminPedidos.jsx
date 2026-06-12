@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { getExtrasLinhas } from '../../lib/formatExtras'
 import './AdminPedidos.css'
 
 const TOTAL_COMANDAS = 20
@@ -26,6 +27,7 @@ function imprimir(sessao) {
           <span>${item.quantidade}x ${item.nome_snapshot}${item.observacao ? ` <em>(${item.observacao})</em>` : ''}</span>
           <span>${fmt(Number(item.preco_snapshot) * item.quantidade)}</span>
         </div>
+        ${getExtrasLinhas(item.extras).map(linha => `<div class="item-extra">${linha}</div>`).join('')}
       `).join('')}
       <div class="subtotal">Subtotal: ${fmt(Number(pedido.total))}</div>
     </div>
@@ -40,6 +42,7 @@ function imprimir(sessao) {
       hr { border: none; border-top: 1px dashed #ccc; margin: 12px 0; }
       .pedido-header { font-weight: bold; margin-bottom: 6px; }
       .item { display: flex; justify-content: space-between; margin: 3px 0; }
+      .item-extra { padding-left: 12px; color: #555; font-size: 12px; white-space: pre; }
       .subtotal { text-align: right; font-size: 12px; color: #555; margin-top: 6px; }
       .total { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; margin-top: 16px; border-top: 2px solid #000; padding-top: 10px; }
       .rodape { text-align: center; margin-top: 20px; font-size: 11px; color: #777; }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { getExtrasLinhas } from '../../lib/formatExtras'
 import './AdminHistorico.css'
 
 const fmt     = (v)   => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -155,10 +156,15 @@ export default function AdminHistorico() {
               <div className="hist-itens">
                 {sessao.pedidos.flatMap(p => p.itens_pedido || []).map(item => (
                   <div key={item.id} className="hist-item">
-                    <span className="hist-item-qtd">{item.quantidade}x</span>
-                    <span className="hist-item-nome">{item.nome_snapshot}</span>
-                    {item.observacao && <span className="hist-item-obs">— {item.observacao}</span>}
-                    <span className="hist-item-preco">{fmt(Number(item.preco_snapshot) * item.quantidade)}</span>
+                    <div className="hist-item-linha">
+                      <span className="hist-item-qtd">{item.quantidade}x</span>
+                      <span className="hist-item-nome">{item.nome_snapshot}</span>
+                      {item.observacao && <span className="hist-item-obs">— {item.observacao}</span>}
+                      <span className="hist-item-preco">{fmt(Number(item.preco_snapshot) * item.quantidade)}</span>
+                    </div>
+                    {getExtrasLinhas(item.extras).map((linha, idx) => (
+                      <div key={idx} className="hist-item-extra">{linha}</div>
+                    ))}
                   </div>
                 ))}
               </div>

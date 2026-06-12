@@ -232,6 +232,16 @@ async function confirmarPedido(itens, comanda) {
       preco_snapshot: i.preco,
       quantidade:     i.quantidade,
       observacao:     i.extras?.observacao || null,
+      extras: {
+        adicionais: i.extras?.adicionais || [],
+        retirados:  i.extras?.retirados  || [],
+        tamanho:    i.extras?.tamanho    || null,
+        gelo:       i.extras?.gelo       || false,
+        limao:      i.extras?.limao      || false,
+        copos:      i.extras?.copos      || null,
+        tipoCombo:  i.extras?.tipoCombo  || null,
+        itensCombo: i.extras?.itensCombo || [],
+      },
     }))
     const { error: itensErr } = await supabase.from('itens_pedido').insert(itensSup)
     if (itensErr) throw itensErr

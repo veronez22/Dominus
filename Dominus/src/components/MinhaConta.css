@@ -112,6 +112,7 @@
   font-size: 12px;
   color: var(--texto-terciario);
   font-style: italic;
+  white-space: pre;
 }
 
 .conta-item-preco {

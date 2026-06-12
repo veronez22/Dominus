@@ -166,6 +166,12 @@
 .cozinha-item {
   font-size: 14px;
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cozinha-item > div:first-child {
+  display: flex;
   gap: 6px;
   align-items: baseline;
 }
@@ -184,6 +190,13 @@
   color: #888;
   font-size: 12px;
   font-style: italic;
+}
+
+.cozinha-item-extra {
+  color: #999;
+  font-size: 12px;
+  padding-left: 32px;
+  white-space: pre;
 }
 
 /* ── Footer do card ── */

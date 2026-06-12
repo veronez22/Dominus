@@ -121,12 +121,19 @@
 
 .hist-item {
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.hist-item-linha {
+  display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 13px;
 }
 
 .hist-item-qtd  { color: #FFB84D; font-weight: 700; min-width: 22px; }
 .hist-item-nome { color: #ddd; flex: 1; }
 .hist-item-obs  { color: #666; font-size: 12px; font-style: italic; }
 .hist-item-preco { color: #666; font-size: 12px; white-space: nowrap; }
+.hist-item-extra { color: #666; font-size: 12px; padding-left: 28px; white-space: pre; }

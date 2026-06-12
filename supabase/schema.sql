@@ -79,7 +79,8 @@ create table if not exists itens_pedido (
   nome_snapshot   text not null,           -- nome do produto no momento do pedido
   preco_snapshot  numeric(10,2) not null,  -- preço no momento do pedido
   quantidade      int not null default 1,
-  observacao      text
+  observacao      text,
+  extras          jsonb -- adicionais, removidos, opções de bebida e itens de combo
 );
 
 -- ── Avaliações ──

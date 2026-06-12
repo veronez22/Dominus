@@ -21,7 +21,7 @@ function ModalComanda({ onFechar, onComandaLida }) {
     }
 
     scanner.start(
-      { facingMode: 'environment' },
+      { facingMode: 'user' },
       { fps: 10, qrbox: { width: 220, height: 220 } },
       (texto) => {
         if (!ativoRef.current) return

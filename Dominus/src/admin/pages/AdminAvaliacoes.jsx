@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { Star, Utensils, CupSoda, Armchair, Smile, Music, Frown } from 'lucide-react'
 import './AdminAvaliacoes.css'
 
 function Estrelas({ nota }) {
@@ -44,8 +45,10 @@ export default function AdminAvaliacoes() {
         total:        data.length,
         media:        media('nota'),
         comida:       media('nota_comida'),
+        bebida:       media('nota_bebida'),
         atendimento:  media('nota_atendimento'),
         ambiente:     media('nota_ambiente'),
+        musica:       media('nota_musica'),
       })
     }
     setLoading(false)
@@ -60,7 +63,7 @@ export default function AdminAvaliacoes() {
     <div className="av-wrap">
       <div className="av-topbar">
         <div>
-          <h1>⭐ Avaliações</h1>
+          <h1><Star size={22} className="av-title-icone" /> Avaliações</h1>
           <p>{stats?.total ?? 0} avaliações recebidas</p>
         </div>
       </div>
@@ -79,12 +82,14 @@ export default function AdminAvaliacoes() {
               </div>
               <div className="av-resumo-categorias">
                 {[
-                  { label: '🍽️ Comida',      val: stats.comida },
-                  { label: '😊 Atendimento', val: stats.atendimento },
-                  { label: '🏠 Ambiente',    val: stats.ambiente },
+                  { label: 'Comida',      Icone: Utensils, val: stats.comida },
+                  { label: 'Bebida',      Icone: CupSoda,  val: stats.bebida },
+                  { label: 'Atendimento', Icone: Smile,    val: stats.atendimento },
+                  { label: 'Ambiente',    Icone: Armchair, val: stats.ambiente },
+                  { label: 'Música',      Icone: Music,    val: stats.musica },
                 ].map(item => (
                   <div key={item.label} className="av-cat-item">
-                    <span className="av-cat-label">{item.label}</span>
+                    <span className="av-cat-label"><item.Icone size={16} strokeWidth={1.8} /> {item.label}</span>
                     <div className="av-cat-bar">
                       <div className="av-cat-fill" style={{ width: `${(item.val / 5) * 100}%` }} />
                     </div>
@@ -98,7 +103,7 @@ export default function AdminAvaliacoes() {
           {/* ── Lista ── */}
           {avaliacoes.length === 0 ? (
             <div className="av-vazio">
-              <span>🙁</span>
+              <Frown size={48} strokeWidth={1.5} />
               <p>Nenhuma avaliação ainda.</p>
             </div>
           ) : (
@@ -109,15 +114,25 @@ export default function AdminAvaliacoes() {
                     <div className="av-card-esquerda">
                       <Estrelas nota={a.nota} />
                       {a.mesa && <span className="av-mesa">Mesa {a.mesa}</span>}
+                      {a.comanda && <span className="av-mesa">Comanda {a.comanda}</span>}
                     </div>
                     <span className="av-data">{fmtData(a.criado_em)}</span>
                   </div>
 
+                  {(a.nome || a.email) && (
+                    <div className="av-cliente">
+                      {a.nome && <span className="av-cliente-nome">{a.nome}</span>}
+                      {a.email && <span className="av-cliente-email">{a.email}</span>}
+                    </div>
+                  )}
+
                   <div className="av-notas-detalhe">
                     {[
                       { label: 'Comida',      val: a.nota_comida },
+                      { label: 'Bebida',      val: a.nota_bebida },
                       { label: 'Atendimento', val: a.nota_atendimento },
                       { label: 'Ambiente',    val: a.nota_ambiente },
+                      { label: 'Música',      val: a.nota_musica },
                     ].map(item => item.val ? (
                       <span key={item.label} className="av-nota-tag">
                         {item.label}: {'★'.repeat(item.val)}{'☆'.repeat(5 - item.val)}

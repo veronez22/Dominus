@@ -147,10 +147,10 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                           {/* Bebida: tamanho / copos / gelo / limão */}
                           {(tamanho || gelo || limao || (copos && copos > 1)) && (
                             <div className="carrinho-item-extras">
-                              {tamanho && <span className="carrinho-item-tag carrinho-item-tag--tam">📦 {TAMANHO_LABEL[tamanho] ?? tamanho}</span>}
+                              {tamanho && <span className="carrinho-item-tag carrinho-item-tag--tam">{TAMANHO_LABEL[tamanho] ?? tamanho}</span>}
                               {copos > 1 && <span className="carrinho-item-tag">{copos} copos</span>}
-                              {gelo  && <span className="carrinho-item-tag">🧊 Gelo</span>}
-                              {limao && <span className="carrinho-item-tag">🍋 Limão</span>}
+                              {gelo  && <span className="carrinho-item-tag">Gelo</span>}
+                              {limao && <span className="carrinho-item-tag">Limão</span>}
                             </div>
                           )}
 
@@ -158,7 +158,7 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                           {tipoCombo && itensCombo.length > 0 && (
                             <div className="carrinho-item-combo">
                               <span className="carrinho-combo-label">
-                                {tipoCombo === 'familia' ? '👨‍👩‍👧‍👦 Combo Família' : '🔥 Combo'}
+                                {tipoCombo === 'familia' ? 'Combo Família' : 'Combo'}
                               </span>
                               {itensCombo.map((ci, idx) => (
                                 <div key={idx} className="carrinho-combo-item">
@@ -177,7 +177,7 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
                           )}
 
                           {observacao && (
-                            <p className="carrinho-item-obs">📝 {observacao}</p>
+                            <p className="carrinho-item-obs">{observacao}</p>
                           )}
                         </div>
                       </div>

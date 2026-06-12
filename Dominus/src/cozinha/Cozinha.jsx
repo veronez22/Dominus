@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { getExtrasLinhas } from '../lib/formatExtras'
 import './Cozinha.css'
 
 const STATUS_LABEL = {
@@ -112,11 +113,16 @@ export default function Cozinha() {
                     <ul className="cozinha-itens">
                       {pedido.itens_pedido.map(item => (
                         <li key={item.id} className="cozinha-item">
-                          <span className="cozinha-item-qtd">{item.quantidade}x</span>
-                          <span className="cozinha-item-nome">{item.nome_snapshot}</span>
-                          {item.observacao && (
-                            <span className="cozinha-item-obs">— {item.observacao}</span>
-                          )}
+                          <div>
+                            <span className="cozinha-item-qtd">{item.quantidade}x</span>
+                            <span className="cozinha-item-nome">{item.nome_snapshot}</span>
+                            {item.observacao && (
+                              <span className="cozinha-item-obs">— {item.observacao}</span>
+                            )}
+                          </div>
+                          {getExtrasLinhas(item.extras).map((linha, idx) => (
+                            <div key={idx} className="cozinha-item-extra">{linha}</div>
+                          ))}
                         </li>
                       ))}
                     </ul>

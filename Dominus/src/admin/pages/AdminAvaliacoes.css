@@ -1,6 +1,7 @@
 .av-wrap { padding: 28px; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
 
-.av-topbar h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.av-topbar h1 { font-size: 22px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.av-title-icone { color: #FFB84D; }
 .av-topbar p  { font-size: 13px; color: #A0A0A0; margin-top: 3px; }
 
 .av-loading { color: #A0A0A0; font-size: 14px; padding: 40px 0; }
@@ -48,7 +49,7 @@
   gap: 12px;
 }
 
-.av-cat-label { font-size: 13px; color: #ccc; min-width: 120px; }
+.av-cat-label { font-size: 13px; color: #ccc; min-width: 120px; display: flex; align-items: center; gap: 6px; }
 
 .av-cat-bar {
   flex: 1;
@@ -77,7 +78,7 @@
   display: flex; flex-direction: column; align-items: center;
   gap: 12px; color: #555; padding: 60px 0;
 }
-.av-vazio span { font-size: 48px; }
+.av-vazio svg { color: #555; }
 .av-vazio p    { font-size: 14px; }
 
 /* ── Lista de cards ── */
@@ -120,6 +121,15 @@
 }
 
 .av-data { font-size: 12px; color: #555; }
+
+.av-cliente {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.av-cliente-nome  { color: #ddd; font-weight: 600; }
+.av-cliente-email { color: #777; font-size: 12px; }
 
 .av-notas-detalhe {
   display: flex;
