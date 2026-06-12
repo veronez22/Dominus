@@ -65,10 +65,10 @@
 
   /* ── Destaques cards ── */
   body .destaques-card            { min-width: 190px; max-width: 190px; border-radius: 20px; }
-  body .destaques-card-imagem-wrapper { height: 120px; }
+  body .destaques-card-imagem-wrapper { height: 105px; }
   body .destaques-card-nome       { font-size: 15px; }
   body .destaques-card-preco      { font-size: 17px; }
-  body .destaques-cards           { gap: 24px; padding-bottom: 40px; }
+  body .destaques-cards           { gap: 24px; padding-bottom: 18px; }
 
   /* ── Modal produto ── */
   body .mp-sheet  { max-width: 1380px; }
@@ -149,10 +149,10 @@
 
   /* ── Destaques cards ── */
   body .destaques-card            { min-width: 175px; max-width: 175px; border-radius: 18px; }
-  body .destaques-card-imagem-wrapper { height: 110px; }
+  body .destaques-card-imagem-wrapper { height: 95px; }
   body .destaques-card-nome       { font-size: 14px; }
   body .destaques-card-preco      { font-size: 16px; }
-  body .destaques-cards           { gap: 22px; padding-bottom: 36px; }
+  body .destaques-cards           { gap: 22px; padding-bottom: 16px; }
 
   /* ── Modais ── */
   body .mp-sheet  { max-width: 1180px; }

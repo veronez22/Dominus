@@ -2,7 +2,7 @@
 .destaques {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 /* ── Banner / Carrossel ── */
@@ -152,14 +152,14 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--texto-principal);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .destaques-cards {
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding-bottom: 32px;
+  padding-bottom: 14px;
   scrollbar-width: none;
 }
 
@@ -189,7 +189,7 @@
 .destaques-card-imagem-wrapper {
   position: relative;
   width: 100%;
-  height: 105px;
+  height: 90px;
 }
 
 .destaques-card-imagem {
@@ -213,10 +213,10 @@
 }
 
 .destaques-card-info {
-  padding: 10px 12px 4px;
+  padding: 8px 10px 2px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
 }
 
@@ -249,12 +249,12 @@
 }
 
 .destaques-card-btn {
-  margin: 8px 12px 12px;
+  margin: 6px 10px 10px;
   background: var(--cor-primaria);
   border: 1px solid var(--cor-primaria);
   border-radius: 8px;
   color: #1a1a1a;
-  padding: 8px;
+  padding: 7px;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 800;
