@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Camera, ShoppingBag } from 'lucide-react'
+import { X, IdCard, RotateCw, ShoppingBag } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import { supabase } from '../lib/supabase'
 import { getExtrasLinhas } from '../lib/formatExtras'
@@ -87,32 +87,28 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
 
   return (
     <div className="modal-overlay conta-overlay" onClick={onFechar}>
-      <div className="conta-modal" onClick={(e) => e.stopPropagation()}>
+      <div className={`conta-modal ${etapa === 'scanner' ? 'conta-modal--scan' : ''}`} onClick={(e) => e.stopPropagation()}>
 
         {/* ══ SCANNER ══ */}
         {etapa === 'scanner' && (
           <>
-            <div className="conta-header">
-              <div className="conta-header-info">
-                <h2>Minha Conta</h2>
-                <span>Leia sua comanda para continuar</span>
+            <button className="conta-fechar-scan" onClick={onFechar}><X size={20} /></button>
+            <div className="conta-scanner-info">
+              <div className="conta-scanner-icone">
+                <IdCard size={32} />
+                <RotateCw size={16} className="conta-scanner-icone-badge" />
               </div>
-              <button className="conta-btn-fechar" onClick={onFechar}><X size={20} /></button>
-            </div>
-            <div className="conta-scanner-area">
-              <div className="conta-scanner-topo">
-                <Camera size={22} color="var(--cor-primaria)" />
-                <p>Aponte o QR Code da comanda para a câmera</p>
-              </div>
-              <div className="conta-camera-wrapper">
-                <div id="qr-conta-container" className="conta-camera-inner" />
-                <div className="conta-frame">
-                  <span className="frame-tl" /><span className="frame-tr" />
-                  <span className="frame-bl" /><span className="frame-br" />
-                </div>
-                <div className="conta-scanline" />
-              </div>
+              <h2>Minha Conta</h2>
+              <p>Aponte a câmera para o QR Code impresso na sua comanda para ver os pedidos e o total da sua mesa.</p>
               {erroMsg && <p className="conta-erro">{erroMsg}</p>}
+            </div>
+            <div className="conta-camera-wrapper">
+              <div id="qr-conta-container" className="conta-camera-inner" />
+              <div className="conta-frame">
+                <span className="frame-tl" /><span className="frame-tr" />
+                <span className="frame-bl" /><span className="frame-br" />
+              </div>
+              <div className="conta-scanline" />
             </div>
           </>
         )}

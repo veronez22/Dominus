@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, CheckCircle, Camera } from 'lucide-react'
+import { X, CheckCircle, IdCard, RotateCw } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import './ModalComanda.css'
 
@@ -30,7 +30,7 @@ function ModalComanda({ onFechar, onComandaLida }) {
           setComanda(texto)
           setEtapa('sucesso')
           onComandaLida(texto)
-          setTimeout(() => onFechar(), 2000)
+          setTimeout(() => onFechar(), 1000)
         } else {
           setErroMsg('QR Code inválido. Use a comanda do estabelecimento.')
           setTimeout(() => setErroMsg(''), 2500)
@@ -56,7 +56,7 @@ function ModalComanda({ onFechar, onComandaLida }) {
 
   return (
     <div className="comanda-overlay" onClick={onFechar}>
-      <div className="comanda-modal" onClick={(e) => e.stopPropagation()}>
+      <div className={`comanda-modal ${etapa === 'lendo' ? 'comanda-modal--scan' : ''}`} onClick={(e) => e.stopPropagation()}>
 
         <button className="comanda-fechar" onClick={onFechar}>
           <X size={18} />
@@ -65,10 +65,16 @@ function ModalComanda({ onFechar, onComandaLida }) {
         {/* ── Câmera ── */}
         {etapa === 'lendo' && (
           <>
-            <div className="comanda-topo">
-              <Camera size={22} color="var(--cor-primaria)" />
-              <h2 className="comanda-titulo">Leia sua comanda</h2>
-              <p className="comanda-subtitulo">Aponte o QR Code da comanda para a câmera</p>
+            <div className="comanda-info">
+              <div className="comanda-info-icone">
+                <IdCard size={32} />
+                <RotateCw size={16} className="comanda-info-icone-badge" />
+              </div>
+              <h2 className="comanda-titulo">Confirme sua comanda</h2>
+              <p className="comanda-subtitulo">
+                Aponte a câmera para o QR Code impresso na sua comanda para vincular o pedido à sua mesa.
+              </p>
+              {erroMsg && <p className="comanda-erro">{erroMsg}</p>}
             </div>
 
             <div className="comanda-camera-wrapper">
@@ -81,8 +87,6 @@ function ModalComanda({ onFechar, onComandaLida }) {
               </div>
               <div className="comanda-scanline" />
             </div>
-
-            {erroMsg && <p className="comanda-erro">{erroMsg}</p>}
           </>
         )}
 

@@ -687,6 +687,18 @@
 .mp-obs:focus { border-color: rgba(255,184,77,0.5); }
 .mp-obs::placeholder { color: var(--texto-terciario); }
 
+.mp-erro-passo {
+  margin: 0 36px 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,80,80,0.1);
+  border: 1px solid rgba(255,80,80,0.3);
+  color: #ff8080;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* ── Rodapé do passo ── */
 .mp-passo-footer {
   padding: 14px 36px 22px;
@@ -852,6 +864,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 .mp-mini-btn:hover { background: rgba(255,184,77,0.1); }
+.mp-mini-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.mp-mini-btn:disabled:hover { background: transparent; }
 
 .mp-mini-num {
   width: 36px;

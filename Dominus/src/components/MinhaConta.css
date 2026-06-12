@@ -20,8 +20,145 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   animation: slideUp 0.25s ease;
   box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+/* ── Modal de leitura (lado a lado: info + câmera, tema claro, quase tela cheia) ──
+   Especificidade reforçada (.conta-modal.conta-modal--scan) para sobrepor as
+   regras `body .conta-modal { width: ... }` dos breakpoints em responsive.css */
+.conta-modal.conta-modal--scan {
+  width: 98vw;
+  max-width: none;
+  height: 96vh;
+  max-height: none;
+  flex-direction: row;
+  align-items: stretch;
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+}
+
+.conta-scanner-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 22px;
+  padding: 64px 72px;
+  text-align: left;
+}
+
+.conta-scanner-icone {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: rgba(255, 184, 77, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-primaria);
+}
+
+.conta-scanner-icone-badge {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 28px;
+  height: 28px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--cor-primaria);
+  border: 2px solid rgba(255, 184, 77, 0.14);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.conta-modal--scan .conta-scanner-info h2 {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.conta-modal--scan .conta-scanner-info p {
+  font-size: 19px;
+  line-height: 1.7;
+  color: #6b6b6b;
+  max-width: 440px;
+  margin: 0;
+}
+
+.conta-modal--scan .conta-camera-wrapper {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0 64px;
+  width: 46%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: 80%;
+  border-radius: 24px;
+}
+
+.conta-fechar-scan {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  color: #888;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.conta-fechar-scan:hover {
+  background: rgba(255, 80, 80, 0.12);
+  color: #ff5555;
+}
+
+@media (max-width: 900px) {
+  .conta-modal.conta-modal--scan {
+    flex-direction: column;
+    width: 92vw;
+    max-width: none;
+    height: auto;
+    max-height: 94vh;
+    border-radius: 24px;
+  }
+
+  .conta-scanner-info {
+    padding: 36px 28px;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .conta-modal--scan .conta-scanner-info h2 {
+    font-size: 28px;
+  }
+
+  .conta-modal--scan .conta-scanner-info p {
+    font-size: 15px;
+    text-align: center;
+    max-width: none;
+  }
+
+  .conta-modal--scan .conta-camera-wrapper {
+    width: 80%;
+    max-width: 320px;
+    margin: 0 auto 32px;
+  }
 }
 
 /* ── Header ── */

@@ -5,6 +5,9 @@ import { useState } from 'react'
 // Desconto do combo (acompanhamento + bebida). Zero por enquanto — definir com o Rafa.
 const DESCONTO_COMBO = 0
 
+// Limite máximo de copos por bebida
+const MAX_COPOS = 10
+
 // Sugestão contextual de acompanhamento por categoria do produto pedido.
 // cat = categoria sugerida · titulo = chamada exibida no passo do combo.
 const SUGESTAO_COMBO = {
@@ -145,10 +148,23 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   const [comboCopos,    setComboCopos]    = useState(1)
   const [comboGelo,     setComboGelo]     = useState(false)
   const [comboLimao,    setComboLimao]    = useState(false)
-  const [comboSubPasso, setComboSubPasso] = useState(null)
 
   /* passo dedicado de bebida (feature #2): personalização da bebida escolhida */
   const [bebidaOptsAberto, setBebidaOptsAberto] = useState(false)
+
+  /* mensagem de validação (ex: bebida sem tamanho selecionado) */
+  const [erroPasso, setErroPasso] = useState('')
+  function mostrarErro(msg) {
+    setErroPasso(msg)
+    setTimeout(() => setErroPasso(''), 3000)
+  }
+  function confirmarComValidacao(nomeBebida, tamAtual, onOk) {
+    if (ehRefrigerante(nomeBebida) && !tamAtual) {
+      mostrarErro(`Selecione o tamanho da ${nomeBebida} para continuar.`)
+      return
+    }
+    onOk()
+  }
 
   /* combo-produto  — esfihas como { id: quantidade } */
   const [cpEsfihas,  setCpEsfihas]  = useState({})   // { [id]: qty }
@@ -240,19 +256,44 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   /* navegação */
   // Combo iniciado = escolheu um acompanhamento.
   const comboIniciado = !!comboAcomp
-  const comboPronto   = comboSubPasso !== 'bebida-opts'
 
-  const emSubPasso = !!cpBebSub || comboSubPasso === 'bebida-opts' || bebidaOptsAberto
+  const emSubPasso = !!cpBebSub || bebidaOptsAberto
   const podeVoltar = passo > 0 || emSubPasso
 
   function handleVoltar() {
-    if (cpBebSub)                        { setCpBebSub(null); return }
-    if (comboSubPasso === 'bebida-opts') { setComboSubPasso(null); return }
-    if (bebidaOptsAberto)                { setBebidaOptsAberto(false); return }
+    if (cpBebSub)          { setCpBebSub(null); return }
+    if (bebidaOptsAberto)  { setBebidaOptsAberto(false); return }
     if (passo > 0) setPasso(p => p - 1)
   }
 
-  function avancar() { passo < passos.length - 1 ? setPasso(p => p + 1) : confirmar() }
+  function avancar() {
+    // Bebida principal (ex: Coca-Cola) precisa de tamanho selecionado
+    if (passoAtual?.id === 'bebida-opcoes' && isRefri && !tamanho) {
+      mostrarErro(`Selecione o tamanho da ${produto.nome} para continuar.`)
+      return
+    }
+    // Bebida escolhida no passo "Adicionar bebida" também precisa de tamanho
+    if (passoAtual?.id === 'bebida-combo' && comboBebida) {
+      const bObj = produtos.find(p => p.id === comboBebida)
+      if (ehRefrigerante(bObj?.nome) && !comboTamanho) {
+        mostrarErro(`Selecione o tamanho da ${bObj?.nome} para continuar.`)
+        return
+      }
+    }
+    // Bebidas do combo-produto também precisam de tamanho cada uma
+    if (passoAtual?.id === 'combo-bebidas' && !cpBebSub) {
+      const semTamanho = cpBebidas.find(b => {
+        const bObj = produtos.find(p => p.id === b.id)
+        return ehRefrigerante(bObj?.nome) && !cpBebOpts[b.uid]?.tamanho
+      })
+      if (semTamanho) {
+        const bObj = produtos.find(p => p.id === semTamanho.id)
+        mostrarErro(`Selecione o tamanho da ${bObj?.nome}.`)
+        return
+      }
+    }
+    passo < passos.length - 1 ? setPasso(p => p + 1) : confirmar()
+  }
 
   function confirmar() {
     const adicionaisObjs = adicionais.map(id => ADICIONAIS_POOL.find(a => a.id === id)).filter(Boolean)
@@ -322,7 +363,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             <div className="mp-mini-contador">
               <button className="mp-mini-btn" onClick={() => setCopas(Math.max(1, copasAtual - 1))}><Minus size={13} /></button>
               <span className="mp-mini-num">{copasAtual}</span>
-              <button className="mp-mini-btn" onClick={() => setCopas(copasAtual + 1)}><Plus size={13} /></button>
+              <button className="mp-mini-btn" disabled={copasAtual >= MAX_COPOS} onClick={() => setCopas(Math.min(MAX_COPOS, copasAtual + 1))}><Plus size={13} /></button>
             </div>
           </div>
           <div className="mp-bebida-opts-toggles">
@@ -415,11 +456,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
             </>}
             {passoAtual?.id === 'combo' && <>
               <h3 className="mp-passo-titulo">Transforme em Combo! 🔥</h3>
-              <p className="mp-passo-sub">
-                {comboSubPasso === 'bebida-opts'
-                  ? `Personalize sua ${bebidaComboObj?.nome ?? 'bebida'}`
-                  : 'Adicione um acompanhamento ao seu pedido'}
-              </p>
+              <p className="mp-passo-sub">Adicione um acompanhamento ao seu pedido</p>
             </>}
             {passoAtual?.id === 'bebida-combo' && <>
               <h3 className="mp-passo-titulo"><CupSoda size={20} style={{display:'inline',marginRight:8,color:'var(--cor-primaria)'}}/>Que tal uma bebida gelada?</h3>
@@ -498,7 +535,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                     copasAtual={opt.copos}  setCopas={v => updateCpBebOpt(cpBebSub, 'copos', v)}
                     geloAtual={opt.gelo}    setGeloL={v => updateCpBebOpt(cpBebSub, 'gelo', v)}
                     limaoAtual={opt.limao}  setLimaoL={v => updateCpBebOpt(cpBebSub, 'limao', v)}
-                    onConfirmar={() => setCpBebSub(null)}
+                    onConfirmar={() => confirmarComValidacao(bObj?.nome, opt.tamanho, () => setCpBebSub(null))}
                   />
                 )
               }
@@ -587,20 +624,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
 
             {/* ── Combo (transformar) ── */}
             {passoAtual?.id === 'combo' && (() => {
-              if (comboSubPasso === 'bebida-opts') {
-                return (
-                  <BebidaOpts
-                    nomeBebida={bebidaComboObj?.nome}
-                    isRefriLocal={ehRefrigerante(bebidaComboObj?.nome)}
-                    semLimaoLocal={temLimaoNatural(bebidaComboObj?.nome)}
-                    tamAtual={comboTamanho}  setTam={setComboTamanho}
-                    copasAtual={comboCopos}  setCopas={setComboCopos}
-                    geloAtual={comboGelo}    setGeloL={setComboGelo}
-                    limaoAtual={comboLimao}  setLimaoL={setComboLimao}
-                    onConfirmar={() => setComboSubPasso(null)}
-                  />
-                )
-              }
               const acompObj   = produtos.find(p => p.id === comboAcomp)
               const acompPreco = acompObj ? (acompObj.precoPromo ?? acompObj.preco) : 0
               const comboTotal = acompPreco - DESCONTO_COMBO
@@ -662,7 +685,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                     copasAtual={comboCopos}  setCopas={setComboCopos}
                     geloAtual={comboGelo}    setGeloL={setComboGelo}
                     limaoAtual={comboLimao}  setLimaoL={setComboLimao}
-                    onConfirmar={() => setBebidaOptsAberto(false)}
+                    onConfirmar={() => confirmarComValidacao(bebidaComboObj?.nome, comboTamanho, () => setBebidaOptsAberto(false))}
                   />
                 )
               }
@@ -726,6 +749,7 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
           </div>
 
           {/* rodapé */}
+          {erroPasso && <p className="mp-erro-passo">{erroPasso}</p>}
           <div className="mp-passo-footer">
             {podeVoltar && (
               <button className="mp-btn-voltar" onClick={handleVoltar} title="Voltar">
@@ -753,7 +777,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                 disabled={
                   (passoAtual?.id === 'combo-esfihas' && !cpEsfihasOk) ||
                   (passoAtual?.id === 'combo-bebidas' && (!cpBebidasOk || !!cpBebSub)) ||
-                  (passoAtual?.id === 'combo' && comboSubPasso === 'bebida-opts') ||
                   (passoAtual?.id === 'bebida-combo' && bebidaOptsAberto)
                 }
                 onClick={avancar}
@@ -768,8 +791,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
                     ? cpBebidasOk
                       ? <><span>Avançar</span><ChevronRight size={16} /></>
                       : `Faltam ${comboCfg.maxBebidas - cpBebidas.length} de ${comboCfg.maxBebidas} bebidas`
-                  : passoAtual?.id === 'combo' && comboSubPasso === 'bebida-opts'
-                    ? 'Confirme sua bebida para continuar'
                   : passoAtual?.id === 'bebida-combo' && bebidaOptsAberto
                     ? 'Confirme sua bebida para continuar'
                   : (adicionais.length > 0 || retirados.length > 0 || comboIniciado || comboBebida || gelo || limao || copos > 1 || tamanho)

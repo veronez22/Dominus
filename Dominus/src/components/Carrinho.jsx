@@ -38,9 +38,9 @@ function Carrinho({ itens, onRemover, onAlterar, onFechar, onConfirmar, onLimpar
       // Mostra avaliação apenas na primeira vez desta comanda
       const jaAvaliou = sessionStorage.getItem(`avaliou_${codigo}`)
       if (!jaAvaliou) {
-        setTimeout(() => setMostrarAvaliar(true), 1500)
+        setTimeout(() => setMostrarAvaliar(true), 800)
       } else {
-        setTimeout(() => onFechar(), 3000)
+        setTimeout(() => onFechar(), 1500)
       }
     } catch {
       setMensagemErro('Erro ao salvar pedido. Tente novamente.')
