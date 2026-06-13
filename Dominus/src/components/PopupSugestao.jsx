@@ -1,41 +1,38 @@
 import './PopupSugestao.css'
 import { Plus, X } from 'lucide-react'
 
-// Popup pós-adição: sugere uma bebida quando o pedido ainda não tem nenhuma.
-// "Sim" abre o ModalProduto da bebida direto no passo Quantidade.
-function PopupSugestao({ bebida, onSim, onNao }) {
-  const preco = bebida.precoPromo ?? bebida.preco
+// Popup de sugestão (cross-sell de esfiha doce/salgada ao abrir o carrinho).
+function PopupSugestao({ produto, titulo, subtitulo, textoSim = 'Sim, quero!', onSim, onNao }) {
+  const preco = produto.precoPromo ?? produto.preco
 
   return (
     <div className="ps-overlay" onClick={onNao}>
       <div className="ps-card" onClick={e => e.stopPropagation()}>
-        <button className="ps-fechar" onClick={onNao}><X size={16} /></button>
+        <button className="ps-fechar" onClick={onNao}><X size={20} /></button>
 
-        <div className="ps-titulo">
-          <span className="ps-emoji">🥤</span>
-          <h3>Que tal uma bebida gelada?</h3>
-          <p>Seu pedido ainda está sem bebida.</p>
+        <div className="ps-img-grande">
+          {produto.imagem && <img src={produto.imagem} alt={produto.nome} />}
         </div>
 
-        <div className="ps-bebida">
-          <div className="ps-bebida-img">
-            {bebida.imagem
-              ? <img src={bebida.imagem} alt={bebida.nome} />
-              : <span>🥤</span>}
+        <div className="ps-corpo">
+          <div className="ps-titulo">
+            <h3>{titulo}</h3>
+            <p>{subtitulo}</p>
           </div>
-          <div className="ps-bebida-info">
-            <span className="ps-bebida-nome">{bebida.nome}</span>
-            <span className="ps-bebida-preco">R$ {preco.toFixed(2).replace('.', ',')}</span>
-          </div>
-        </div>
 
-        <div className="ps-acoes">
-          <button className="ps-btn ps-btn--nao" onClick={onNao}>
-            Agora não
-          </button>
-          <button className="ps-btn ps-btn--sim" onClick={onSim}>
-            <Plus size={18} /> Sim, quero!
-          </button>
+          <div className="ps-produto">
+            <span className="ps-produto-nome">{produto.nome}</span>
+            <span className="ps-produto-preco">R$ {preco.toFixed(2).replace('.', ',')}</span>
+          </div>
+
+          <div className="ps-acoes">
+            <button className="ps-btn ps-btn--nao" onClick={onNao}>
+              Agora não
+            </button>
+            <button className="ps-btn ps-btn--sim" onClick={onSim}>
+              <Plus size={20} /> {textoSim}
+            </button>
+          </div>
         </div>
       </div>
     </div>

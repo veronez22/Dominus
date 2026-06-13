@@ -15,19 +15,6 @@ import './App.css'
 // Categorias que pertencem ao Cardápio (sub-aside)
 const CATS_CARDAPIO = ['esfihas', 'esfihas-doces', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas', 'bebidas', 'diversos']
 
-// Detecta se um item (ou seu combo) já contém uma bebida.
-function itemContemBebida(item) {
-  if (item.categoria === 'bebidas') return true
-  const combo = item.extras?.itensCombo || []
-  return combo.some(ci => {
-    const n = (ci.nome || '').toLowerCase()
-    return ci.tamanho || ci.gelo || ci.limao || ci.copos ||
-      n.includes('coca')    || n.includes('suco')     || n.includes('refri') ||
-      n.includes('cerveja') || n.includes('limonada') || n.includes('água')  ||
-      n.includes('agua')    || n.includes('guaraná')  || n.includes('guarana')
-  })
-}
-
 function App() {
   const { produtos, categorias, loading } = useCardapio()
 
@@ -37,13 +24,13 @@ function App() {
   const [categoriaVisivel, setCategoriaVisivel] = useState('destaques')
   const [secaoAtiva, setSecaoAtiva] = useState('destaques') // 'destaques' | 'cardapio' | 'combos'
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
-  const [produtoDireto,      setProdutoDireto]      = useState(false) // modal aberto via popup → abre no passo Quantidade
-  const [sugestaoBebida,     setSugestaoBebida]     = useState(null)  // popup pós-adição
+  const [sugestaoEsfiha,     setSugestaoEsfiha]     = useState(null)  // cross-sell doce/salgada ao abrir o carrinho
   const [produtoImagem,     setProdutoImagem]     = useState(null)
   const [busca, setBusca] = useState('')
   const [historico, setHistorico] = useState([])
   const [mesa, setMesa] = useState('')
   const refs = useRef({})
+  const jaSugeriuEsfiha = useRef(false) // garante a sugestão doce/salgada só 1x por visita
 
   // Filtra quais categorias renderizar no main baseado na seção ativa
   const categoriasVisiveis = categorias.filter(cat => {
@@ -110,27 +97,33 @@ function App() {
     })
   }
 
-  // Adição vinda do ModalProduto: adiciona e, se o pedido ficar sem bebida, dispara o popup pós-adição.
-  function adicionarItemComSugestao(item) {
-    adicionarItem(item)
-    if (itemContemBebida(item) || carrinho.some(itemContemBebida)) return
-    const bebidas = produtos.filter(p => p.categoria === 'bebidas' && p.disponivel !== false)
-    if (bebidas.length === 0) return
-    const sugerida = bebidas.find(b => b.nome.toLowerCase().includes('coca')) ?? bebidas[0]
-    setSugestaoBebida(sugerida)
+  // Abre o carrinho e, na primeira vez da visita, sugere a esfiha "que falta"
+  // (doce se só tem salgada, salgada se só tem doce).
+  function abrirCarrinho() {
+    setCarrinhoAberto(true)
+    if (jaSugeriuEsfiha.current) return
+    const temSalgada = carrinho.some(i => i.categoria === 'esfihas')
+    const temDoce    = carrinho.some(i => i.categoria === 'esfihas-doces')
+    let alvo = null
+    if (temSalgada && !temDoce) alvo = 'esfihas-doces'
+    else if (temDoce && !temSalgada) alvo = 'esfihas'
+    if (!alvo) return
+    const candidatos = produtos.filter(p => p.categoria === alvo && p.disponivel !== false)
+    if (candidatos.length === 0) return
+    const sugerida = candidatos.find(p => p.badge) ?? candidatos[0]
+    jaSugeriuEsfiha.current = true
+    setSugestaoEsfiha(sugerida)
   }
 
-  // "Sim" no popup → abre a bebida sugerida direto no passo Quantidade.
-  function aceitarSugestaoBebida() {
-    const b = sugestaoBebida
-    setSugestaoBebida(null)
-    setProdutoDireto(true)
-    setProdutoSelecionado(b)
+  // "Sim" na sugestão de esfiha → abre a esfiha sugerida (só passo Quantidade).
+  function aceitarSugestaoEsfiha() {
+    const e = sugestaoEsfiha
+    setSugestaoEsfiha(null)
+    setProdutoSelecionado(e)
   }
 
   function fecharModalProduto() {
     setProdutoSelecionado(null)
-    setProdutoDireto(false)
   }
 
   function limparCarrinho() {
@@ -264,7 +257,7 @@ async function confirmarPedido(itens, comanda) {
     <div className="app">
       <Header
         totalItens={totalItens}
-        onAbrirCarrinho={() => setCarrinhoAberto(true)}
+        onAbrirCarrinho={abrirCarrinho}
         onAbrirConta={() => setContaAberta(true)}
         busca={busca}
         onBusca={setBusca}
@@ -378,7 +371,7 @@ async function confirmarPedido(itens, comanda) {
         <MinhaConta
           mesa={mesa}
           onFechar={() => setContaAberta(false)}
-          onAbrirCarrinho={() => { setContaAberta(false); setCarrinhoAberto(true) }}
+          onAbrirCarrinho={() => { setContaAberta(false); abrirCarrinho() }}
         />
       )}
 
@@ -394,16 +387,23 @@ async function confirmarPedido(itens, comanda) {
           produto={produtoSelecionado}
           produtos={produtos}
           onFechar={fecharModalProduto}
-          onAdicionar={produtoDireto ? adicionarItem : adicionarItemComSugestao}
+          onAdicionar={adicionarItem}
           onPedirAgora={() => setCarrinhoAberto(true)}
         />
       )}
 
-      {sugestaoBebida && (
+      {sugestaoEsfiha && (
         <PopupSugestao
-          bebida={sugestaoBebida}
-          onSim={aceitarSugestaoBebida}
-          onNao={() => setSugestaoBebida(null)}
+          produto={sugestaoEsfiha}
+          titulo={sugestaoEsfiha.categoria === 'esfihas-doces'
+            ? 'Que tal uma esfiha doce?'
+            : 'Que tal uma esfiha salgada?'}
+          subtitulo={sugestaoEsfiha.categoria === 'esfihas-doces'
+            ? 'Uma sobremesa pra fechar o pedido com chave de ouro.'
+            : 'Complete seu pedido com uma salgada quentinha.'}
+          textoSim="Sim, adicionar!"
+          onSim={aceitarSugestaoEsfiha}
+          onNao={() => setSugestaoEsfiha(null)}
         />
       )}
 

@@ -103,11 +103,58 @@ function parseComboCfg(produto) {
 let bebUid = 0
 function newUid() { return `b${++bebUid}` }
 
+/* ── componente reutilizável de opções de bebida ── */
+function BebidaOpts({ nomeBebida, isRefriLocal, semLimaoLocal, tamAtual, setTam, copasAtual, setCopas, geloAtual, setGeloL, limaoAtual, setLimaoL, onConfirmar, grande }) {
+  return (
+    <div className="mp-combo-wrap">
+      {onConfirmar && nomeBebida && <p className="mp-bebida-opts-nome">{nomeBebida}</p>}
+      {isRefriLocal && (
+        <div className="mp-tamanho-grupo">
+          <p className="mp-tamanho-label">Qual tamanho?</p>
+          <div className="mp-tamanho-grid">
+            {TAMANHOS_REFRI.map(t => (
+              <button key={t.id}
+                className={`mp-tamanho-btn ${grande ? 'mp-tamanho-btn--lg' : ''} ${tamAtual === t.id ? 'mp-tamanho-btn--ativo' : ''}`}
+                onClick={() => setTam(t.id)}>
+                <span className="mp-tamanho-nome">{t.label}</span>
+                <span className="mp-tamanho-desc">{t.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="mp-bebida-opts">
+        <div className="mp-bebida-opts-linha">
+          <span className="mp-bebida-opts-label">Quantidade de copos</span>
+          <div className="mp-mini-contador">
+            <button className="mp-mini-btn" onClick={() => setCopas(Math.max(1, copasAtual - 1))}><Minus size={13} /></button>
+            <span className="mp-mini-num">{copasAtual}</span>
+            <button className="mp-mini-btn" disabled={copasAtual >= MAX_COPOS} onClick={() => setCopas(Math.min(MAX_COPOS, copasAtual + 1))}><Plus size={13} /></button>
+          </div>
+        </div>
+        <div className="mp-bebida-opts-toggles">
+          <button className={`mp-toggle ${grande ? 'mp-toggle--lg' : ''} ${geloAtual ? 'mp-toggle--ativo' : ''}`} onClick={() => setGeloL(!geloAtual)}>
+            <Droplets size={grande ? 16 : 14} /> Gelo
+          </button>
+          {!semLimaoLocal && (
+            <button className={`mp-toggle ${grande ? 'mp-toggle--lg' : ''} ${limaoAtual ? 'mp-toggle--ativo' : ''}`} onClick={() => setLimaoL(!limaoAtual)}>
+              <Citrus size={grande ? 16 : 14} /> Limão
+            </button>
+          )}
+        </div>
+      </div>
+      {onConfirmar && (
+        <button className="mp-btn-confirmar-bebida" onClick={onConfirmar}>
+          <Check size={16} /> Confirmar bebida
+        </button>
+      )}
+    </div>
+  )
+}
+
 /* ══════════════════════════════════════ */
 function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   const ehBebida    = produto.categoria === 'bebidas'
-  const ehDoce      = produto.categoria === 'esfihas-doces'
-  const ehSalgada   = produto.categoria === 'esfihas'
   const ehComboProd = produto.categoria === 'combos'
   const temTurbinar = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
   const temRetirar  = ['esfihas', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas'].includes(produto.categoria)
@@ -184,14 +231,8 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
     { id: 'combo-bebidas', label: 'Escolha as Bebidas', sub: `${cpBebidas.length}/${comboCfg.maxBebidas}` },
     { id: 'quantidade',    label: 'Quantidade',         sub: 'Selecione' },
   ] : [
-    ...(temTurbinar && adicionaisDisponiveis.length > 0
-      ? [{ id: 'turbinar', label: TURBINAR_LABEL[produto.categoria] ?? 'Turbine seu lanche', sub: 'Opcional' }] : []),
-    ...(temRetirar
-      ? [{ id: 'retirar',       label: 'Retirar ingredientes', sub: 'Opcional' }] : []),
-    ...(temCombo
-      ? [{ id: 'combo',         label: 'Transformar em Combo', sub: 'Opcional' }] : []),
-    ...(!ehBebida && bebidas.length > 0
-      ? [{ id: 'bebida-combo',  label: 'Adicionar bebida',     sub: 'Opcional' }] : []),
+    // Produtos normais (não-bebida): sem passos de customização — só quantidade.
+    // Bebidas mantêm o passo de personalização (tamanho, gelo, limão).
     ...(ehBebida
       ? [{ id: 'bebida-opcoes', label: 'Personalizar bebida',  sub: 'Opcional' }] : []),
     { id: 'quantidade', label: 'Quantidade', sub: 'Selecione' },
@@ -336,55 +377,6 @@ function ModalProduto({ produto, produtos = [], onFechar, onAdicionar }) {
   }
 
   const bebidaComboObj = produtos.find(p => p.id === comboBebida)
-
-  /* ── componente interno reutilizável de opções de bebida ── */
-  function BebidaOpts({ nomeBebida, isRefriLocal, semLimaoLocal, tamAtual, setTam, copasAtual, setCopas, geloAtual, setGeloL, limaoAtual, setLimaoL, onConfirmar, grande }) {
-    return (
-      <div className="mp-combo-wrap">
-        {onConfirmar && nomeBebida && <p className="mp-bebida-opts-nome">{nomeBebida}</p>}
-        {isRefriLocal && (
-          <div className="mp-tamanho-grupo">
-            <p className="mp-tamanho-label">Qual tamanho?</p>
-            <div className="mp-tamanho-grid">
-              {TAMANHOS_REFRI.map(t => (
-                <button key={t.id}
-                  className={`mp-tamanho-btn ${grande ? 'mp-tamanho-btn--lg' : ''} ${tamAtual === t.id ? 'mp-tamanho-btn--ativo' : ''}`}
-                  onClick={() => setTam(t.id)}>
-                  <span className="mp-tamanho-nome">{t.label}</span>
-                  <span className="mp-tamanho-desc">{t.desc}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="mp-bebida-opts">
-          <div className="mp-bebida-opts-linha">
-            <span className="mp-bebida-opts-label">Quantidade de copos</span>
-            <div className="mp-mini-contador">
-              <button className="mp-mini-btn" onClick={() => setCopas(Math.max(1, copasAtual - 1))}><Minus size={13} /></button>
-              <span className="mp-mini-num">{copasAtual}</span>
-              <button className="mp-mini-btn" disabled={copasAtual >= MAX_COPOS} onClick={() => setCopas(Math.min(MAX_COPOS, copasAtual + 1))}><Plus size={13} /></button>
-            </div>
-          </div>
-          <div className="mp-bebida-opts-toggles">
-            <button className={`mp-toggle ${grande ? 'mp-toggle--lg' : ''} ${geloAtual ? 'mp-toggle--ativo' : ''}`} onClick={() => setGeloL(!geloAtual)}>
-              <Droplets size={grande ? 16 : 14} /> Gelo
-            </button>
-            {!semLimaoLocal && (
-              <button className={`mp-toggle ${grande ? 'mp-toggle--lg' : ''} ${limaoAtual ? 'mp-toggle--ativo' : ''}`} onClick={() => setLimaoL(!limaoAtual)}>
-                <Citrus size={grande ? 16 : 14} /> Limão
-              </button>
-            )}
-          </div>
-        </div>
-        {onConfirmar && (
-          <button className="mp-btn-confirmar-bebida" onClick={onConfirmar}>
-            <Check size={16} /> Confirmar bebida
-          </button>
-        )}
-      </div>
-    )
-  }
 
   /* ════════════════════ RENDER ════════════════════ */
   return (

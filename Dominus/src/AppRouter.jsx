@@ -4,7 +4,6 @@ import { supabase } from './lib/supabase'
 import App from './App'
 import AdminLogin from './admin/AdminLogin'
 import AdminLayout from './admin/AdminLayout'
-import Cozinha from './cozinha/Cozinha'
 
 /**
  * Rota protegida — redireciona para /admin/login se não autenticado
@@ -32,9 +31,6 @@ export default function AppRouter() {
     <Routes>
       {/* ── App do tablet (cliente) ── */}
       <Route path="/*" element={<App />} />
-
-      {/* ── Painel da Cozinha ── */}
-      <Route path="/cozinha" element={<Cozinha />} />
 
       {/* ── Login do admin ── */}
       <Route path="/admin/login" element={<AdminLogin />} />
