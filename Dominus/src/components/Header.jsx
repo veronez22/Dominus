@@ -67,7 +67,12 @@ function Header({ totalItens, onAbrirCarrinho, onAbrirConta, busca, onBusca, mes
       setInputSenha('')
       return
     }
-    onMesaMudou(inputMesa)
+    const resultado = await onMesaMudou(inputMesa)
+    if (!resultado?.ok) {
+      mostrarErro(resultado?.erro || 'Não foi possível definir a mesa.')
+      setInputSenha('')
+      return
+    }
     handleFechar()
   }
 

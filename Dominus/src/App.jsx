@@ -10,7 +10,11 @@ import Destaques from './components/Destaques'
 import MinhaConta from './components/MinhaConta'
 import { useCardapio } from './lib/useCardapio'
 import { supabase } from './lib/supabase'
+import { getDeviceId } from './lib/deviceId'
 import './App.css'
+
+// Tempo após o qual uma mesa "ativa" é considerada abandonada e pode ser reutilizada
+const MESA_ATIVA_EXPIRA_MS = 8 * 60 * 60 * 1000 // 8 horas
 
 // Categorias que pertencem ao Cardápio (sub-aside)
 const CATS_CARDAPIO = ['esfihas', 'esfihas-doces', 'fogazzas', 'kibes', 'cigarretes', 'coxinhas', 'bebidas', 'diversos']
@@ -28,9 +32,11 @@ function App() {
   const [produtoImagem,     setProdutoImagem]     = useState(null)
   const [busca, setBusca] = useState('')
   const [historico, setHistorico] = useState([])
-  const [mesa, setMesa] = useState('')
+  const [mesa, setMesa] = useState(() => localStorage.getItem('dominus_mesa') || '')
   const refs = useRef({})
   const jaSugeriuEsfiha = useRef(false) // garante a sugestão doce/salgada só 1x por visita
+  const restauranteIdRef = useRef(null)
+  const deviceId = useRef(getDeviceId()).current
 
   // Filtra quais categorias renderizar no main baseado na seção ativa
   const categoriasVisiveis = categorias.filter(cat => {
@@ -59,6 +65,27 @@ function App() {
     })
     return () => observer.disconnect()
   }, [secaoAtiva]) // re-observa quando a seção muda
+
+  // Busca o restaurante_id uma vez e, se este tablet já tem mesa salva, renova o "carimbo" dela.
+  useEffect(() => {
+    (async () => {
+      const { data: rest, error } = await supabase
+        .from('restaurantes')
+        .select('id')
+        .eq('slug', 'dominus')
+        .single()
+      if (error) return
+      restauranteIdRef.current = rest.id
+      if (mesa) {
+        await supabase.from('mesas_ativas').upsert({
+          restaurante_id: rest.id,
+          mesa: parseInt(mesa),
+          device_id: deviceId,
+          atualizado_em: new Date().toISOString(),
+        })
+      }
+    })()
+  }, [])
 
   const totalItens = carrinho.reduce((s, i) => s + i.quantidade, 0)
   const buscaAtiva = busca.trim().length > 0
@@ -120,6 +147,42 @@ function App() {
     const e = sugestaoEsfiha
     setSugestaoEsfiha(null)
     setProdutoSelecionado(e)
+  }
+
+  // Define a mesa deste tablet, garantindo que nenhum outro tablet esteja usando o mesmo número.
+  async function definirMesa(novoNumero) {
+    const num = parseInt(novoNumero)
+    const restauranteId = restauranteIdRef.current
+    if (!restauranteId) {
+      return { ok: false, erro: 'Não foi possível verificar a mesa agora. Tente novamente.' }
+    }
+
+    const { data: existente } = await supabase
+      .from('mesas_ativas')
+      .select('device_id, atualizado_em')
+      .eq('restaurante_id', restauranteId)
+      .eq('mesa', num)
+      .maybeSingle()
+
+    if (existente && existente.device_id !== deviceId) {
+      const expirada = Date.now() - new Date(existente.atualizado_em).getTime() > MESA_ATIVA_EXPIRA_MS
+      if (!expirada) {
+        return { ok: false, erro: `A Mesa ${num} já está em uso em outro tablet.` }
+      }
+    }
+
+    // Libera a mesa anterior deste tablet (se houver) e reivindica a nova.
+    await supabase.from('mesas_ativas').delete().eq('restaurante_id', restauranteId).eq('device_id', deviceId)
+    await supabase.from('mesas_ativas').upsert({
+      restaurante_id: restauranteId,
+      mesa: num,
+      device_id: deviceId,
+      atualizado_em: new Date().toISOString(),
+    })
+
+    localStorage.setItem('dominus_mesa', String(num))
+    setMesa(String(num))
+    return { ok: true }
   }
 
   function fecharModalProduto() {
@@ -262,7 +325,7 @@ async function confirmarPedido(itens, comanda) {
         busca={busca}
         onBusca={setBusca}
         mesa={mesa}
-        onMesaMudou={setMesa}
+        onMesaMudou={definirMesa}
         onLogoClick={() => scrollParaCategoria('destaques', 'destaques')}
       />
 
