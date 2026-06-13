@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, IdCard, RotateCw, ShoppingBag } from 'lucide-react'
+import { X, ShoppingBag } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import { supabase } from '../lib/supabase'
 import { getExtrasLinhas } from '../lib/formatExtras'
@@ -95,8 +95,7 @@ function MinhaConta({ mesa, onFechar, onAbrirCarrinho }) {
             <button className="conta-fechar-scan" onClick={onFechar}><X size={20} /></button>
             <div className="conta-scanner-info">
               <div className="conta-scanner-icone">
-                <IdCard size={32} />
-                <RotateCw size={16} className="conta-scanner-icone-badge" />
+                <img src="/icones/iconeQR.png" alt="" />
               </div>
               <h2>Minha Conta</h2>
               <p>Aponte a câmera para o QR Code impresso na sua comanda para ver os pedidos e o total da sua mesa.</p>

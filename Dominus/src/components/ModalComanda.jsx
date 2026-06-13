@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, CheckCircle, IdCard, RotateCw } from 'lucide-react'
+import { X, CheckCircle } from 'lucide-react'
 import { Html5Qrcode } from 'html5-qrcode'
 import './ModalComanda.css'
 
@@ -67,8 +67,7 @@ function ModalComanda({ onFechar, onComandaLida }) {
           <>
             <div className="comanda-info">
               <div className="comanda-info-icone">
-                <IdCard size={32} />
-                <RotateCw size={16} className="comanda-info-icone-badge" />
+                <img src="/icones/iconeQR.png" alt="" />
               </div>
               <h2 className="comanda-titulo">Confirme sua comanda</h2>
               <p className="comanda-subtitulo">
