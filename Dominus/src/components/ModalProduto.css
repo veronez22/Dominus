@@ -60,8 +60,8 @@
 
 /* ══ PAINEL ESQUERDO ══ */
 .mp-esq {
-  width: 290px;
-  min-width: 290px;
+  width: 380px;
+  min-width: 380px;
   display: flex;
   flex-direction: column;
   background: #111;
